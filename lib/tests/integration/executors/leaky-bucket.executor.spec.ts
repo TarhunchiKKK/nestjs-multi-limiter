@@ -2,20 +2,20 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { Test } from "@nestjs/testing";
 import type Redis from "ioredis";
 import { STORAGE_TOKEN } from "../../../src/di";
-import { type TokenBucketOptions, TokenBucketRedisExecutor } from "../../../src/executors";
+import { type LeakyBucketOptions, LeakyBucketRedisExecutor } from "../../../src/executors";
 import { createRedisClient, MS_IN_SECOND } from "../../shared";
 
-describe("TokenBucketRedisExecutor", () => {
-    let executor: TokenBucketRedisExecutor;
+describe("LeakyBucketRedisExecutor", () => {
+    let executor: LeakyBucketRedisExecutor;
     let redis: Redis;
-    const key = "rate-limiter:token-bucket:key:scope";
+    const key = "rate-limiter:leaky-bucket:key:scope";
 
     beforeEach(async () => {
         redis = createRedisClient();
 
         const module = await Test.createTestingModule({
             providers: [
-                TokenBucketRedisExecutor,
+                LeakyBucketRedisExecutor,
                 {
                     provide: STORAGE_TOKEN,
                     useValue: redis
@@ -23,7 +23,7 @@ describe("TokenBucketRedisExecutor", () => {
             ]
         }).compile();
 
-        executor = module.get(TokenBucketRedisExecutor);
+        executor = module.get(LeakyBucketRedisExecutor);
 
         await redis.flushdb();
     });
@@ -32,10 +32,10 @@ describe("TokenBucketRedisExecutor", () => {
         await redis.quit();
     });
 
-    it("should consume tokens down to 0 and then block request", async () => {
-        const options: TokenBucketOptions = {
+    it("should fill the bucket up to capacity and then leak further requests", async () => {
+        const options: LeakyBucketOptions = {
             capacity: 3,
-            refillRate: 1 / MS_IN_SECOND,
+            leakRate: 1 / 10_000,
             ttl: 5 * MS_IN_SECOND
         };
 
@@ -45,25 +45,25 @@ describe("TokenBucketRedisExecutor", () => {
             expect(check).toBeTrue();
         }
 
-        const blockedCheck = executor.check(key, options);
-
+        const blockedCheck = await executor.check(key, options);
         expect(blockedCheck).toBeFalse();
     });
 
-    it("should refill tokens incrementally based on elapsed time", async () => {
-        const options: TokenBucketOptions = {
+    it("should allow new request after water leaks over time", async () => {
+        const options: LeakyBucketOptions = {
             capacity: 2,
-            refillRate: 1 / 100,
+            leakRate: 1 / 100,
             ttl: 5 * MS_IN_SECOND
         };
 
+        // Fill bucket
         for (let i = 0; i <= options.capacity; i++) {
             const check = await executor.check(key, options);
 
             expect(check).toBe(i < options.capacity);
         }
 
-        await Bun.sleep(150);
+        await Bun.sleep(110);
 
         const successfulCheck = await executor.check(key, options);
         expect(successfulCheck).toBeTrue();
@@ -72,45 +72,45 @@ describe("TokenBucketRedisExecutor", () => {
         expect(blockedCheck).toBeFalse();
     });
 
-    it("should not accumulate tokens beyond maximum capacity", async () => {
-        const options: TokenBucketOptions = {
+    it("should floor the water level at zero and not drop below", async () => {
+        const options: LeakyBucketOptions = {
             capacity: 2,
-            refillRate: 1,
+            leakRate: 1,
             ttl: 5 * MS_IN_SECOND
         };
 
         const initialCheck = await executor.check(key, options);
         expect(initialCheck).toBeTrue();
 
-        await Bun.sleep(10 * options.refillRate);
+        await Bun.sleep(10);
 
-        for (let i = 0; i <= options.capacity; i++) {
+        for (let i = 0; i < options.capacity; i++) {
             const check = await executor.check(key, options);
 
             expect(check).toBe(i < options.capacity);
         }
     });
 
-    it("should check structure and data stored inside Redis Hash-table", async () => {
-        const options: TokenBucketOptions = {
+    it("should check internal Redis Hash state values", async () => {
+        const options: LeakyBucketOptions = {
             capacity: 5,
-            refillRate: 1 / 10,
-            ttl: 2 * MS_IN_SECOND
+            leakRate: 0.05,
+            ttl: 3 * MS_IN_SECOND
         };
 
-        const initialCheck = await executor.check(key, options);
-        expect(initialCheck).toBeTrue();
+        // Make 1 request (water level become 1)
+        await executor.check(key, options);
 
-        const state = await redis.hmget(key, "tokens", "lastRefilled");
+        const state = await redis.hmget(key, "water", "lastLeaked");
 
-        const tokens = parseFloat(state[0] || "0");
-        const lastRefilled = parseInt(state[1] || "0", 10);
+        const water = parseFloat(state[0] || "0");
+        expect(water).toBe(1);
 
-        expect(tokens).toBe(options.capacity - 1);
-        expect(lastRefilled).toBeGreaterThan(0);
+        const lastLeaked = parseInt(state[1] || "0", 10);
+        expect(lastLeaked).toBeGreaterThan(0);
 
         const pttl = await redis.pttl(key);
         expect(pttl).toBeGreaterThan(0);
-        expect(pttl).toBeLessThan(options.ttl);
+        expect(pttl).toBeLessThanOrEqual(options.ttl);
     });
 });
