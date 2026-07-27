@@ -1,10 +1,5 @@
 {
-    "name": "nest-modules",
-    "version": "0.0.0",
-    "private": true,
-    "description": "",
-    "author": "",
-    "license": "UNLICENSED",
+    "name": "nestjs-rate-limiter-monorepo",
     "type": "module",
     "engines": {
         "node": ">=18"
@@ -15,9 +10,10 @@
         "build": "turbo run build",
         "build:lib": "turbo run build --filter=nestjs-rate-limiter",
         "build:e2e": "turbo run build --filter=e2e",
-        "chmod:scripts": "chmod +x ./scripts",
+        "chmod:scripts": "chmod +x -R ./scripts",
         "test:unit": "turbo run test:unit",
-        "test:integration": "./scriipts/start-containers.sh && ./scripts/stop-containers.sh",
+        "test:integration": "./scripts/start-containers.sh && turbo run test:integration && ./scripts/stop-containers.sh",
+        "test:e2e": "./scripts/start-containers.sh && turbo run test:e2e  && ./scripts/stop-containers.sh",
         "format:check": "biome format",
         "format:fix": "biome format --write",
         "lint:check": "biome lint",

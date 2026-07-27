@@ -26,7 +26,8 @@
     "files": ["./dist/**", "./lua/**", "readme.md", "license"],
     "scripts": {
         "build": "tsc -p tsconfig.build.json",
-        "test:unit": "bun test tests/unit --preload ./tests/preload.ts"
+        "test:unit": "bun test tests/unit --preload ./tests/preload.ts",
+        "test:integration": "bun test tests/integration --preload ./tests/preload.ts"
     },
     "devDependencies": {
         "@nestjs/common": "^11.1.27",
