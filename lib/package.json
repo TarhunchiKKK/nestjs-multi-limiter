@@ -38,12 +38,12 @@
         "@types/node": "^26.1.1",
         "express": "^5.2.1",
         "ioredis": "^5.11.1",
-        "reflect-metadata": "^0.2.2"
+        "reflect-metadata": "^0.2.2",
+        "typescript": "^5"
     },
     "peerDependencies": {
         "@nestjs/common": "^11.0.0",
         "@nestjs/core": "^11.0.0",
-        "ioredis": "^5.0.0",
-        "typescript": "^5"
+        "ioredis": "^5.0.0"
     }
 }
