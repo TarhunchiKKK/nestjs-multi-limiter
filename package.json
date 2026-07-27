@@ -15,6 +15,7 @@
         "build": "turbo run build",
         "build:lib": "turbo run build --filter=nestjs-rate-limiter",
         "build:e2e": "turbo run build --filter=e2e",
+        "chmod:scripts": "chmod +x ./scripts",
         "test:unit": "turbo run test:unit",
         "test:integration": "./scriipts/start-containers.sh && ./scripts/stop-containers.sh",
         "format:check": "biome format",
