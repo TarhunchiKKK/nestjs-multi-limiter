@@ -8,7 +8,7 @@ export type FixedWindowOptions = {
     limit: number;
 
     /**
-     * Requests limit time-to-live.
+     * Requests limit time-to-live in milliseconds.
      */
     ttl: number;
 };

@@ -13,7 +13,7 @@ export type TokenBucketOptions = {
     refillRate: number;
 
     /**
-     * Tokens time-to-live (for Redis only).
+     * Redis key time-to-live in milliseconds.
      */
     ttl: number;
 };
