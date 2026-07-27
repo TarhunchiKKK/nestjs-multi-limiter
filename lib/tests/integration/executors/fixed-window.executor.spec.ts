@@ -1,15 +1,18 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { Test } from "@nestjs/testing";
+import type Redis from "ioredis";
 import { STORAGE_TOKEN } from "../../../src/di";
 import { type FixedWindowOptions, FixedWindowRedisExecutor } from "../../../src/executors";
 import { createRedisClient, MS_IN_MINUTE, MS_IN_SECOND } from "../../shared";
 
 describe("FixedWindowRedisExecutor", () => {
     let executor: FixedWindowRedisExecutor;
-    const redis = createRedisClient();
+    let redis: Redis;
     const key = "rate-limiter:fixed-window:key:scope";
 
     beforeEach(async () => {
+        redis = createRedisClient();
+
         const module = await Test.createTestingModule({
             providers: [
                 FixedWindowRedisExecutor,
