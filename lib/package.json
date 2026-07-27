@@ -27,7 +27,7 @@
     "scripts": {
         "build": "tsc -p tsconfig.build.json",
         "test:unit": "bun test tests/unit --preload ./tests/preload.ts",
-        "test:integration": "bun test tests/integration --preload ./tests/preload.ts"
+        "test:integration": "bun test tests/integration --preload ../scripts/test-preload.ts"
     },
     "devDependencies": {
         "@nestjs/common": "^11.1.27",
