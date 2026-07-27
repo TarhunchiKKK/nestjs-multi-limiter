@@ -1,5 +1,4 @@
-import { describe, expect } from "bun:test";
-import { afterEach, beforeEach, it } from "node:test";
+import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { Test } from "@nestjs/testing";
 import type Redis from "ioredis";
 import { STORAGE_TOKEN } from "../../../src/di";
