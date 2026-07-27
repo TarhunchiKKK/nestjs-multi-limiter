@@ -1,17 +1,7 @@
 {
     "name": "e2e",
-    "version": "0.0.1",
-    "description": "",
-    "author": "",
-    "private": true,
-    "license": "UNLICENSED",
-    "files": ["dist", "readme.md", "license"],
     "scripts": {
         "build": "nest build",
-        "start": "nest start",
-        "start:dev": "nest start --watch",
-        "start:debug": "nest start --debug --watch",
-        "start:prod": "node dist/main",
         "test:e2e": "bun test e2e --preload ../scripts/test-preload.ts"
     },
     "dependencies": {

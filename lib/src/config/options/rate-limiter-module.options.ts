@@ -21,6 +21,9 @@ export type RateLimiterModuleOptions = StorageOptions & {
     };
 
     defaultProviders?: {
+        // FIX: should `TokenType` be here?
+        // `ProvidersDiscoveryService` looks for metadata added by corresponding decorators.
+        // No-classes cannot have such metadata
         keyExtractor?: Type<IKeyExtractor> | TokenType;
         errorFactory?: Type<IErrorFactory> | TokenType;
         optionsFactory?: Type<IOptionsFactory> | TokenType;
