@@ -1,10 +1,10 @@
 services:
   redis:
-    container_name: boards-cache
+    container_name: redis
     image: redis:5.0
     restart: always
     ports:
-      - ${REDIS_PORT}:6379
+      - 6379:6379
     volumes:
       - data:/data
 
