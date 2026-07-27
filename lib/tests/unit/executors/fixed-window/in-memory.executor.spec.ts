@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { Test } from "@nestjs/testing";
 import { STORAGE_TOKEN } from "../../../../src/di";
 import { FixedWindowInMemoryExecutor, type FixedWindowOptions, type FixedWindowState } from "../../../../src/executors";
-import { clearMock, createInMemoryStorageMock, MS_IN_DAY, TOMORROW, YESTERDAY } from "../../../mocks";
+import { clearMock, createInMemoryStorageMock, MS_IN_DAY, TOMORROW, YESTERDAY } from "../../../shared";
 
 describe("FixedWindowInMemoryExecutor", () => {
     let executor: FixedWindowInMemoryExecutor;

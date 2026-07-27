@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { Test } from "@nestjs/testing";
 import { STORAGE_TOKEN } from "../../../../src/di";
 import { type SlidingWindowLogOptions, SlidingWindowLogRedisExecutor } from "../../../../src/executors";
-import { clearMock, createRedisMock, MS_IN_DAY } from "../../../mocks";
+import { clearMock, createRedisMock, MS_IN_DAY } from "../../../shared";
 
 describe("SlidingWindowLogRedisExecutor", () => {
     let executor: SlidingWindowLogRedisExecutor;
