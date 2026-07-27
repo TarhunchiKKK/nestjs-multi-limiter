@@ -9,7 +9,6 @@
     "scripts": {
         "build": "turbo run build",
         "build:lib": "turbo run build --filter=nestjs-rate-limiter",
-        "build:e2e": "turbo run build --filter=e2e",
         "test:unit": "turbo run test:unit",
         "test:integration": "bun run ./scripts/test-integration.ts",
         "test:e2e": "bun run ./scripts/test-e2e.ts",
