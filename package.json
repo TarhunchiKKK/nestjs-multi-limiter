@@ -1,10 +1,5 @@
 {
-    "name": "nest-modules",
-    "version": "0.0.0",
-    "private": true,
-    "description": "",
-    "author": "",
-    "license": "UNLICENSED",
+    "name": "nestjs-rate-limiter-monorepo",
     "type": "module",
     "engines": {
         "node": ">=18"
@@ -16,15 +11,20 @@
         "build:lib": "turbo run build --filter=nestjs-rate-limiter",
         "build:e2e": "turbo run build --filter=e2e",
         "test:unit": "turbo run test:unit",
+        "test:integration": "bun run ./scripts/test-integration.ts",
+        "test:e2e": "bun run ./scripts/test-e2e.ts",
         "format:check": "biome format",
         "format:fix": "biome format --write",
         "lint:check": "biome lint",
         "lint:fix": "biome lint --write",
         "knip": "knip",
-        "sync-meta": "./scripts/sync-meta.sh"
+        "clean": "bun run ./scripts/clean.ts",
+        "sync-meta": "bun run ./scripts/sync-meta.ts"
     },
     "devDependencies": {
         "@biomejs/biome": "^2.5.1",
+        "@types/bun": "^1.3.14",
+        "bun-plugin-swc": "^0.0.1",
         "knip": "^6.23.0",
         "turbo": "^2.10.0"
     }

@@ -1,10 +1,10 @@
-name: End-To-End Testing
+name: Integration & E2e Testing
 
 on:
   workflow_dispatch:
 
 jobs:
-  test:
+  integration-tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -16,5 +16,26 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: Test
+      - name: Build
+        run: bun run build
+
+      - name: Integration Tests
+        run: bun run test:integration
+
+  e2e-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build
+        run: bun run build
+
+      - name: E2e-Tests
         run: bun run test:e2e
