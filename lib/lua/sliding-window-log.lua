@@ -12,7 +12,7 @@ local currentCount = redis.call('zcard', key)
 
 -- Less than limit -> add current request
 if currentCount < limit then
-    redis.call('zadd', key, startTime, ARGV .. ":" .. ARGV)
+    redis.call('zadd', key, startTime, ARGV[1] .. ":" .. ARGV[4])
     redis.call('pexpire', key, windowMs)
     return 1
 else

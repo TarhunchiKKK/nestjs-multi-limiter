@@ -18,7 +18,7 @@ export class SlidingWindowCounterRedisExecutor implements IExecutor<SlidingWindo
         const keysCount = 1;
         const startTime = Date.now();
 
-        const result = await this.redis.eval(this.luaScript, key, keysCount, startTime.toString(), options.windowMs.toString(), options.limit.toString());
+        const result = await this.redis.eval(this.luaScript, keysCount, key, startTime.toString(), options.windowMs.toString(), options.limit.toString());
 
         return result === 1;
     }
