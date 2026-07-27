@@ -19,6 +19,9 @@ jobs:
       - name: Build
         run: bun run build
 
+      - name: Grant execution permissions for scripts folder
+        run: bun run chmod:scripts
+
       - name: Integration Tests
         run: bun run test:integration
 
