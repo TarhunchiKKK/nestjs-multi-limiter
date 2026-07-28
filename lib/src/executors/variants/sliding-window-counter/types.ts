@@ -28,5 +28,5 @@ export type SlidingWindowCounterState = {
     /**
      * Previous window requests counter.
      */
-    previousCont: number;
+    previousCount: number;
 };
