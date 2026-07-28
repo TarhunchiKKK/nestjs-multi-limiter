@@ -9,42 +9,49 @@ export class TokenBucketInMemoryExecutor implements IExecutor<TokenBucketOptions
 
     public check(key: Key, options: TokenBucketOptions) {
         const state = this.storage.get(key);
+        const now = Date.now();
 
         if (!state) {
-            this.setInitialState(key, options);
+            this.setInitialState(key, options, now);
             return true;
         }
 
-        const { currentTokens, refilledAt } = this.refillTokens(state, options);
+        const { currentTokens, refilledAt } = this.refillTokens(state, options, now);
 
         if (currentTokens >= 1) {
+            const nextTokens = currentTokens - 1;
+
             this.storage.set(key, {
-                tokens: currentTokens - 1,
-                lastRefilled: refilledAt
+                tokens: nextTokens,
+                lastRefilled: refilledAt,
+                expiresAt: this.getExpiration(nextTokens, options, refilledAt)
             });
+
             return true;
         }
 
         this.storage.set(key, {
             tokens: currentTokens,
-            lastRefilled: refilledAt
+            lastRefilled: refilledAt,
+            expiresAt: this.getExpiration(currentTokens, options, refilledAt)
         });
 
         return false;
     }
 
-    private setInitialState(key: Key, options: TokenBucketOptions) {
+    private setInitialState(key: Key, options: TokenBucketOptions, now: number) {
+        const nextTokens = options.capacity - 1;
+
         const initialState: TokenBucketState = {
             tokens: options.capacity - 1,
-            lastRefilled: Date.now()
+            lastRefilled: now,
+            expiresAt: this.getExpiration(nextTokens, options, now)
         };
 
         this.storage.set(key, initialState);
     }
 
-    private refillTokens(state: TokenBucketState, options: TokenBucketOptions) {
-        const now = Date.now();
-
+    private refillTokens(state: TokenBucketState, options: TokenBucketOptions, now: number) {
         const elapsed = Math.max(0, now - state.lastRefilled);
 
         const refilledTokens = elapsed * options.refillRate;
@@ -55,5 +62,13 @@ export class TokenBucketInMemoryExecutor implements IExecutor<TokenBucketOptions
             currentTokens: currentTokens,
             refilledAt: now
         };
+    }
+
+    private getExpiration(currentTokens: number, options: TokenBucketOptions, baseTime: number) {
+        const missingTokens = options.capacity - currentTokens;
+
+        const timeToFullRefill = missingTokens / options.refillRate;
+
+        return baseTime + timeToFullRefill;
     }
 }

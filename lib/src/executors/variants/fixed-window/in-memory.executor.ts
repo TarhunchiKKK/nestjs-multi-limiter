@@ -8,14 +8,16 @@ export class FixedWindowInMemoryExecutor implements IExecutor<FixedWindowOptions
     public constructor(@InjectStorage() private readonly storage: InMemoryStorage<FixedWindowState>) {}
 
     public check(key: Key, options: FixedWindowOptions) {
+        let state = this.storage.get(key);
         const now = Date.now();
 
-        let state = this.storage.get(key);
-
         if (!state || state.resetTime < now) {
+            const resetTime = now + options.ttl;
+
             state = {
                 count: 0,
-                resetTime: now + options.ttl
+                resetTime: resetTime,
+                expiresAt: resetTime
             };
         }
 
@@ -24,6 +26,8 @@ export class FixedWindowInMemoryExecutor implements IExecutor<FixedWindowOptions
             this.storage.set(key, state);
             return true;
         }
+
+        this.storage.set(key, state);
 
         return false;
     }

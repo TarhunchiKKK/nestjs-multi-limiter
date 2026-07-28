@@ -1,3 +1,5 @@
+import type { BaseStrategyState } from "../../../shared/model";
+
 /**
  * @publicApi
  */
@@ -18,7 +20,7 @@ export type TokenBucketOptions = {
     ttl: number;
 };
 
-export type TokenBucketState = {
+export type TokenBucketState = BaseStrategyState & {
     /**
      * Current tokens count.
      */
