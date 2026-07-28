@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it, jest } from "bun:test";
 import { Test } from "@nestjs/testing";
 import { STORAGE_TOKEN } from "../../../../src/di";
 import { LeakyBucketInMemoryExecutor, type LeakyBucketOptions, type LeakyBucketState } from "../../../../src/executors";
@@ -24,6 +24,12 @@ describe("LeakyBucketInMemoryExecutor", () => {
         }).compile();
 
         executor = module.get(LeakyBucketInMemoryExecutor);
+
+        jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+        jest.useRealTimers();
     });
 
     it("should fill the bucket up to capacity and then deny further requests", () => {
@@ -43,7 +49,7 @@ describe("LeakyBucketInMemoryExecutor", () => {
         expect(blockedCheck).toBeFalse();
     });
 
-    it("should leak water over time and allow new requests", async () => {
+    it("should leak water over time and allow new requests", () => {
         const options: LeakyBucketOptions = {
             capacity: 2,
             leakRate: 1 / 100,
@@ -59,7 +65,7 @@ describe("LeakyBucketInMemoryExecutor", () => {
         const blockedCheck = executor.check(key, options);
         expect(blockedCheck).toBeFalse();
 
-        await Bun.sleep(110);
+        jest.advanceTimersByTime(110);
 
         const successfulCheck = executor.check(key, options);
         expect(successfulCheck).toBeTrue();
@@ -68,7 +74,7 @@ describe("LeakyBucketInMemoryExecutor", () => {
         expect(emptyBucketCheck).toBeFalse();
     });
 
-    it("should prevent water level from dropping below zero", async () => {
+    it("should prevent water level from dropping below zero", () => {
         const options: LeakyBucketOptions = {
             capacity: 2,
             leakRate: 1,
@@ -78,7 +84,7 @@ describe("LeakyBucketInMemoryExecutor", () => {
         const initialCheck = executor.check(key, options);
         expect(initialCheck).toBeTrue();
 
-        await Bun.sleep(20);
+        jest.advanceTimersByTime(20);
 
         for (let i = 0; i < options.capacity; i++) {
             const check = executor.check(key, options);

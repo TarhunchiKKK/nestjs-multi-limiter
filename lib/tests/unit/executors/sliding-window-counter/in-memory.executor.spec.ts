@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it, jest } from "bun:test";
 import { Test } from "@nestjs/testing";
 import { STORAGE_TOKEN } from "../../../../src/di";
 import { SlidingWindowCounterInMemoryExecutor, type SlidingWindowCounterOptions, type SlidingWindowCounterState } from "../../../../src/executors";
@@ -24,6 +24,12 @@ describe("SlidingWindowCounterInMemoryExecutor", () => {
         }).compile();
 
         executor = module.get(SlidingWindowCounterInMemoryExecutor);
+
+        jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+        jest.useRealTimers();
     });
 
     it("should allow requests up to the limit within the same static window", () => {
@@ -42,7 +48,7 @@ describe("SlidingWindowCounterInMemoryExecutor", () => {
         expect(blockedCheck).toBeFalse();
     });
 
-    it("should decay previous window weight as time progressed into the next window", async () => {
+    it("should decay previous window weight as time progressed into the next window", () => {
         const options: SlidingWindowCounterOptions = {
             limit: 2,
             windowMs: 200
@@ -57,7 +63,7 @@ describe("SlidingWindowCounterInMemoryExecutor", () => {
         const blockedCheck = executor.check(key, options);
         expect(blockedCheck).toBeFalse();
 
-        await Bun.sleep(options.windowMs + 10);
+        jest.advanceTimersByTime(options.windowMs + 10);
 
         const successfulCheck = executor.check(key, options);
         expect(successfulCheck).toBeTrue();
@@ -66,7 +72,7 @@ describe("SlidingWindowCounterInMemoryExecutor", () => {
         expect(zeroCounterCheck).toBeFalse();
     });
 
-    it("should shift windows and keep previous count when gap is exactly 1 window length", async () => {
+    it("should shift windows and keep previous count when gap is exactly 1 window length", () => {
         const options: SlidingWindowCounterOptions = {
             limit: 5,
             windowMs: 100
@@ -79,7 +85,7 @@ describe("SlidingWindowCounterInMemoryExecutor", () => {
             expect(check).toBeTrue();
         }
 
-        await Bun.sleep(options.windowMs + 5);
+        jest.advanceTimersByTime(options.windowMs + 5);
 
         const windowShiftCheck = executor.check(key, options);
         expect(windowShiftCheck).toBeTrue();
@@ -90,7 +96,7 @@ describe("SlidingWindowCounterInMemoryExecutor", () => {
         expect(state?.currentCount).toBe(1);
     });
 
-    it("should completely reset counts if more than  2 windows have passed", async () => {
+    it("should completely reset counts if more than  2 windows have passed", () => {
         const options: SlidingWindowCounterOptions = {
             limit: 2,
             windowMs: 50
@@ -99,7 +105,7 @@ describe("SlidingWindowCounterInMemoryExecutor", () => {
         const initialCheck = executor.check(key, options);
         expect(initialCheck).toBeTrue();
 
-        await Bun.sleep(3 * options.windowMs);
+        jest.advanceTimersByTime(3 * options.windowMs);
 
         // History should be fully erased
         const check = executor.check(key, options);

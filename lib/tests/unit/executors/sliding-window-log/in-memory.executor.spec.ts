@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it, jest } from "bun:test";
 import { Test } from "@nestjs/testing";
 import { STORAGE_TOKEN } from "../../../../src/di";
 import { SlidingWindowLogInMemoryExecutor, type SlidingWindowLogOptions, type SlidingWindowLogState } from "../../../../src/executors";
@@ -24,6 +24,12 @@ describe("SlidingWindowLogInMemoryExecutor", () => {
         }).compile();
 
         executor = module.get(SlidingWindowLogInMemoryExecutor);
+
+        jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+        jest.useRealTimers();
     });
 
     it("should allow requests up to the limit and then deny them", () => {
@@ -46,7 +52,7 @@ describe("SlidingWindowLogInMemoryExecutor", () => {
         expect(timestamps?.length).toBe(options.limit);
     });
 
-    it("should release slots one by one as timestamps slide out of the window", async () => {
+    it("should release slots one by one as timestamps slide out of the window", () => {
         const options: SlidingWindowLogOptions = {
             limit: 2,
             windowMs: 300
@@ -55,12 +61,12 @@ describe("SlidingWindowLogInMemoryExecutor", () => {
         const initialCheck = executor.check(key, options);
         expect(initialCheck).toBeTrue();
 
-        await Bun.sleep(100);
+        jest.advanceTimersByTime(100);
 
         const lastAllowedCheck = executor.check(key, options);
         expect(lastAllowedCheck).toBeTrue();
 
-        await Bun.sleep(210);
+        jest.advanceTimersByTime(210);
 
         const newCheck = executor.check(key, options);
         expect(newCheck).toBeTrue();
@@ -70,7 +76,7 @@ describe("SlidingWindowLogInMemoryExecutor", () => {
         expect(timestamps?.length).toBe(2);
     });
 
-    it("should completely clear logs if the time gap is larger than windowMS", async () => {
+    it("should completely clear logs if the time gap is larger than windowMS", () => {
         const options: SlidingWindowLogOptions = {
             limit: 2,
             windowMs: 50
@@ -85,7 +91,7 @@ describe("SlidingWindowLogInMemoryExecutor", () => {
         const blockedCheck = executor.check(key, options);
         expect(blockedCheck).toBeFalse();
 
-        await Bun.sleep(70);
+        jest.advanceTimersByTime(70);
 
         const successfulCheck = executor.check(key, options);
         expect(successfulCheck).toBeTrue();

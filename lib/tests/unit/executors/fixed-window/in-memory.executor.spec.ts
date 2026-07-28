@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it, jest } from "bun:test";
 import { Test } from "@nestjs/testing";
 import { STORAGE_TOKEN } from "../../../../src/di";
 import { FixedWindowInMemoryExecutor, type FixedWindowOptions, type FixedWindowState } from "../../../../src/executors";
@@ -24,6 +24,12 @@ describe("FixedWindowInMemoryExecutor", () => {
         }).compile();
 
         executor = module.get(FixedWindowInMemoryExecutor);
+
+        jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+        jest.useRealTimers();
     });
 
     it("should allow request up to the limit and then deny", () => {
@@ -54,7 +60,7 @@ describe("FixedWindowInMemoryExecutor", () => {
         const blockedCheck = executor.check(key, options);
         expect(blockedCheck).toBeFalse();
 
-        Bun.sleep(options.ttl + 20);
+        jest.advanceTimersByTime(options.ttl + 20);
 
         const newCheck = executor.check(key, options);
         expect(newCheck).toBeTrue();

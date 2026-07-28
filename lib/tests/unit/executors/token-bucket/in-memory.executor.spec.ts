@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it, jest } from "bun:test";
 import { Test } from "@nestjs/testing";
 import { STORAGE_TOKEN } from "../../../../src/di";
 import { TokenBucketInMemoryExecutor, type TokenBucketOptions, type TokenBucketState } from "../../../../src/executors";
@@ -24,6 +24,12 @@ describe("TokenBucketInMemoryExecutor", () => {
         }).compile();
 
         executor = module.get(TokenBucketInMemoryExecutor);
+
+        jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+        jest.useRealTimers();
     });
 
     it("should consume tokens down to zero and then block requests", () => {
@@ -43,7 +49,7 @@ describe("TokenBucketInMemoryExecutor", () => {
         expect(blockedCheck).toBeFalse();
     });
 
-    it("should refill tokens incrementally based on elapsed time", async () => {
+    it("should refill tokens incrementally based on elapsed time", () => {
         const options: TokenBucketOptions = {
             capacity: 2,
             refillRate: 1 / 100,
@@ -59,7 +65,7 @@ describe("TokenBucketInMemoryExecutor", () => {
         const blockedCheck = executor.check(key, options);
         expect(blockedCheck).toBeFalse();
 
-        await Bun.sleep(110);
+        jest.advanceTimersByTime(110);
 
         const oneTokenCheck = executor.check(key, options);
         expect(oneTokenCheck).toBeTrue();
@@ -68,7 +74,7 @@ describe("TokenBucketInMemoryExecutor", () => {
         expect(noTokensCheck).toBeFalse();
     });
 
-    it("should capped tokens at maximum capacity even after long sleep", async () => {
+    it("should capped tokens at maximum capacity even after long sleep", () => {
         const options: TokenBucketOptions = {
             capacity: 2,
             refillRate: 1,
@@ -78,7 +84,7 @@ describe("TokenBucketInMemoryExecutor", () => {
         const initialCheck = executor.check(key, options);
         expect(initialCheck).toBeTrue();
 
-        await Bun.sleep(options.refillRate * 20);
+        jest.advanceTimersByTime(options.refillRate * 20);
 
         for (let i = 0; i < options.capacity; i++) {
             const check = executor.check(key, options);

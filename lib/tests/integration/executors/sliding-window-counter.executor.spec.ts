@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it, jest } from "bun:test";
 import { Test } from "@nestjs/testing";
 import type Redis from "ioredis";
 import { STORAGE_TOKEN } from "../../../src/di";
@@ -26,9 +26,13 @@ describe("SlidingWindowCounterRedisExecutor", () => {
         executor = module.get(SlidingWindowCounterRedisExecutor);
 
         await redis.flushdb();
+
+        jest.useFakeTimers();
     });
 
     afterEach(async () => {
+        jest.useRealTimers();
+
         await redis.flushdb();
     });
 
@@ -60,7 +64,7 @@ describe("SlidingWindowCounterRedisExecutor", () => {
             expect(check).toBe(i < options.windowMs);
         }
 
-        await Bun.sleep(options.windowMs + 20);
+        jest.advanceTimersByTime(options.windowMs + 20);
 
         const successfulCheck = await executor.check(key, options);
         expect(successfulCheck).toBeTrue();
@@ -78,7 +82,7 @@ describe("SlidingWindowCounterRedisExecutor", () => {
         const initialCheck = await executor.check(key, options);
         expect(initialCheck).toBeTrue();
 
-        await Bun.sleep(options.windowMs + 10);
+        jest.advanceTimersByTime(options.windowMs + 10);
 
         // Lua-script should execute branch: if timePassed == windowMs
         await executor.check(key, options);
@@ -97,7 +101,7 @@ describe("SlidingWindowCounterRedisExecutor", () => {
         const initialCheck = await executor.check(key, options);
         expect(initialCheck).toBeTrue();
 
-        await Bun.sleep(options.windowMs * 2 + 50);
+        jest.advanceTimersByTime(options.windowMs * 2 + 50);
 
         // Result should be calculated without old data
         const check = await executor.check(key, options);
