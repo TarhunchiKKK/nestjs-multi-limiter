@@ -48,6 +48,7 @@ describe("SlidingWindowCounterInMemoryExecutor", () => {
         expect(blockedCheck).toBeFalse();
     });
 
+    // FIX: flaking test
     it("should decay previous window weight as time progressed into the next window", () => {
         const options: SlidingWindowCounterOptions = {
             limit: 2,
@@ -72,6 +73,7 @@ describe("SlidingWindowCounterInMemoryExecutor", () => {
         expect(zeroCounterCheck).toBeFalse();
     });
 
+    // FIX: flaking test
     it("should shift windows and keep previous count when gap is exactly 1 window length", () => {
         const options: SlidingWindowCounterOptions = {
             limit: 5,

@@ -67,7 +67,9 @@ import { AppController } from "./app.controller.ts";
 @Module({
     imports: [
         RateLimiterModule.forRoot({
-            storage: "in-memory",
+            storage: {
+                type: "in-memory"
+            },
             scope: "my-scope",
             strategy: "token-bucket",
             strategyOptions: {
@@ -104,8 +106,13 @@ There is only one required field in configuration - `storage`.
 
 ```typescript
 RateLimiterModule.forRoot({
-    storage: "in-memory",
     scope: "my-scope",
+
+    // storage configuration (Map or Redis)
+    storage: {
+        type: "in-memory",
+        gcTime: 15 * 60 * 1000 // Time to clear `old` data from memory
+    },
 
     // strategy configuration
     strategy: "token-bucket",
@@ -144,6 +151,11 @@ Your custom options will be merged with this:
 {
     scope: "default-scope",
 
+    storage: {
+        type: "in-memory",
+        gcTime: 15 * 60 * 1000,
+    },
+
     strategy: "fixed-window",
     strategyOptions: {
         fixedWindow: {
@@ -170,9 +182,11 @@ Your custom options will be merged with this:
         }
     },
 
-    keyExtractor: BuiltinKeyExtractor,  // IP-address is used as key
-    errorFactory: BuiltinErrorFactory,  // throws HttpException (from @nestjs/common)
-    optionsFactory: undefined           // no dynamic options by default
+    defaultProviders: {
+        keyExtractor: BuiltinKeyExtractor,  // IP-address is used as key
+        errorFactory: BuiltinErrorFactory,  // throws HttpException (from @nestjs/common)
+        optionsFactory: undefined           // no dynamic options by default
+    }
 }
 ```
 
@@ -421,8 +435,11 @@ RateLimiterModule.forRootAsync({
     imports: [RedisModule],
     inject: [RedisService],
     useFactory: (redisService: RedisService) => ({
-        storage: "redis",
-        instance: redisService  // or `redisService.getClient()`
+        storage: {
+            type: "redis",
+            instance: redisService  // or `redisService.getClient()`
+        },
+        // ...
     })
 });
 ```
