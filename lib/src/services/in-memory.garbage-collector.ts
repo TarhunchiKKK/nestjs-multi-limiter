@@ -12,6 +12,16 @@ export class InMemoryGarbageCollector implements OnApplicationBootstrap, OnAppli
         @Inject(MODULE_OPTIONS_TOKEN) private readonly options: RateLimiterModuleOptions
     ) {}
 
+    private collect() {
+        const now = Date.now();
+
+        for (const [key, state] of this.storage.entries()) {
+            if (state.expiresAt < now) {
+                this.storage.delete(key);
+            }
+        }
+    }
+
     public onApplicationBootstrap() {
         this.intervalRef = setInterval(() => {
             this.collect();
@@ -24,6 +34,4 @@ export class InMemoryGarbageCollector implements OnApplicationBootstrap, OnAppli
             clearInterval(this.intervalRef);
         }
     }
-
-    private collect() {}
 }
