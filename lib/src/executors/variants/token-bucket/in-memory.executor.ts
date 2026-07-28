@@ -45,7 +45,7 @@ export class TokenBucketInMemoryExecutor implements IExecutor<TokenBucketOptions
     private refillTokens(state: TokenBucketState, options: TokenBucketOptions) {
         const now = Date.now();
 
-        const elapsed = Math.max(now - state.lastRefilled);
+        const elapsed = Math.max(0, now - state.lastRefilled);
 
         const refilledTokens = elapsed * options.refillRate;
 

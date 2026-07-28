@@ -12,9 +12,9 @@ export class SlidingWindowCounterInMemoryExecutor implements IExecutor<SlidingWi
 
         const currentWindowStart = Math.floor(startTime / options.windowMs) * options.windowMs;
 
-        const state = this.getState(key, currentWindowStart);
+        let state = this.getState(key, currentWindowStart);
 
-        this.checkPassedWindows(state, options, currentWindowStart);
+        state = this.checkPassedWindows(state, options, currentWindowStart);
 
         const calculatedWeightCount = this.calculateWeightCount(state, options, currentWindowStart, startTime);
 
@@ -34,7 +34,7 @@ export class SlidingWindowCounterInMemoryExecutor implements IExecutor<SlidingWi
             state = {
                 currentWindowStart: currentWindowStart,
                 currentCount: 0,
-                previousCont: 0
+                previousCount: 0
             };
         }
 
@@ -45,18 +45,20 @@ export class SlidingWindowCounterInMemoryExecutor implements IExecutor<SlidingWi
         const timePassedSinceStoredWindow = currentWindowStart - state.currentWindowStart;
 
         if (timePassedSinceStoredWindow === options.windowMs) {
-            state = {
+            return {
                 currentWindowStart: currentWindowStart,
                 currentCount: 0,
-                previousCont: state.currentCount
+                previousCount: state.currentCount
             };
         } else if (timePassedSinceStoredWindow > options.windowMs) {
-            state = {
+            return {
                 currentWindowStart: currentWindowStart,
                 currentCount: 0,
-                previousCont: 0
+                previousCount: 0
             };
         }
+
+        return state;
     }
 
     private calculateWeightCount(state: SlidingWindowCounterState, options: SlidingWindowCounterOptions, currentWindowStart: number, startTime: number) {
@@ -64,7 +66,7 @@ export class SlidingWindowCounterInMemoryExecutor implements IExecutor<SlidingWi
 
         const previousWindowWeight = 1 - timeElapsedInCurrentWindow / options.windowMs;
 
-        const calculatedWeightCount = state.currentCount + state.previousCont * previousWindowWeight;
+        const calculatedWeightCount = state.currentCount + state.previousCount * previousWindowWeight;
 
         return calculatedWeightCount;
     }

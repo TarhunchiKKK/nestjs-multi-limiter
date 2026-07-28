@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it, jest } from "bun:test";
 import { Test } from "@nestjs/testing";
 import type Redis from "ioredis";
 import { STORAGE_TOKEN } from "../../../src/di";
@@ -26,9 +26,13 @@ describe("LeakyBucketRedisExecutor", () => {
         executor = module.get(LeakyBucketRedisExecutor);
 
         await redis.flushdb();
+
+        jest.useFakeTimers();
     });
 
     afterEach(async () => {
+        jest.useRealTimers();
+
         await redis.quit();
     });
 
@@ -63,7 +67,7 @@ describe("LeakyBucketRedisExecutor", () => {
             expect(check).toBe(i < options.capacity);
         }
 
-        await Bun.sleep(110);
+        jest.advanceTimersByTime(110);
 
         const successfulCheck = await executor.check(key, options);
         expect(successfulCheck).toBeTrue();
@@ -82,7 +86,7 @@ describe("LeakyBucketRedisExecutor", () => {
         const initialCheck = await executor.check(key, options);
         expect(initialCheck).toBeTrue();
 
-        await Bun.sleep(10);
+        jest.advanceTimersByTime(10);
 
         for (let i = 0; i < options.capacity; i++) {
             const check = await executor.check(key, options);

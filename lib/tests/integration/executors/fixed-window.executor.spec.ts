@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it, jest } from "bun:test";
 import { Test } from "@nestjs/testing";
 import type Redis from "ioredis";
 import { STORAGE_TOKEN } from "../../../src/di";
@@ -26,9 +26,13 @@ describe("FixedWindowRedisExecutor", () => {
         executor = module.get(FixedWindowRedisExecutor);
 
         await redis.flushdb();
+
+        jest.useFakeTimers();
     });
 
     afterEach(async () => {
+        jest.useRealTimers();
+
         await redis.quit();
     });
 
@@ -57,7 +61,7 @@ describe("FixedWindowRedisExecutor", () => {
         const secondCheck = await executor.check(key, options);
         expect(secondCheck).toBeFalse();
 
-        Bun.sleep(150);
+        jest.advanceTimersByTime(150);
 
         const thirdCheck = await executor.check(key, options);
         expect(thirdCheck).toBeTrue();

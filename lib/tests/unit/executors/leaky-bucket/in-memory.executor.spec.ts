@@ -1,21 +1,21 @@
 import { afterEach, beforeEach, describe, expect, it, jest } from "bun:test";
 import { Test } from "@nestjs/testing";
 import { STORAGE_TOKEN } from "../../../../src/di";
-import { TokenBucketInMemoryExecutor, type TokenBucketOptions, type TokenBucketState } from "../../../../src/executors";
+import { LeakyBucketInMemoryExecutor, type LeakyBucketOptions, type LeakyBucketState } from "../../../../src/executors";
 import type { InMemoryStorage } from "../../../../src/shared/model";
 import { createInMemoryStorage, MS_IN_SECOND } from "../../../shared";
 
-describe("TokenBucketInMemoryExecutor", () => {
-    let executor: TokenBucketInMemoryExecutor;
-    let storage: InMemoryStorage<TokenBucketState>;
-    const key = "rate-limiter:token-bucket:key:scope";
+describe("LeakyBucketInMemoryExecutor", () => {
+    let executor: LeakyBucketInMemoryExecutor;
+    let storage: InMemoryStorage<LeakyBucketState>;
+    const key = "rate-limiter:leaky-bucket:key:scope";
 
     beforeEach(async () => {
-        storage = createInMemoryStorage<TokenBucketState>();
+        storage = createInMemoryStorage<LeakyBucketState>();
 
         const module = await Test.createTestingModule({
             providers: [
-                TokenBucketInMemoryExecutor,
+                LeakyBucketInMemoryExecutor,
                 {
                     provide: STORAGE_TOKEN,
                     useValue: storage
@@ -23,7 +23,7 @@ describe("TokenBucketInMemoryExecutor", () => {
             ]
         }).compile();
 
-        executor = module.get(TokenBucketInMemoryExecutor);
+        executor = module.get(LeakyBucketInMemoryExecutor);
 
         jest.useFakeTimers();
     });
@@ -32,10 +32,10 @@ describe("TokenBucketInMemoryExecutor", () => {
         jest.useRealTimers();
     });
 
-    it("should consume tokens down to zero and then block requests", () => {
-        const options: TokenBucketOptions = {
+    it("should fill the bucket up to capacity and then deny further requests", () => {
+        const options: LeakyBucketOptions = {
             capacity: 3,
-            refillRate: 1 / (10 * MS_IN_SECOND),
+            leakRate: 1 / (10 * MS_IN_SECOND),
             ttl: 5 * MS_IN_SECOND
         };
 
@@ -49,10 +49,10 @@ describe("TokenBucketInMemoryExecutor", () => {
         expect(blockedCheck).toBeFalse();
     });
 
-    it("should refill tokens incrementally based on elapsed time", () => {
-        const options: TokenBucketOptions = {
+    it("should leak water over time and allow new requests", () => {
+        const options: LeakyBucketOptions = {
             capacity: 2,
-            refillRate: 1 / 100,
+            leakRate: 1 / 100,
             ttl: 5 * MS_IN_SECOND
         };
 
@@ -67,24 +67,24 @@ describe("TokenBucketInMemoryExecutor", () => {
 
         jest.advanceTimersByTime(110);
 
-        const oneTokenCheck = executor.check(key, options);
-        expect(oneTokenCheck).toBeTrue();
+        const successfulCheck = executor.check(key, options);
+        expect(successfulCheck).toBeTrue();
 
-        const noTokensCheck = executor.check(key, options);
-        expect(noTokensCheck).toBeFalse();
+        const emptyBucketCheck = executor.check(key, options);
+        expect(emptyBucketCheck).toBeFalse();
     });
 
-    it("should capped tokens at maximum capacity even after long sleep", () => {
-        const options: TokenBucketOptions = {
+    it("should prevent water level from dropping below zero", () => {
+        const options: LeakyBucketOptions = {
             capacity: 2,
-            refillRate: 1,
+            leakRate: 1,
             ttl: 5 * MS_IN_SECOND
         };
 
         const initialCheck = executor.check(key, options);
         expect(initialCheck).toBeTrue();
 
-        jest.advanceTimersByTime(options.refillRate * 20);
+        jest.advanceTimersByTime(20);
 
         for (let i = 0; i < options.capacity; i++) {
             const check = executor.check(key, options);
@@ -92,14 +92,14 @@ describe("TokenBucketInMemoryExecutor", () => {
             expect(check).toBeTrue();
         }
 
-        const noTokensCheck = executor.check(key, options);
-        expect(noTokensCheck).toBeFalse();
+        const blockedCheck = executor.check(key, options);
+        expect(blockedCheck).toBeFalse();
     });
 
-    it("should correctly update and store state variables", () => {
-        const options: TokenBucketOptions = {
+    it("should correctly update and persist internal storage state properties", () => {
+        const options: LeakyBucketOptions = {
             capacity: 5,
-            refillRate: 1 / 10,
+            leakRate: 0.01,
             ttl: 5 * MS_IN_SECOND
         };
 
@@ -108,7 +108,7 @@ describe("TokenBucketInMemoryExecutor", () => {
 
         const state = storage.get(key);
         expect(state).toBeDefined();
-        expect(state?.tokens).toBe(options.capacity - 1);
-        expect(state?.lastRefilled).toBeLessThanOrEqual(Date.now());
+        expect(state?.water).toBe(1);
+        expect(state?.lastLeaked).toBeLessThanOrEqual(Date.now());
     });
 });

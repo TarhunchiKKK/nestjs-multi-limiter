@@ -1,118 +1,101 @@
-import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it, jest } from "bun:test";
 import { Test } from "@nestjs/testing";
 import { STORAGE_TOKEN } from "../../../../src/di";
 import { FixedWindowInMemoryExecutor, type FixedWindowOptions, type FixedWindowState } from "../../../../src/executors";
-import { clearMock, createInMemoryStorageMock, MS_IN_DAY, TOMORROW, YESTERDAY } from "../../../shared";
+import type { InMemoryStorage } from "../../../../src/shared/model";
+import { createInMemoryStorage, MS_IN_SECOND } from "../../../shared";
 
 describe("FixedWindowInMemoryExecutor", () => {
     let executor: FixedWindowInMemoryExecutor;
-    const storageMock = createInMemoryStorageMock<FixedWindowState>();
+    let storage: InMemoryStorage<FixedWindowState>;
+    const key = "rate-limiter:fixed-window:key:scope";
 
     beforeEach(async () => {
+        storage = createInMemoryStorage<FixedWindowState>();
+
         const module = await Test.createTestingModule({
             providers: [
                 FixedWindowInMemoryExecutor,
                 {
                     provide: STORAGE_TOKEN,
-                    useValue: storageMock
+                    useValue: storage
                 }
             ]
         }).compile();
 
         executor = module.get(FixedWindowInMemoryExecutor);
+
+        jest.useFakeTimers();
     });
 
     afterEach(() => {
-        clearMock(storageMock);
+        jest.useRealTimers();
     });
 
-    describe("allow request", () => {
-        it("should find valid state", () => {
-            const key = crypto.randomUUID();
-            const options: FixedWindowOptions = {
-                limit: 100,
-                ttl: MS_IN_DAY
-            };
-            const state: FixedWindowState = {
-                count: 10,
-                resetTime: TOMORROW
-            };
+    it("should allow request up to the limit and then deny", () => {
+        const options: FixedWindowOptions = {
+            limit: 2,
+            ttl: 5 * MS_IN_SECOND
+        };
 
-            storageMock.get.mockReturnValue(state);
+        for (let i = 0; i < options.limit; i++) {
+            const check = executor.check(key, options);
 
-            const result = executor.check(key, options);
+            expect(check).toBeTrue();
+        }
 
-            expect(result).toBeTrue();
-        });
-
-        it("should find state with resetTime left", () => {
-            const key = crypto.randomUUID();
-            const options: FixedWindowOptions = {
-                limit: 100,
-                ttl: MS_IN_DAY
-            };
-            const state: FixedWindowState = {
-                count: 10,
-                resetTime: YESTERDAY
-            };
-
-            storageMock.get.mockReturnValue(state);
-
-            const result = executor.check(key, options);
-
-            expect(result).toBeTrue();
-        });
-
-        it("should not found state", () => {
-            const key = crypto.randomUUID();
-            const options: FixedWindowOptions = {
-                limit: 100,
-                ttl: MS_IN_DAY
-            };
-
-            storageMock.get.mockReturnValue(undefined);
-
-            const result = executor.check(key, options);
-
-            expect(result).toBeTrue();
-        });
+        const blockedCheck = executor.check(key, options);
+        expect(blockedCheck).toBeFalse();
     });
 
-    describe("disallow request", () => {
-        it("should found state with limit === count", () => {
-            const key = crypto.randomUUID();
-            const options: FixedWindowOptions = {
-                limit: 10,
-                ttl: MS_IN_DAY
-            };
-            const state: FixedWindowState = {
-                count: 10,
-                resetTime: TOMORROW
-            };
+    it("should reset the limit after TTL expires", () => {
+        const options: FixedWindowOptions = {
+            limit: 1,
+            ttl: 100
+        };
 
-            storageMock.get.mockReturnValue(state);
+        const successfulCheck = executor.check(key, options);
+        expect(successfulCheck).toBeTrue();
 
-            const result = executor.check(key, options);
+        const blockedCheck = executor.check(key, options);
+        expect(blockedCheck).toBeFalse();
 
-            expect(result).toBeFalse();
-        });
+        jest.advanceTimersByTime(options.ttl + 20);
 
-        it("should found state with limit <= count", () => {
-            const key = crypto.randomUUID();
-            const options: FixedWindowOptions = {
-                limit: 10,
-                ttl: MS_IN_DAY
-            };
-            const state: FixedWindowState = {
-                count: 20,
-                resetTime: TOMORROW
-            };
+        const newCheck = executor.check(key, options);
+        expect(newCheck).toBeTrue();
+    });
 
-            storageMock.get.mockReturnValue(state);
+    it("should isolate limits for different keys", () => {
+        const options: FixedWindowOptions = {
+            limit: 1,
+            ttl: MS_IN_SECOND
+        };
+        const alternativeKey = "rate-limiter:fixed-window:alternative-key:scope";
 
-            const result = executor.check(key, options);
+        const successfulCheck = executor.check(key, options);
+        expect(successfulCheck).toBeTrue();
 
-            expect(result).toBeFalse();
-        });
+        const blockedCheck = executor.check(key, options);
+        expect(blockedCheck).toBeFalse();
+
+        const alternativeKeyCheck = executor.check(alternativeKey, options);
+        expect(alternativeKeyCheck).toBeTrue();
+    });
+
+    it("should update the internal storage state correctly", () => {
+        const options: FixedWindowOptions = {
+            limit: 5,
+            ttl: 2 * MS_IN_SECOND
+        };
+
+        // update storage state
+        executor.check(key, options);
+
+        const state = storage.get(key);
+
+        expect(state).toBeDefined();
+        expect(state?.count).toBe(1);
+        expect(state?.resetTime).toBeGreaterThan(Date.now());
     });
 });

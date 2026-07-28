@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it, jest } from "bun:test";
 import { Test } from "@nestjs/testing";
 import type Redis from "ioredis";
 import { STORAGE_TOKEN } from "../../../src/di";
@@ -26,9 +26,13 @@ describe("SlidingWindowLogRedisExecutor", () => {
         executor = module.get(SlidingWindowLogRedisExecutor);
 
         await redis.flushdb();
+
+        jest.useFakeTimers();
     });
 
     afterEach(async () => {
+        jest.useRealTimers();
+
         await redis.quit();
     });
 
@@ -60,7 +64,7 @@ describe("SlidingWindowLogRedisExecutor", () => {
         const firstCheck = await executor.check(key, options);
         expect(firstCheck).toBeTrue();
 
-        await Bun.sleep(100);
+        jest.advanceTimersByTime(100);
 
         const secondCheck = await executor.check(key, options);
         expect(secondCheck).toBeTrue();
@@ -68,7 +72,7 @@ describe("SlidingWindowLogRedisExecutor", () => {
         const thirdCheck = await executor.check(key, options);
         expect(thirdCheck).toBeFalse();
 
-        await Bun.sleep(210);
+        jest.advanceTimersByTime(210);
 
         const lastCheck = await executor.check(key, options);
         expect(lastCheck).toBeTrue();
@@ -91,7 +95,7 @@ describe("SlidingWindowLogRedisExecutor", () => {
         const overflowCheck = await executor.check(key, options);
         expect(overflowCheck).toBeFalse();
 
-        await Bun.sleep(options.limit + 50);
+        jest.advanceTimersByTime(options.limit + 50);
 
         const newCheck = await executor.check(key, options);
         expect(newCheck).toBeTrue();
