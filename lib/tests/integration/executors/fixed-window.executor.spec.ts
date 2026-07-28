@@ -57,7 +57,7 @@ describe("FixedWindowRedisExecutor", () => {
         const secondCheck = await executor.check(key, options);
         expect(secondCheck).toBeFalse();
 
-        Bun.sleep(150);
+        await Bun.sleep(150);
 
         const thirdCheck = await executor.check(key, options);
         expect(thirdCheck).toBeTrue();
