@@ -9,25 +9,38 @@ export class SlidingWindowLogInMemoryExecutor implements IExecutor<SlidingWindow
 
     public check(key: Key, options: SlidingWindowLogOptions) {
         const now = Date.now();
-
         const timestamps = this.getRelevantTimestamps(key, options, now);
 
         if (timestamps.length < options.limit) {
             timestamps.push(now);
-            this.storage.set(key, timestamps);
+
+            this.storage.set(key, {
+                timestamps: timestamps,
+                expiresAt: this.getExpiration(options, now)
+            });
+
             return true;
         }
 
-        this.storage.set(key, timestamps);
+        const lastSuccessfulTimestamp = timestamps[timestamps.length - 1];
+
+        this.storage.set(key, {
+            timestamps: timestamps,
+            expiresAt: this.getExpiration(options, lastSuccessfulTimestamp)
+        });
 
         return false;
     }
 
-    private getRelevantTimestamps(key: Key, options: SlidingWindowLogOptions, startTime: number) {
-        const clearBefore = startTime - options.windowMs;
+    private getRelevantTimestamps(key: Key, options: SlidingWindowLogOptions, baseTime: number) {
+        const clearBefore = baseTime - options.windowMs;
 
-        const timestamps = this.storage.get(key) ?? [];
+        const state = this.storage.get(key);
 
-        return timestamps.filter((timestamp) => timestamp > clearBefore);
+        return (state?.timestamps ?? []).filter((timestamp) => timestamp > clearBefore);
+    }
+
+    private getExpiration(options: SlidingWindowLogOptions, baseTime: number) {
+        return baseTime + options.windowMs;
     }
 }

@@ -1,3 +1,5 @@
+import type { BaseStrategyState } from "../../../shared/model";
+
 /**
  * @publicApi
  */
@@ -14,7 +16,7 @@ export type SlidingWindowCounterOptions = {
     windowMs: number;
 };
 
-export type SlidingWindowCounterState = {
+export type SlidingWindowCounterState = BaseStrategyState & {
     /**
      * Current window start timestamp.
      */

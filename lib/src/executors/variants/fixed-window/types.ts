@@ -1,3 +1,5 @@
+import type { BaseStrategyState } from "../../../shared/model";
+
 /**
  * @publicApi
  */
@@ -13,7 +15,7 @@ export type FixedWindowOptions = {
     ttl: number;
 };
 
-export type FixedWindowState = {
+export type FixedWindowState = BaseStrategyState & {
     /**
      * Current allowed requests count.
      */

@@ -47,9 +47,9 @@ describe("SlidingWindowLogInMemoryExecutor", () => {
         const blockedCheck = executor.check(key, options);
         expect(blockedCheck).toBeFalse();
 
-        const timestamps = storage.get(key);
-        expect(timestamps).toBeDefined();
-        expect(timestamps?.length).toBe(options.limit);
+        const state = storage.get(key);
+        expect(state).toBeDefined();
+        expect(state?.timestamps.length).toBe(options.limit);
     });
 
     it("should release slots one by one as timestamps slide out of the window", () => {
@@ -71,9 +71,9 @@ describe("SlidingWindowLogInMemoryExecutor", () => {
         const newCheck = executor.check(key, options);
         expect(newCheck).toBeTrue();
 
-        const timestamps = storage.get(key);
-        expect(timestamps).toBeDefined();
-        expect(timestamps?.length).toBe(2);
+        const state = storage.get(key);
+        expect(state).toBeDefined();
+        expect(state?.timestamps.length).toBe(2);
     });
 
     it("should completely clear logs if the time gap is larger than windowMS", () => {
@@ -96,9 +96,9 @@ describe("SlidingWindowLogInMemoryExecutor", () => {
         const successfulCheck = executor.check(key, options);
         expect(successfulCheck).toBeTrue();
 
-        const timestamps = storage.get(key);
-        expect(timestamps).toBeDefined();
-        expect(timestamps?.length).toBe(1);
+        const state = storage.get(key);
+        expect(state).toBeDefined();
+        expect(state?.timestamps.length).toBe(1);
     });
 
     it("should handle concurrent synchronous requests correctly", () => {
@@ -114,9 +114,9 @@ describe("SlidingWindowLogInMemoryExecutor", () => {
             expect(check).toBeTrue();
         }
 
-        const timestamps = storage.get(key);
-        expect(timestamps).toBeDefined();
-        expect(timestamps?.length).toBe(concurrentRequests);
-        expect(timestamps?.[0]).toBeLessThanOrEqual(Date.now());
+        const state = storage.get(key);
+        expect(state).toBeDefined();
+        expect(state?.timestamps.length).toBe(concurrentRequests);
+        expect(state?.timestamps[0]).toBeLessThanOrEqual(Date.now());
     });
 });

@@ -8,8 +8,10 @@ import type { TokenType } from "../../shared/lib";
 import type { Scope, Strategies } from "../../shared/model";
 import type { StorageOptions } from "./common.options";
 
-export type RateLimiterModuleOptions = StorageOptions & {
+export type RateLimiterModuleOptions = {
     scope?: Scope;
+
+    storage: StorageOptions;
 
     strategy?: Strategies;
     strategyOptions?: {
@@ -35,8 +37,10 @@ export type RateLimiterModuleAsyncOptions = Pick<ModuleMetadata, "imports"> & {
     useFactory: (...args: any[]) => RateLimiterModuleOptions | Promise<RateLimiterModuleOptions>;
 };
 
-export type RateLimiterModuleFullOptions = StorageOptions & {
+export type RateLimiterModuleFullOptions = {
     scope: Scope;
+
+    storage: Required<StorageOptions>;
 
     strategy: Strategies;
     strategyOptions: {

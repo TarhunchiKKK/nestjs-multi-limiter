@@ -1,13 +1,14 @@
 import type { RateLimiterModuleFullOptions, RateLimiterModuleOptions, StorageOptions } from "../options";
-import { RATE_LIMITER_MODULE_DEFAULT_OPTIONS } from "./default-options.constants";
+import { DEFAULT_IN_MEMORY_GC_TIME, RATE_LIMITER_MODULE_DEFAULT_OPTIONS } from "./default-options.constants";
 
 export function mergeDefaultOptions(options: RateLimiterModuleOptions) {
-    const storageOptions: StorageOptions = options.storage === "redis" ? { storage: "redis", instance: options.instance } : { storage: "in-memory" };
+    const storageOptions: Required<StorageOptions> =
+        options.storage.type === "redis" ? options.storage : { type: "in-memory", gcTime: options.storage.gcTime ?? DEFAULT_IN_MEMORY_GC_TIME };
 
     return {
         scope: options.scope ?? RATE_LIMITER_MODULE_DEFAULT_OPTIONS.scope,
 
-        ...storageOptions,
+        storage: storageOptions,
 
         strategy: options.strategy ?? RATE_LIMITER_MODULE_DEFAULT_OPTIONS.strategy,
         strategyOptions: {

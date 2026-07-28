@@ -1,18 +1,13 @@
 import { type DynamicModule, type FactoryProvider, Module } from "@nestjs/common";
 import { mergeDefaultOptions } from "./config/defaults";
 import { getExecutorsByStorage } from "./config/helpers";
-import type {
-    RateLimiterModuleAsyncOptions,
-    RateLimiterModuleFullOptions,
-    RateLimiterModuleOptions,
-    RateLimitGuardOptions,
-    StorageOptions
-} from "./config/options";
+import type { RateLimiterModuleAsyncOptions, RateLimiterModuleFullOptions, RateLimiterModuleOptions, RateLimitGuardOptions } from "./config/options";
 import { BuiltinErrorFactory } from "./custom/error-factories";
 import { BuiltinKeyExtractor } from "./custom/key-extractors";
 import { GUARD_OPTIONS_TOKEN, MODULE_OPTIONS_TOKEN, STORAGE_TOKEN } from "./di";
 import { AVAILABLE_EXECUTORS } from "./executors";
 import { RateLimitGuard } from "./middleware";
+import { InMemoryGarbageCollector } from "./services/in-memory.garbage-collector";
 import { ProvidersDiscoveryService } from "./services/providers-discovery.service";
 import type { Storage } from "./shared/model";
 
@@ -26,41 +21,39 @@ export class RateLimiterModule {
             module: RateLimiterModule,
             providers: [
                 { provide: MODULE_OPTIONS_TOKEN, useValue: fullOptions },
-                // QUESTION: Maybe use `useExisting` for Redis storage
-                { provide: STORAGE_TOKEN, useValue: RateLimiterModule.createStorage(fullOptions) },
+                // QUESTION: Maybe use `useExisting` for Redis storage?
+                { provide: STORAGE_TOKEN, useValue: RateLimiterModule.getStorageProvider(fullOptions) },
 
-                ...getExecutorsByStorage(options.storage),
+                ...getExecutorsByStorage(options.storage.type),
                 ...RateLimiterModule.getBuiltinProviders(),
 
-                { provide: GUARD_OPTIONS_TOKEN, useValue: RateLimiterModule.createGuardOptions(fullOptions) },
-                ProvidersDiscoveryService,
-                RateLimitGuard
+                { provide: GUARD_OPTIONS_TOKEN, useValue: RateLimiterModule.getGuardOptions(fullOptions) }
             ],
             exports: [RateLimitGuard]
         };
     }
 
     public static forRootAsync(options: RateLimiterModuleAsyncOptions): DynamicModule {
-        const moduleOptionsProvider: FactoryProvider<RateLimiterModuleOptions> = {
+        const moduleOptionsProvider: FactoryProvider<RateLimiterModuleFullOptions> = {
             provide: MODULE_OPTIONS_TOKEN,
             inject: options.inject ?? [],
-            useFactory: options.useFactory
+            // biome-ignore lint/suspicious/noExplicitAny: `any` type is necessary for factory customization
+            useFactory: async (...args: any[]) => {
+                const calculatedOptions = await options.useFactory(...args);
+                return mergeDefaultOptions(calculatedOptions);
+            }
         };
 
         const storageProvider: FactoryProvider<Storage> = {
             provide: STORAGE_TOKEN,
             inject: [MODULE_OPTIONS_TOKEN],
-            useFactory: (moduleOptions: RateLimiterModuleOptions) => RateLimiterModule.createStorage(moduleOptions)
+            useFactory: (moduleOptions: RateLimiterModuleFullOptions) => RateLimiterModule.getStorageProvider(moduleOptions)
         };
 
         const guardOptionsProvider: FactoryProvider<RateLimitGuardOptions> = {
             provide: GUARD_OPTIONS_TOKEN,
             inject: [MODULE_OPTIONS_TOKEN],
-            useFactory: (moduleOptions: RateLimiterModuleOptions) => {
-                const fullOptions = mergeDefaultOptions(moduleOptions);
-
-                return RateLimiterModule.createGuardOptions(fullOptions);
-            }
+            useFactory: (moduleOptions: RateLimiterModuleFullOptions) => RateLimiterModule.getGuardOptions(moduleOptions)
         };
 
         return {
@@ -74,19 +67,17 @@ export class RateLimiterModule {
                 ...AVAILABLE_EXECUTORS,
                 ...RateLimiterModule.getBuiltinProviders(),
 
-                guardOptionsProvider,
-                RateLimitGuard,
-                ProvidersDiscoveryService
+                guardOptionsProvider
             ],
             exports: [RateLimitGuard]
         };
     }
 
-    private static createStorage(options: StorageOptions) {
-        return options.storage === "redis" ? options.instance : new Map();
+    private static getStorageProvider(options: RateLimiterModuleFullOptions) {
+        return options.storage.type === "redis" ? options.storage.instance : new Map();
     }
 
-    private static createGuardOptions(options: RateLimiterModuleFullOptions): RateLimitGuardOptions {
+    private static getGuardOptions(options: RateLimiterModuleFullOptions): RateLimitGuardOptions {
         return {
             scope: options.scope,
             strategy: options.strategy,
@@ -104,6 +95,6 @@ export class RateLimiterModule {
     }
 
     private static getBuiltinProviders() {
-        return [BuiltinKeyExtractor, BuiltinErrorFactory];
+        return [BuiltinKeyExtractor, BuiltinErrorFactory, ProvidersDiscoveryService, InMemoryGarbageCollector, RateLimitGuard];
     }
 }

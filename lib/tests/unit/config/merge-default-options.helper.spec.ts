@@ -9,7 +9,9 @@ describe("mergeDefaultOptions", () => {
     describe("scope", () => {
         it("default", () => {
             const input = {
-                storage: "in-memory"
+                storage: {
+                    type: "in-memory"
+                }
             } satisfies RateLimiterModuleOptions;
 
             const result = mergeDefaultOptions(input);
@@ -19,7 +21,9 @@ describe("mergeDefaultOptions", () => {
 
         it("custom", () => {
             const input = {
-                storage: "in-memory",
+                storage: {
+                    type: "in-memory"
+                },
                 scope: "custom-scope"
             } satisfies RateLimiterModuleOptions;
 
@@ -32,19 +36,23 @@ describe("mergeDefaultOptions", () => {
     describe("storage", () => {
         it("in-memory storage", () => {
             const input = {
-                storage: "in-memory"
+                storage: {
+                    type: "in-memory"
+                }
             } satisfies RateLimiterModuleOptions;
 
             const result = mergeDefaultOptions(input);
 
-            expect(result.storage).toBe(input.storage);
+            expect(result.storage.type).toBe(input.storage.type);
         });
 
         it("redis storage", () => {
             const input = {
-                storage: "redis",
-                instance: {
-                    eval: () => Promise.resolve(1)
+                storage: {
+                    type: "redis",
+                    instance: {
+                        eval: () => Promise.resolve(1)
+                    }
                 }
             } satisfies RateLimiterModuleOptions;
 
@@ -52,14 +60,16 @@ describe("mergeDefaultOptions", () => {
 
             expect(result.storage).toBe(input.storage);
             // biome-ignore lint/complexity/useLiteralKeys: This property is not visible for TypeScript
-            expect(result["instance"]).toEqual(input.instance);
+            expect(result.storage["instance"]).toEqual(input.storage.instance);
         });
     });
 
     describe("strategy", () => {
         it("default", () => {
             const input = {
-                storage: "in-memory"
+                storage: {
+                    type: "in-memory"
+                }
             } satisfies RateLimiterModuleOptions;
 
             const result = mergeDefaultOptions(input);
@@ -69,7 +79,9 @@ describe("mergeDefaultOptions", () => {
 
         it("custom", () => {
             const input = {
-                storage: "in-memory",
+                storage: {
+                    type: "in-memory"
+                },
                 strategy: "sliding-window-log"
             } satisfies RateLimiterModuleOptions;
 
@@ -80,7 +92,9 @@ describe("mergeDefaultOptions", () => {
 
         it("strategy options", () => {
             const input = {
-                storage: "in-memory",
+                storage: {
+                    type: "in-memory"
+                },
                 strategyOptions: {
                     fixedWindow: {
                         // full strategy options
@@ -118,7 +132,9 @@ describe("mergeDefaultOptions", () => {
     describe("providers", () => {
         it("default", () => {
             const input = {
-                storage: "in-memory"
+                storage: {
+                    type: "in-memory"
+                }
             } satisfies RateLimiterModuleOptions;
 
             const result = mergeDefaultOptions(input);
@@ -130,8 +146,9 @@ describe("mergeDefaultOptions", () => {
 
         it("override default", () => {
             const input = {
-                storage: "in-memory",
-
+                storage: {
+                    type: "in-memory"
+                },
                 defaultProviders: {
                     keyExtractor: "key-extractor-token",
                     errorFactory: "error-factory-token",
