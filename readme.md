@@ -150,12 +150,10 @@ Your custom options will be merged with this:
 ```typescript
 {
     scope: "default-scope",
-
     storage: {
         type: "in-memory",
         gcTime: 15 * 60 * 1000,
     },
-
     strategy: "fixed-window",
     strategyOptions: {
         fixedWindow: {
@@ -181,7 +179,6 @@ Your custom options will be merged with this:
             ttl: 3 * MS_IN_MINUTE
         }
     },
-
     defaultProviders: {
         keyExtractor: BuiltinKeyExtractor,  // IP-address is used as key
         errorFactory: BuiltinErrorFactory,  // throws HttpException (from @nestjs/common)
