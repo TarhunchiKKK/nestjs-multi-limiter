@@ -1,30 +1,29 @@
-import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { beforeEach, describe, expect, it } from "bun:test";
 import { Test } from "@nestjs/testing";
 import { STORAGE_TOKEN } from "../../../../src/di";
 import { TokenBucketInMemoryExecutor, type TokenBucketOptions, type TokenBucketState } from "../../../../src/executors";
-import { clearMock, createInMemoryStorageMock, MS_IN_SECOND } from "../../../shared";
+import type { InMemoryStorage } from "../../../../src/shared/model";
+import { createInMemoryStorage, MS_IN_SECOND } from "../../../shared";
 
 describe("TokenBucketInMemoryExecutor", () => {
     let executor: TokenBucketInMemoryExecutor;
-    const storageMock = createInMemoryStorageMock<TokenBucketState>();
+    let storage: InMemoryStorage<TokenBucketState>;
     const key = "rate-limiter:token-bucket:key:scope";
 
     beforeEach(async () => {
+        storage = createInMemoryStorage<TokenBucketState>();
+
         const module = await Test.createTestingModule({
             providers: [
                 TokenBucketInMemoryExecutor,
                 {
                     provide: STORAGE_TOKEN,
-                    useValue: storageMock
+                    useValue: storage
                 }
             ]
         }).compile();
 
         executor = module.get(TokenBucketInMemoryExecutor);
-    });
-
-    afterEach(() => {
-        clearMock(storageMock);
     });
 
     it("should consume tokens down to zero and then block requests", () => {
@@ -101,7 +100,7 @@ describe("TokenBucketInMemoryExecutor", () => {
         const initialCheck = executor.check(key, options);
         expect(initialCheck).toBeTrue();
 
-        const state = storageMock.get(key);
+        const state = storage.get(key);
         expect(state).toBeDefined();
         expect(state?.tokens).toBe(options.capacity - 1);
         expect(state?.lastRefilled).toBeLessThanOrEqual(Date.now());

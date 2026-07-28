@@ -1,30 +1,29 @@
-import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { beforeEach, describe, expect, it } from "bun:test";
 import { Test } from "@nestjs/testing";
 import { STORAGE_TOKEN } from "../../../../src/di";
 import { SlidingWindowLogInMemoryExecutor, type SlidingWindowLogOptions, type SlidingWindowLogState } from "../../../../src/executors";
-import { clearMock, createInMemoryStorageMock, MS_IN_SECOND } from "../../../shared";
+import type { InMemoryStorage } from "../../../../src/shared/model";
+import { createInMemoryStorage, MS_IN_SECOND } from "../../../shared";
 
 describe("SlidingWindowLogInMemoryExecutor", () => {
     let executor: SlidingWindowLogInMemoryExecutor;
-    const storageMock = createInMemoryStorageMock<SlidingWindowLogState>();
+    let storage: InMemoryStorage<SlidingWindowLogState>;
     const key = "rate-limiter:sliding-window-log:key:scope";
 
     beforeEach(async () => {
+        storage = createInMemoryStorage<SlidingWindowLogState>();
+
         const module = await Test.createTestingModule({
             providers: [
                 SlidingWindowLogInMemoryExecutor,
                 {
                     provide: STORAGE_TOKEN,
-                    useValue: storageMock
+                    useValue: storage
                 }
             ]
         }).compile();
 
         executor = module.get(SlidingWindowLogInMemoryExecutor);
-    });
-
-    afterEach(() => {
-        clearMock(storageMock);
     });
 
     it("should allow requests up to the limit and then deny them", () => {
@@ -42,7 +41,7 @@ describe("SlidingWindowLogInMemoryExecutor", () => {
         const blockedCheck = executor.check(key, options);
         expect(blockedCheck).toBeFalse();
 
-        const timestamps = storageMock.get(key);
+        const timestamps = storage.get(key);
         expect(timestamps).toBeDefined();
         expect(timestamps?.length).toBe(options.limit);
     });
@@ -66,7 +65,7 @@ describe("SlidingWindowLogInMemoryExecutor", () => {
         const newCheck = executor.check(key, options);
         expect(newCheck).toBeTrue();
 
-        const timestamps = storageMock.get(key);
+        const timestamps = storage.get(key);
         expect(timestamps).toBeDefined();
         expect(timestamps?.length).toBe(2);
     });
@@ -91,7 +90,7 @@ describe("SlidingWindowLogInMemoryExecutor", () => {
         const successfulCheck = executor.check(key, options);
         expect(successfulCheck).toBeTrue();
 
-        const timestamps = storageMock.get(key);
+        const timestamps = storage.get(key);
         expect(timestamps).toBeDefined();
         expect(timestamps?.length).toBe(1);
     });
@@ -109,7 +108,7 @@ describe("SlidingWindowLogInMemoryExecutor", () => {
             expect(check).toBeTrue();
         }
 
-        const timestamps = storageMock.get(key);
+        const timestamps = storage.get(key);
         expect(timestamps).toBeDefined();
         expect(timestamps?.length).toBe(concurrentRequests);
         expect(timestamps?.[0]).toBeLessThanOrEqual(Date.now());

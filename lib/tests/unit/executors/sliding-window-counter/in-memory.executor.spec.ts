@@ -1,30 +1,29 @@
-import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { beforeEach, describe, expect, it } from "bun:test";
 import { Test } from "@nestjs/testing";
 import { STORAGE_TOKEN } from "../../../../src/di";
 import { SlidingWindowCounterInMemoryExecutor, type SlidingWindowCounterOptions, type SlidingWindowCounterState } from "../../../../src/executors";
-import { clearMock, createInMemoryStorageMock, MS_IN_SECOND } from "../../../shared";
+import type { InMemoryStorage } from "../../../../src/shared/model";
+import { createInMemoryStorage, MS_IN_SECOND } from "../../../shared";
 
 describe("SlidingWindowCounterInMemoryExecutor", () => {
     let executor: SlidingWindowCounterInMemoryExecutor;
-    const storageMock = createInMemoryStorageMock<SlidingWindowCounterState>();
+    let storage: InMemoryStorage<SlidingWindowCounterState>;
     const key = "rate-limiter:sliding-window-counter:key:scope";
 
     beforeEach(async () => {
+        storage = createInMemoryStorage<SlidingWindowCounterState>();
+
         const module = await Test.createTestingModule({
             providers: [
                 SlidingWindowCounterInMemoryExecutor,
                 {
                     provide: STORAGE_TOKEN,
-                    useValue: storageMock
+                    useValue: storage
                 }
             ]
         }).compile();
 
         executor = module.get(SlidingWindowCounterInMemoryExecutor);
-    });
-
-    afterEach(() => {
-        clearMock(storageMock);
     });
 
     it("should allow requests up to the limit within the same static window", () => {
@@ -85,7 +84,7 @@ describe("SlidingWindowCounterInMemoryExecutor", () => {
         const windowShiftCheck = executor.check(key, options);
         expect(windowShiftCheck).toBeTrue();
 
-        const state = storageMock.get(key);
+        const state = storage.get(key);
         expect(state).toBeDefined();
         expect(state?.previousCount).toBe(firstWindowRequests);
         expect(state?.currentCount).toBe(1);
@@ -106,7 +105,7 @@ describe("SlidingWindowCounterInMemoryExecutor", () => {
         const check = executor.check(key, options);
         expect(check).toBeTrue();
 
-        const state = storageMock.get(key);
+        const state = storage.get(key);
         expect(state).toBeDefined();
         expect(state?.previousCount).toBe(0);
         expect(state?.currentCount).toBe(1);

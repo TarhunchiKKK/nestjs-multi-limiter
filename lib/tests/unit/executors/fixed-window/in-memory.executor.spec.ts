@@ -1,30 +1,29 @@
-import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { beforeEach, describe, expect, it } from "bun:test";
 import { Test } from "@nestjs/testing";
 import { STORAGE_TOKEN } from "../../../../src/di";
 import { FixedWindowInMemoryExecutor, type FixedWindowOptions, type FixedWindowState } from "../../../../src/executors";
-import { clearMock, createInMemoryStorageMock, MS_IN_SECOND } from "../../../shared";
+import type { InMemoryStorage } from "../../../../src/shared/model";
+import { createInMemoryStorage, MS_IN_SECOND } from "../../../shared";
 
 describe("FixedWindowInMemoryExecutor", () => {
     let executor: FixedWindowInMemoryExecutor;
-    const storageMock = createInMemoryStorageMock<FixedWindowState>();
+    let storage: InMemoryStorage<FixedWindowState>;
     const key = "rate-limiter:fixed-window:key:scope";
 
     beforeEach(async () => {
+        storage = createInMemoryStorage<FixedWindowState>();
+
         const module = await Test.createTestingModule({
             providers: [
                 FixedWindowInMemoryExecutor,
                 {
                     provide: STORAGE_TOKEN,
-                    useValue: storageMock
+                    useValue: storage
                 }
             ]
         }).compile();
 
         executor = module.get(FixedWindowInMemoryExecutor);
-    });
-
-    afterEach(() => {
-        clearMock(storageMock);
     });
 
     it("should allow request up to the limit and then deny", () => {
@@ -87,7 +86,7 @@ describe("FixedWindowInMemoryExecutor", () => {
         // update storage state
         executor.check(key, options);
 
-        const state = storageMock.get(key);
+        const state = storage.get(key);
 
         expect(state).toBeDefined();
         expect(state?.count).toBe(1);

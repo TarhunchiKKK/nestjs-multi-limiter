@@ -1,30 +1,29 @@
-import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { beforeEach, describe, expect, it } from "bun:test";
 import { Test } from "@nestjs/testing";
 import { STORAGE_TOKEN } from "../../../../src/di";
 import { LeakyBucketInMemoryExecutor, type LeakyBucketOptions, type LeakyBucketState } from "../../../../src/executors";
-import { clearMock, createInMemoryStorageMock, MS_IN_SECOND } from "../../../shared";
+import type { InMemoryStorage } from "../../../../src/shared/model";
+import { createInMemoryStorage, MS_IN_SECOND } from "../../../shared";
 
 describe("LeakyBucketInMemoryExecutor", () => {
     let executor: LeakyBucketInMemoryExecutor;
-    const storageMock = createInMemoryStorageMock<LeakyBucketState>();
+    let storage: InMemoryStorage<LeakyBucketState>;
     const key = "rate-limiter:leaky-bucket:key:scope";
 
     beforeEach(async () => {
+        storage = createInMemoryStorage<LeakyBucketState>();
+
         const module = await Test.createTestingModule({
             providers: [
                 LeakyBucketInMemoryExecutor,
                 {
                     provide: STORAGE_TOKEN,
-                    useValue: storageMock
+                    useValue: storage
                 }
             ]
         }).compile();
 
         executor = module.get(LeakyBucketInMemoryExecutor);
-    });
-
-    afterEach(() => {
-        clearMock(storageMock);
     });
 
     it("should fill the bucket up to capacity and then deny further requests", () => {
@@ -101,7 +100,7 @@ describe("LeakyBucketInMemoryExecutor", () => {
         const initialCheck = executor.check(key, options);
         expect(initialCheck).toBeTrue();
 
-        const state = storageMock.get(key);
+        const state = storage.get(key);
         expect(state).toBeDefined();
         expect(state?.water).toBe(1);
         expect(state?.lastLeaked).toBeLessThanOrEqual(Date.now());
