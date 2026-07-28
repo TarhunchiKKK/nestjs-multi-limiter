@@ -1,3 +1,5 @@
+import type { BaseStrategyState } from "../../../shared/model";
+
 /**
  * @publicApi
  */
@@ -18,7 +20,7 @@ export type LeakyBucketOptions = {
     ttl: number;
 };
 
-export type LeakyBucketState = {
+export type LeakyBucketState = BaseStrategyState & {
     /**
      * Current "water" level (requests count in queue).
      */

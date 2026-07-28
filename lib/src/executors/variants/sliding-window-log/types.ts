@@ -1,3 +1,5 @@
+import type { BaseStrategyState } from "../../../shared/model";
+
 /**
  * @publicApi
  */
@@ -13,4 +15,6 @@ export type SlidingWindowLogOptions = {
     windowMs: number;
 };
 
-export type SlidingWindowLogState = number[];
+export type SlidingWindowLogState = BaseStrategyState & {
+    timestamps: number[];
+};
