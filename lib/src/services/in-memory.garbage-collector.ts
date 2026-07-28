@@ -1,7 +1,7 @@
-import { Inject, Injectable, OnApplicationBootstrap, OnApplicationShutdown } from "@nestjs/common";
+import { Inject, Injectable, type OnApplicationBootstrap, type OnApplicationShutdown } from "@nestjs/common";
+import type { RateLimiterModuleFullOptions } from "../config/options";
 import { InjectStorage, MODULE_OPTIONS_TOKEN } from "../di";
-import { BaseStrategyState, InMemoryStorage } from "../shared/model";
-import { RateLimiterModuleOptions } from "../config/options";
+import type { BaseStrategyState, InMemoryStorage } from "../shared/model";
 
 @Injectable()
 export class InMemoryGarbageCollector implements OnApplicationBootstrap, OnApplicationShutdown {
@@ -9,7 +9,7 @@ export class InMemoryGarbageCollector implements OnApplicationBootstrap, OnAppli
 
     public constructor(
         @InjectStorage() private readonly storage: InMemoryStorage<BaseStrategyState>,
-        @Inject(MODULE_OPTIONS_TOKEN) private readonly options: RateLimiterModuleOptions
+        @Inject(MODULE_OPTIONS_TOKEN) private readonly options: RateLimiterModuleFullOptions
     ) {}
 
     private collect() {
@@ -23,10 +23,13 @@ export class InMemoryGarbageCollector implements OnApplicationBootstrap, OnAppli
     }
 
     public onApplicationBootstrap() {
+        if (this.options.storage.type !== "in-memory") {
+            return;
+        }
+
         this.intervalRef = setInterval(() => {
             this.collect();
-            // FIX: valid interval
-        }, 1_000_000);
+        }, this.options.storage.gcTime);
     }
 
     public onApplicationShutdown() {
