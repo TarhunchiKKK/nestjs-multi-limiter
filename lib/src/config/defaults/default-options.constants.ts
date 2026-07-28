@@ -4,9 +4,15 @@ import { MS_IN_MINUTE } from "../../shared/lib";
 import { DEFAULT_SCOPE } from "../../shared/model";
 import type { RateLimiterModuleFullOptions } from "../options";
 
+export const DEFAULT_IN_MEMORY_GC_TIME = 15 * MS_IN_MINUTE;
+
 export const RATE_LIMITER_MODULE_DEFAULT_OPTIONS = {
-    storage: "in-memory",
     scope: DEFAULT_SCOPE,
+
+    storage: {
+        type: "in-memory",
+        gcTime: DEFAULT_IN_MEMORY_GC_TIME
+    },
 
     strategy: "fixed-window",
     strategyOptions: {

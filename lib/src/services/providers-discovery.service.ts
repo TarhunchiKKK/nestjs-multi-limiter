@@ -75,7 +75,7 @@ export class ProvidersDiscoveryService implements OnModuleInit {
                 if (this.isValidProvider<IExecutor<unknown>>(instance, "check", EXECUTOR_METADATA_KEY)) {
                     const metadata = this.reflector.get<ExecutorMetadata>(EXECUTOR_METADATA_KEY, instance.constructor);
 
-                    if (metadata && metadata.storage === this.moduleOptions.storage) {
+                    if (metadata && metadata.storage === this.moduleOptions.storage.type) {
                         this.executorsMap.set(metadata.strategy, instance);
                     }
                 }
