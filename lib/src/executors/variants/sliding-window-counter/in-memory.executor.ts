@@ -41,7 +41,7 @@ export class SlidingWindowCounterInMemoryExecutor implements IExecutor<SlidingWi
             };
         }
 
-        return state;
+        return { ...state };
     }
 
     private checkPassedWindows(state: SlidingWindowCounterState, options: SlidingWindowCounterOptions, currentWindowStart: number) {
