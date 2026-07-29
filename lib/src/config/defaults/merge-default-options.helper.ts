@@ -35,9 +35,8 @@ export function mergeDefaultOptions(options: RateLimiterModuleOptions) {
         },
 
         defaultProviders: {
-            keyExtractor: options?.defaultProviders?.keyExtractor ?? RATE_LIMITER_MODULE_DEFAULT_OPTIONS?.defaultProviders?.keyExtractor,
-            errorFactory: options?.defaultProviders?.errorFactory ?? RATE_LIMITER_MODULE_DEFAULT_OPTIONS?.defaultProviders?.errorFactory,
-            optionsFactory: options?.defaultProviders?.optionsFactory ?? RATE_LIMITER_MODULE_DEFAULT_OPTIONS?.defaultProviders?.optionsFactory
+            ...RATE_LIMITER_MODULE_DEFAULT_OPTIONS.defaultProviders,
+            ...options.defaultProviders
         }
     } satisfies RateLimiterModuleFullOptions;
 }
