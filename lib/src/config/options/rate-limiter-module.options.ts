@@ -8,12 +8,30 @@ import type { TokenType } from "../../shared/lib";
 import type { Scope, Strategies } from "../../shared/model";
 import type { StorageOptions } from "./common.options";
 
+/**
+ * Sync options for `RateLimiterModule` configuration.
+ *
+ * @publicApi
+ */
 export type RateLimiterModuleOptions = {
+    /**
+     * Default scope.
+     */
     scope?: Scope;
 
+    /**
+     * Storage options.
+     */
     storage: StorageOptions;
 
+    /**
+     * Default rate limiting algorithm.
+     */
     strategy?: Strategies;
+
+    /**
+     * Default options for different algorithms.
+     */
     strategyOptions?: {
         fixedWindow?: Partial<AllStrategiesOptions["fixed-window"]>;
         tokenBucket?: Partial<AllStrategiesOptions["token-bucket"]>;
@@ -22,6 +40,9 @@ export type RateLimiterModuleOptions = {
         leakyBucket?: Partial<AllStrategiesOptions["leaky-bucket"]>;
     };
 
+    /**
+     * Providers that are used by default.
+     */
     defaultProviders?: {
         // FIX: should `TokenType` be here?
         // `ProvidersDiscoveryService` looks for metadata added by corresponding decorators.
@@ -32,8 +53,23 @@ export type RateLimiterModuleOptions = {
     };
 };
 
+/**
+ * Async options for `RateLimiterModule` configuration.
+ *
+ * @publicApi
+ */
 export type RateLimiterModuleAsyncOptions = Pick<ModuleMetadata, "imports"> & {
+    /**
+     * Dependencies to inject.
+     */
     inject?: any[];
+
+    /**
+     * Function that creates dynamic module options.
+     *
+     * @param args Injected dependencies.
+     * @returns Dynamic options.
+     */
     useFactory: (...args: any[]) => RateLimiterModuleOptions | Promise<RateLimiterModuleOptions>;
 };
 

@@ -22,7 +22,7 @@ export type FixedWindowState = BaseStrategyState & {
     count: number;
 
     /**
-     * Last attemptions reset time.
+     * Last reset timestamp.
      */
     resetTime: number;
 };

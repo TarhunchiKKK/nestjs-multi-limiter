@@ -15,6 +15,11 @@ type RunOptions = StrategyOptions & {
     errorFactory: IErrorFactory;
 };
 
+/**
+ * Guard that executes rate limiting checks on handlers.
+ *
+ * @publicApi
+ */
 @Injectable()
 export class RateLimitGuard implements CanActivate {
     public constructor(
@@ -32,7 +37,7 @@ export class RateLimitGuard implements CanActivate {
 
         const options = await this.getOptions(context);
 
-        const key = options.keyExtractor.extract(context);
+        const key = await options.keyExtractor.extract(context);
 
         const requestAllowed = await this.checkRate(key, options);
 

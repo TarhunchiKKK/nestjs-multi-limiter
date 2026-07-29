@@ -7,10 +7,30 @@ import type { DeepPartial, PartialUnionMembers, TokenType } from "../../shared/l
 import type { Scope } from "../../shared/model";
 import type { StrategyOptions } from "./common.options";
 
+/**
+ * Options for `RateLimit` decorator.
+ *
+ * @publicApi
+ */
 export type RateLimitOptions = {
+    /**
+     * Overrides default scope.
+     */
     scope?: Scope;
+
+    /**
+     * Overrides default key extractor.
+     */
     keyExtractor?: Type<IKeyExtractor> | TokenType;
+
+    /**
+     * Overrides default error factory.
+     */
     errorFactory?: Type<IErrorFactory> | TokenType;
+
+    /**
+     * Overrides default options factory
+     */
     factory?: Type<IOptionsFactory> | TokenType;
 } & PartialUnionMembers<StrategyOptionsUnion>;
 
