@@ -74,7 +74,7 @@ export class RateLimiterModule {
     }
 
     private static getStorageProvider(options: RateLimiterModuleFullOptions) {
-        return options.storage.type === "redis" ? options.storage.instance : new Map();
+        return options.storage.type === "redis" ? options.storage.adapter : new Map();
     }
 
     private static getGuardOptions(options: RateLimiterModuleFullOptions): RateLimitGuardOptions {

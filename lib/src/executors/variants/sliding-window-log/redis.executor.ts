@@ -2,7 +2,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { InjectStorage } from "../../../di";
 import { generateSalt } from "../../../shared/lib";
-import type { Key, RedisStorage } from "../../../shared/model";
+import type { Key, RedisAdapter } from "../../../shared/model";
 import { Executor, type IExecutor } from "../../lib";
 import type { SlidingWindowLogOptions } from "./types";
 
@@ -10,7 +10,7 @@ import type { SlidingWindowLogOptions } from "./types";
 export class SlidingWindowLogRedisExecutor implements IExecutor<SlidingWindowLogOptions> {
     private readonly luaScript: string;
 
-    public constructor(@InjectStorage() private readonly redis: RedisStorage) {
+    public constructor(@InjectStorage() private readonly redis: RedisAdapter) {
         const luaScriptPath = path.join(__dirname, "../../../../lua/sliding-window-log.lua");
         this.luaScript = fs.readFileSync(luaScriptPath, "utf-8");
     }

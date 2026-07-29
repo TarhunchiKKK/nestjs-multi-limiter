@@ -67,7 +67,9 @@ import { AppController } from "./app.controller.ts";
 @Module({
     imports: [
         RateLimiterModule.forRoot({
-            storage: "in-memory",
+            storage: {
+                type: "in-memory"
+            },
             scope: "my-scope",
             strategy: "token-bucket",
             strategyOptions: {
@@ -104,8 +106,13 @@ There is only one required field in configuration - `storage`.
 
 ```typescript
 RateLimiterModule.forRoot({
-    storage: "in-memory",
     scope: "my-scope",
+
+    // storage configuration (Map or Redis)
+    storage: {
+        type: "in-memory",
+        gcTime: 15 * 60 * 1000 // Time to clear `old` data from memory
+    },
 
     // strategy configuration
     strategy: "token-bucket",
@@ -143,7 +150,10 @@ Your custom options will be merged with this:
 ```typescript
 {
     scope: "default-scope",
-
+    storage: {
+        type: "in-memory",
+        gcTime: 15 * 60 * 1000,
+    },
     strategy: "fixed-window",
     strategyOptions: {
         fixedWindow: {
@@ -169,10 +179,11 @@ Your custom options will be merged with this:
             ttl: 3 * MS_IN_MINUTE
         }
     },
-
-    keyExtractor: BuiltinKeyExtractor,  // IP-address is used as key
-    errorFactory: BuiltinErrorFactory,  // throws HttpException (from @nestjs/common)
-    optionsFactory: undefined           // no dynamic options by default
+    defaultProviders: {
+        keyExtractor: BuiltinKeyExtractor,  // IP-address is used as key
+        errorFactory: BuiltinErrorFactory,  // throws HttpException (from @nestjs/common)
+        optionsFactory: undefined           // no dynamic options by default
+    }
 }
 ```
 
@@ -359,16 +370,16 @@ RateLimiterModule.forRootAsync({
 
 ### Redis
 
-For using Redis storage you need to create object or provider that implements `RedisStorage` type. 
+For using Redis storage you need to create object or provider that implements `RedisAdapter` type. 
 
 1. Setting up your provider:
 
 ```typescript
 import Redis, { type RedisValue } from "ioredis";
-import type { RedisStorage } from "nestjs-rate-limiter";
+import type { RedisAdapter } from "nestjs-rate-limiter";
 
 @Injectable()
-export class RedisService implements RedisStorage {
+export class RedisService implements RedisAdapter {
     private readonly client: Redis;
 
     public constructor(private readonly configService: ConfigService) {
@@ -381,17 +392,19 @@ export class RedisService implements RedisStorage {
 }
 ```
 
+// FIX: update redis technique
+
 > 📌 **Hack**
 >
-> `Redis` type of `ioredis` package already implements `RedisStorage` type.
+> `Redis` type of `ioredis` package already implements `RedisAdapter` type.
 >
 > You can use you provider this way:
 > ```typescript
 > import Redis, { type RedisValue } from "ioredis";
-> import type { RedisStorage } from "nestjs-rate-limiter";
+> import type { RedisAdapter } from "nestjs-rate-limiter";
 > 
 > @Injectable()
-> export class RedisService implements RedisStorage {
+> export class RedisService implements RedisAdapter {
 >     private readonly client: Redis;
 > 
 >     public constructor(private readonly configService: ConfigService) {
@@ -421,8 +434,11 @@ RateLimiterModule.forRootAsync({
     imports: [RedisModule],
     inject: [RedisService],
     useFactory: (redisService: RedisService) => ({
-        storage: "redis",
-        instance: redisService  // or `redisService.getClient()`
+        storage: {
+            type: "redis",
+            adapter: RedisService  // or `redisService.getClient()`
+        },
+        // ...
     })
 });
 ```

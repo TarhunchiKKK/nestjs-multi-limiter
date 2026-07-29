@@ -10,7 +10,7 @@ const strategies: Strategies[] = ["fixed-window", "token-bucket", "sliding-windo
 
 describe.each<[StorageTypes, RateLimiterModuleOptions]>([
     ["in-memory", RATE_LIMITER_MODULE_DEFAULT_OPTIONS],
-    ["redis", { ...RATE_LIMITER_MODULE_DEFAULT_OPTIONS, storage: "redis", instance: createRedisClient() }]
+    ["redis", { ...RATE_LIMITER_MODULE_DEFAULT_OPTIONS, storage: { type: "redis", adapter: createRedisClient() } }]
 ])("ProvidersDiscoveryService - executors discovery (%1 storage)", (storageType, options) => {
     let service: ProvidersDiscoveryService;
 

@@ -5,4 +5,4 @@ export { type IOptionsFactory, OptionsFactory } from "./custom/options-factories
 export { RateLimit, SkipRateLimit } from "./decorators";
 export { RateLimitGuard } from "./middleware";
 export { RateLimiterModule } from "./rate-limiter.module";
-export type { Key, RedisStorage, Scope, StorageTypes, Strategies } from "./shared/model";
+export type { Key, RedisAdapter, Scope, StorageTypes, Strategies } from "./shared/model";

@@ -50,7 +50,7 @@ describe("mergeDefaultOptions", () => {
             const input = {
                 storage: {
                     type: "redis",
-                    instance: {
+                    adapter: {
                         eval: () => Promise.resolve(1)
                     }
                 }
@@ -60,7 +60,7 @@ describe("mergeDefaultOptions", () => {
 
             expect(result.storage).toBe(input.storage);
             // biome-ignore lint/complexity/useLiteralKeys: This property is not visible for TypeScript
-            expect(result.storage["instance"]).toEqual(input.storage.instance);
+            expect(result.storage["adapter"]).toEqual(input.storage.adapter);
         });
     });
 
