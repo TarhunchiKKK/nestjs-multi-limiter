@@ -1,8 +1,8 @@
 import { mock } from "bun:test";
-import type RedisStorage from "ioredis";
+import type RedisAdapter from "ioredis";
 
 export function createRedisMock() {
     return {
-        eval: mock<RedisStorage["eval"]>(() => Promise.resolve(null))
+        eval: mock<RedisAdapter["eval"]>(() => Promise.resolve(null))
     };
 }

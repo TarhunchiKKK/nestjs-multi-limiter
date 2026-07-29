@@ -66,30 +66,30 @@ export class ProvidersDiscoveryService implements OnModuleInit {
         for (const moduleInstance of this.modulesContainer.values()) {
             for (const provider of moduleInstance.providers.values()) {
                 const token = provider.token;
-                const instance = provider.instance;
+                const adapter = provider.instance;
 
-                if (!instance) {
+                if (!adapter) {
                     continue;
                 }
 
-                if (this.isValidProvider<IExecutor<unknown>>(instance, "check", EXECUTOR_METADATA_KEY)) {
-                    const metadata = this.reflector.get<ExecutorMetadata>(EXECUTOR_METADATA_KEY, instance.constructor);
+                if (this.isValidProvider<IExecutor<unknown>>(adapter, "check", EXECUTOR_METADATA_KEY)) {
+                    const metadata = this.reflector.get<ExecutorMetadata>(EXECUTOR_METADATA_KEY, adapter.constructor);
 
                     if (metadata && metadata.storage === this.moduleOptions.storage.type) {
-                        this.executorsMap.set(metadata.strategy, instance);
+                        this.executorsMap.set(metadata.strategy, adapter);
                     }
                 }
 
-                if (this.isValidProvider<IKeyExtractor>(instance, "extract", KEY_EXTRACTOR_METADATA)) {
-                    this.keyExtractorsMap.set(token, instance);
+                if (this.isValidProvider<IKeyExtractor>(adapter, "extract", KEY_EXTRACTOR_METADATA)) {
+                    this.keyExtractorsMap.set(token, adapter);
                 }
 
-                if (this.isValidProvider<IErrorFactory>(instance, "getError", ERROR_FACTORY_METADATA)) {
-                    this.errorFactoriesMap.set(token, instance);
+                if (this.isValidProvider<IErrorFactory>(adapter, "getError", ERROR_FACTORY_METADATA)) {
+                    this.errorFactoriesMap.set(token, adapter);
                 }
 
-                if (this.isValidProvider<IOptionsFactory>(instance, "getOptions", OPTIONS_FACTORY_METADATA)) {
-                    this.optionsFactoriesMap.set(token, instance);
+                if (this.isValidProvider<IOptionsFactory>(adapter, "getOptions", OPTIONS_FACTORY_METADATA)) {
+                    this.optionsFactoriesMap.set(token, adapter);
                 }
             }
         }

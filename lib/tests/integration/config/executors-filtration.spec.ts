@@ -26,7 +26,7 @@ const inMemoryOptions: RateLimiterModuleOptions = {
 const redisOptions: RateLimiterModuleOptions = {
     storage: {
         type: "redis",
-        instance: {
+        adapter: {
             eval: () => Promise.resolve(1)
         }
     }

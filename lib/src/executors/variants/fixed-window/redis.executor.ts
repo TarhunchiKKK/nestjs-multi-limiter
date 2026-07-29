@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { InjectStorage } from "../../../di";
-import type { Key, RedisStorage } from "../../../shared/model";
+import type { Key, RedisAdapter } from "../../../shared/model";
 import { Executor, type IExecutor } from "../../lib";
 import type { FixedWindowOptions } from "./types";
 
@@ -9,7 +9,7 @@ import type { FixedWindowOptions } from "./types";
 export class FixedWindowRedisExecutor implements IExecutor<FixedWindowOptions> {
     private readonly luaScript: string;
 
-    public constructor(@InjectStorage() private readonly redis: RedisStorage) {
+    public constructor(@InjectStorage() private readonly redis: RedisAdapter) {
         const luaScriptPath = path.join(__dirname, "../../../../lua/fixed-window.lua");
         this.luaScript = fs.readFileSync(luaScriptPath, "utf-8");
     }

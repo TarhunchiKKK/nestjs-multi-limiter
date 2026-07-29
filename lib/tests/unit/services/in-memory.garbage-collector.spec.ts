@@ -53,7 +53,7 @@ describe("InMemoryGarbageCollector", () => {
         const options = {
             storage: {
                 type: "redis",
-                instance: {
+                adapter: {
                     eval: () => Promise.resolve(1)
                 }
             } satisfies RateLimiterModuleFullOptions["storage"]

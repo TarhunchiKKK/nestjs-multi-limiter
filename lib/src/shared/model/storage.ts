@@ -6,8 +6,8 @@ export type StorageTypes = "in-memory" | "redis";
 
 export type InMemoryStorage<Value> = Map<Key, Value>;
 
-export type RedisStorage = {
+export type RedisAdapter = {
     eval(...args: [script: string | Buffer, numkeys: number | string, ...args: RedisValue[]]): ReturnType<Redis["eval"]>;
 };
 
-export type Storage = InMemoryStorage<unknown> | RedisStorage;
+export type Storage = InMemoryStorage<unknown> | RedisAdapter;

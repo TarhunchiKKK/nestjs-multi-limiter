@@ -4,14 +4,14 @@ import { Injectable, type OnModuleDestroy, type OnModuleInit } from "@nestjs/com
 import { Test } from "@nestjs/testing";
 import type { RedisValue } from "ioredis";
 import { createClient } from "redis";
-import { RateLimiterModule, type RedisStorage } from "../../../src";
+import { RateLimiterModule, type RedisAdapter } from "../../../src";
 import { type FixedWindowOptions, FixedWindowRedisExecutor } from "../../../src/executors";
 import { createRedisClient, MS_IN_MINUTE } from "../../shared";
 
 const IoRedisClient = createRedisClient();
 
 @Injectable()
-class IoRedisAdapter implements RedisStorage {
+class IoRedisAdapter implements RedisAdapter {
     private client = createRedisClient();
 
     public eval(script: string | Buffer<ArrayBufferLike>, numkeys: string | number, ...args: RedisValue[]) {
@@ -20,7 +20,7 @@ class IoRedisAdapter implements RedisStorage {
 }
 
 @Injectable()
-class NodeRedisAdapter implements RedisStorage, OnModuleInit, OnModuleDestroy {
+class NodeRedisAdapter implements RedisAdapter, OnModuleInit, OnModuleDestroy {
     private client: ReturnType<typeof createClient>;
 
     constructor() {
@@ -37,7 +37,7 @@ class NodeRedisAdapter implements RedisStorage, OnModuleInit, OnModuleDestroy {
         await this.client.disconnect();
     }
 
-    async eval(...args: [script: string | Buffer, numkeys: number | string, ...args: RedisValue[]]): Promise<any> {
+    async eval(...args: [script: string | Buffer, numkeys: number | string, ...args: RedisValue[]]) {
         const [script, numkeys, ...rest] = args;
 
         const keysCount = typeof numkeys === "string" ? parseInt(numkeys, 10) : numkeys;
@@ -68,7 +68,7 @@ describe("Different redis adapters", () => {
                         storage: {
                             type: "redis",
                             // FIX: typing
-                            instance: adapter
+                            adapter: adapter
                         }
                     })
                 ],

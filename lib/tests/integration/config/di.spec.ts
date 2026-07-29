@@ -15,7 +15,7 @@ const nonOptionsProviders = [STORAGE_TOKEN, BuiltinKeyExtractor, BuiltinErrorFac
 const syncOptions: RateLimiterModuleOptions = {
     storage: {
         type: "redis",
-        instance: {
+        adapter: {
             eval: () => Promise.resolve(1)
         }
     }
