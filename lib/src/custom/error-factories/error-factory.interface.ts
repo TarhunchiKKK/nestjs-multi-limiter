@@ -36,6 +36,8 @@ export type ErrorFactoryOptions = {
  */
 export interface IErrorFactory {
     /**
+     * @warning This method should not throw error. It should only create it.
+     *
      * @param context Execution context of current request.
      * @param options Error creation options.
      * @returns Created error.
