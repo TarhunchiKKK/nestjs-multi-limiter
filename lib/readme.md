@@ -24,11 +24,11 @@
 
 - [Table of Contents](#table-of-contents)
 - [Features](#features)
-- [Installation](#installation)
-- [Quick Start](#quick-start)
 - [Algorithms Reference](#algorithms-reference)
     - [Comprehensive Guides](#comprehensive-guides)
     - [Use Cases](#use-cases)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
 - [Configuration](#configuration)
     - [Module Configuration](#module-configuration)
     - [Default Module Options](#default-module-options)
@@ -51,6 +51,26 @@
 - **Custom Key Extractors**: Provide your custom key extraction logic.
 - **Custom Error Factories**: Customize you rate limit exhausted error.
 - **Dynamic Configuration**: Provide dynamic rate limiting options.
+
+## Algorithms Reference
+
+### Comprehensive Guides
+
+This library implements 5 core rate limiting strategies. To understand their trade-offs, behaviors, and memory footprints, check out these excellent resources:
+
+- **[ByteByteGo (Alex Xu): Design a Rate Limiter](https://bytebytego.com/courses/system-design-interview/design-a-rate-limiter)** — The gold standard from the author of _System Design Interview_. It features clear mental models, visual diagrams, and pros/cons for **Token Bucket**, **Leaky Bucket**, **Fixed Window**, **Sliding Window Log**, and **Sliding Window Counter**.
+- **[Arcjet Blog: Rate Limiting Algorithms Compared](https://blog.arcjet.com/rate-limiting-algorithms-token-bucket-vs-sliding-window-vs-fixed-window/)** — An exceptional production-oriented breakdown. It provides a perfect mental model: _Token Bucket_ tracks capacity, _Sliding Windows_ track recent history, and _Fixed Windows_ represent discrete accounting.
+- **[Medium: Rate Limiting Algorithms Explained](https://medium.com/@erwindev/rate-limiting-algorithms-compared-token-bucket-leaky-bucket-and-sliding-window-log-acd9c44bc86f)** — A great code-centric walk-through that tracks request state and explains why **Sliding Window Log** is highly accurate but memory-intensive.
+
+### Use Cases
+
+| Algorithm                  | Fairness              | Burst Tolerance           | Memory Cost | Best For                    |
+| :------------------------- | :-------------------- | :------------------------ | :---------- | :-------------------------- |
+| **Fixed Window**           | Low                   | High at window boundaries | Very Low    | Simple internal limits      |
+| **Token Bucket**           | Medium to High        | Controlled bursts         | Low         | Developer-facing APIs       |
+| **Sliding Window Counter** | Medium to High        | Low to Medium             | Moderate    | Scalable public APIs        |
+| **Sliding Window Log**     | High                  | Low                       | High        | Strict fairness enforcement |
+| **Leaky Bucket**           | High output smoothing | None                      | Low         | Traffic shaping             |
 
 ## Installation
 
@@ -101,26 +121,6 @@ export class AppController {
     }
 }
 ```
-
-## Algorithms Reference
-
-### Comprehensive Guides
-
-This library implements 5 core rate limiting strategies. To understand their trade-offs, behaviors, and memory footprints, check out these excellent resources:
-
-- **[ByteByteGo (Alex Xu): Design a Rate Limiter](https://bytebytego.com/courses/system-design-interview/design-a-rate-limiter)** — The gold standard from the author of _System Design Interview_. It features clear mental models, visual diagrams, and pros/cons for **Token Bucket**, **Leaky Bucket**, **Fixed Window**, **Sliding Window Log**, and **Sliding Window Counter**.
-- **[Arcjet Blog: Rate Limiting Algorithms Compared](https://blog.arcjet.com/rate-limiting-algorithms-token-bucket-vs-sliding-window-vs-fixed-window/)** — An exceptional production-oriented breakdown. It provides a perfect mental model: _Token Bucket_ tracks capacity, _Sliding Windows_ track recent history, and _Fixed Windows_ represent discrete accounting.
-- **[Medium: Rate Limiting Algorithms Explained](https://medium.com/@erwindev/rate-limiting-algorithms-compared-token-bucket-leaky-bucket-and-sliding-window-log-acd9c44bc86f)** — A great code-centric walk-through that tracks request state and explains why **Sliding Window Log** is highly accurate but memory-intensive.
-
-### Use Cases
-
-| Algorithm                  | Fairness              | Burst Tolerance           | Memory Cost | Best For                    |
-| :------------------------- | :-------------------- | :------------------------ | :---------- | :-------------------------- |
-| **Fixed Window**           | Low                   | High at window boundaries | Very Low    | Simple internal limits      |
-| **Token Bucket**           | Medium to High        | Controlled bursts         | Low         | Developer-facing APIs       |
-| **Sliding Window Counter** | Medium to High        | Low to Medium             | Moderate    | Scalable public APIs        |
-| **Sliding Window Log**     | High                  | Low                       | High        | Strict fairness enforcement |
-| **Leaky Bucket**           | High output smoothing | None                      | Low         | Traffic shaping             |
 
 ## Configuration
 
