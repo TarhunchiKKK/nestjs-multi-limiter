@@ -20,35 +20,37 @@
     </a>
 </p>
 
-
 ## Table of Contents
 
+- [Table of Contents](#table-of-contents)
 - [Features](#features)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
+- [Algorithms Reference](#algorithms-reference)
+    - [Comprehensive Guides](#comprehensive-guides)
+    - [Use Cases](#use-cases)
 - [Configuration](#configuration)
-  - [Module Configuration](#module-configuration)
-  - [Default Module Options](#default-module-options)
-  - [Decorator Options](#decorator-options)
+    - [Module Configuration](#module-configuration)
+    - [Default Module Options](#default-module-options)
+    - [Decorator Options](#decorator-options)
 - [Custom Providers](#custom-providers)
-  - [Key Extractors](#key-extractors)
-  - [Error Factories](#error-factories)
-  - [Options Factories](#options-factories)
+    - [Key Extractors](#key-extractors)
+    - [Error Factories](#error-factories)
+    - [Options Factories](#options-factories)
 - [Techniques](#techniques)
-  - [Async Configuration](#async-configuration)
-  - [Redis](#redis)
-  - [Skipping](#skipping)
+    - [Async Configuration](#async-configuration)
+    - [Redis](#redis)
+    - [Skipping](#skipping)
 - [License](#license)
-
 
 ## Features
 
-* **NestJS Native**: Dependency injection and async configuration.
-* **Different limiting strategies**:  *Fixed Window*, *Token Bucket*, *Sliding Window Counter*, *Sliding Window Log* and *Leaky Bucket*.
-* **Different Storages**: In-memory (Map) and <a href="https://redis.io/?ref=soroushjp.com">Redis</a> (With <a href="https://www.lua.org/">Lua</a> scripts).
-* **Custom Key Extractors**: Provide your custom key extraction logic. 
-* **Custom Error Factories**: Customize you rate limit exhausted error.
-* **Dynamic Configuration**: Provide dynamic rate limiting options. 
+- **NestJS Native**: Dependency injection and async configuration.
+- **Different limiting strategies**: _Fixed Window_, _Token Bucket_, _Sliding Window Counter_, _Sliding Window Log_ and _Leaky Bucket_.
+- **Different Storages**: In-memory (Map) and <a href="https://redis.io/?ref=soroushjp.com">Redis</a> (With <a href="https://www.lua.org/">Lua</a> scripts).
+- **Custom Key Extractors**: Provide your custom key extraction logic.
+- **Custom Error Factories**: Customize you rate limit exhausted error.
+- **Dynamic Configuration**: Provide dynamic rate limiting options.
 
 ## Installation
 
@@ -68,16 +70,16 @@ import { AppController } from "./app.controller.ts";
     imports: [
         RateLimiterModule.forRoot({
             storage: {
-                type: "in-memory"
+                type: "in-memory",
             },
             scope: "my-scope",
             strategy: "token-bucket",
             strategyOptions: {
                 // different strategies options (Optional)
-            }
-        })
+            },
+        }),
     ],
-    controllers: [AppController]
+    controllers: [AppController],
 })
 export class AppModule {}
 ```
@@ -91,12 +93,34 @@ import { RateLimit, RateLimitGuard } from "nestjs-rate-limiter";
 @UseGuards(RateLimitGuard)
 export class AppController {
     @Get("/hello")
-    @RateLimit({ /* override default options */ }) 
+    @RateLimit({
+        /* override default options */
+    })
     public hello() {
         return "Hello";
     }
 }
 ```
+
+## Algorithms Reference
+
+### Comprehensive Guides
+
+This library implements 5 core rate limiting strategies. To understand their trade-offs, behaviors, and memory footprints, check out these excellent resources:
+
+- **[ByteByteGo (Alex Xu): Design a Rate Limiter](https://bytebytego.com/courses/system-design-interview/design-a-rate-limiter)** — The gold standard from the author of _System Design Interview_. It features clear mental models, visual diagrams, and pros/cons for **Token Bucket**, **Leaky Bucket**, **Fixed Window**, **Sliding Window Log**, and **Sliding Window Counter**.
+- **[Arcjet Blog: Rate Limiting Algorithms Compared](https://blog.arcjet.com/rate-limiting-algorithms-token-bucket-vs-sliding-window-vs-fixed-window/)** — An exceptional production-oriented breakdown. It provides a perfect mental model: _Token Bucket_ tracks capacity, _Sliding Windows_ track recent history, and _Fixed Windows_ represent discrete accounting.
+- **[Medium: Rate Limiting Algorithms Explained](https://medium.com/@erwindev/rate-limiting-algorithms-compared-token-bucket-leaky-bucket-and-sliding-window-log-acd9c44bc86f)** — A great code-centric walk-through that tracks request state and explains why **Sliding Window Log** is highly accurate but memory-intensive.
+
+### Use Cases
+
+| Algorithm                  | Fairness              | Burst Tolerance           | Memory Cost | Best For                    |
+| :------------------------- | :-------------------- | :------------------------ | :---------- | :-------------------------- |
+| **Fixed Window**           | Low                   | High at window boundaries | Very Low    | Simple internal limits      |
+| **Token Bucket**           | Medium to High        | Controlled bursts         | Low         | Developer-facing APIs       |
+| **Sliding Window Counter** | Medium to High        | Low to Medium             | Moderate    | Scalable public APIs        |
+| **Sliding Window Log**     | High                  | Low                       | High        | Strict fairness enforcement |
+| **Leaky Bucket**           | High output smoothing | None                      | Low         | Traffic shaping             |
 
 ## Configuration
 
@@ -111,7 +135,7 @@ RateLimiterModule.forRoot({
     // storage configuration (Map or Redis)
     storage: {
         type: "in-memory",
-        gcTime: 15 * 60 * 1000 // Time to clear `old` data from memory
+        gcTime: 15 * 60 * 1000, // Time to clear `old` data from memory
     },
 
     // strategy configuration
@@ -131,7 +155,7 @@ RateLimiterModule.forRoot({
         },
         leakyBucket: {
             // strategy-specific options
-        }
+        },
     },
 
     // default providers
@@ -139,7 +163,7 @@ RateLimiterModule.forRoot({
         keyExtractor: undefined,
         errorFactory: undefined,
         optionsFactory: undefined,
-    }
+    },
 });
 ```
 
@@ -193,10 +217,10 @@ By default guard uses options provided in `RateLimiterModule` configuration. You
 
 ```typescript
 // Your custom providers
-import { 
-    MyCustomKeyExtractor, 
-    MyCustomErrorFactory, 
-    MyCustomOptionsFactory 
+import {
+    MyCustomKeyExtractor,
+    MyCustomErrorFactory,
+    MyCustomOptionsFactory
 } from "./providers"
 
 @RateLimit({
@@ -216,8 +240,8 @@ import {
 ## Custom Providers
 
 > ⚠️ Important ⚠️
-> 
-> Your custom providers (key extractors, error factories and options factories) will be called on every request. 
+>
+> Your custom providers (key extractors, error factories and options factories) will be called on every request.
 > Do not perform any expensive computations here. It can significantly hurt performance.
 
 > 📌 **Remember**
@@ -255,7 +279,7 @@ export class MyCustomKeyExtractor implements IKeyExtractor {
 ```typescript
 MyModule.forRoot({
     // ...
-    providers: [MyCustomKeyExtractor]
+    providers: [MyCustomKeyExtractor],
 });
 ```
 
@@ -274,7 +298,11 @@ MyModule.forRoot({
 
 ```typescript
 import { type ExecutionContext, HttpException } from "@nestjs/common";
-import { ErrorFactory, type ErrorFactoryOptions, type IErrorFactory } from "nestjs-rate-limiter";
+import {
+    ErrorFactory,
+    type ErrorFactoryOptions,
+    type IErrorFactory,
+} from "nestjs-rate-limiter";
 
 export class RateLimitError extends HttpException {
     public constructor(message: string) {
@@ -287,7 +315,9 @@ export class MyCustomErrorFactory implements IErrorFactory {
     public constructor(/* You can use any providers */) {}
 
     public getError(context: ExecutionContext, options: ErrorFactoryOptions) {
-        return new RateLimitError(`Rate limit exhausted on ${context.getType()} transporter for scope "${options.scope}" and key "${options.key}".`);
+        return new RateLimitError(
+            `Rate limit exhausted on ${context.getType()} transporter for scope "${options.scope}" and key "${options.key}".`,
+        );
     }
 }
 ```
@@ -297,7 +327,7 @@ export class MyCustomErrorFactory implements IErrorFactory {
 ```typescript
 MyModule.forRoot({
     // ...
-    providers: [MyCustomErrorFactory]
+    providers: [MyCustomErrorFactory],
 });
 ```
 
@@ -323,10 +353,11 @@ export class MyCustomOptionsFactory implements IOptionsFactory {
     public constructor(private readonly configService: ConfigService) {}
 
     public getOptions(context: ExecutionContext) {
-        const scope = this.configService.get("RATE_LIMITER_SCOPE") ?? "custom-scope";
+        const scope =
+            this.configService.get("RATE_LIMITER_SCOPE") ?? "custom-scope";
 
         return {
-            scope
+            scope,
         };
     }
 }
@@ -360,17 +391,21 @@ RateLimiterModule.forRoot({
 
 ```typescript
 RateLimiterModule.forRootAsync({
-    imports: [/* ... */],
-    inject: [/* ... */],
+    imports: [
+        /* ... */
+    ],
+    inject: [
+        /* ... */
+    ],
     useFactory: (/* ... */) => ({
         // This options are same to `forRoot` method excluding `custom` property
-    })
+    }),
 });
 ```
 
 ### Redis
 
-For using Redis storage you need to create object or provider that implements `RedisAdapter` type. 
+For using Redis storage you need to create object or provider that implements `RedisAdapter` type.
 
 1. Setting up your provider:
 
@@ -386,7 +421,11 @@ export class RedisService implements RedisAdapter {
         this.client = new Redis(/* ... */);
     }
 
-    public async eval(script: string | Buffer<ArrayBufferLike>, numkeys: string | number, ...args: RedisValue[]) {
+    public async eval(
+        script: string | Buffer<ArrayBufferLike>,
+        numkeys: string | number,
+        ...args: RedisValue[]
+    ) {
         return await this.client.eval(script, numkeys, ...args);
     }
 }
@@ -399,20 +438,21 @@ export class RedisService implements RedisAdapter {
 > `Redis` type of `ioredis` package already implements `RedisAdapter` type.
 >
 > You can use you provider this way:
+>
 > ```typescript
 > import Redis, { type RedisValue } from "ioredis";
 > import type { RedisAdapter } from "nestjs-rate-limiter";
-> 
+>
 > @Injectable()
 > export class RedisService implements RedisAdapter {
 >     private readonly client: Redis;
-> 
+>
 >     public constructor(private readonly configService: ConfigService) {
 >         this.client = new Redis(/* ... */);
 >     }
-> 
+>
 >     public getClient() {
->         return this.client;  // Your client will be used as storage provider
+>         return this.client; // Your client will be used as storage provider
 >     }
 > }
 > ```
@@ -422,7 +462,7 @@ export class RedisService implements RedisAdapter {
 ```typescript
 @Module({
     providers: [RedisService],
-    exports: [RedisService]
+    exports: [RedisService],
 })
 export class RedisModule {}
 ```
@@ -436,10 +476,10 @@ RateLimiterModule.forRootAsync({
     useFactory: (redisService: RedisService) => ({
         storage: {
             type: "redis",
-            adapter: RedisService  // or `redisService.getClient()`
+            adapter: RedisService, // or `redisService.getClient()`
         },
         // ...
-    })
+    }),
 });
 ```
 
@@ -453,7 +493,6 @@ import { RateLimitGuard, SkipRateLimit } from "nestjs-rate-limiter";
 @Controller()
 @UseGuards(RateLimitGuard)
 export class MyController {
-
     public method1() {}
 
     // Rate limiting for this method will be skipped
