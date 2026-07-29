@@ -8,7 +8,7 @@ import type { Scope } from "../../shared/model";
 import type { StrategyOptions } from "./common.options";
 
 /**
- * Options for `RateLimit` guard.
+ * Options for `RateLimit` decorator.
  *
  * @publicApi
  */

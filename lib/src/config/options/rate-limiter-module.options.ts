@@ -59,7 +59,17 @@ export type RateLimiterModuleOptions = {
  * @publicApi
  */
 export type RateLimiterModuleAsyncOptions = Pick<ModuleMetadata, "imports"> & {
+    /**
+     * Dependencies to inject.
+     */
     inject?: any[];
+
+    /**
+     * Function that creates dynamic module options.
+     *
+     * @param args Injected dependencies.
+     * @returns Dynamic options.
+     */
     useFactory: (...args: any[]) => RateLimiterModuleOptions | Promise<RateLimiterModuleOptions>;
 };
 

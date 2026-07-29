@@ -11,8 +11,17 @@ import { InMemoryGarbageCollector } from "./services/in-memory.garbage-collector
 import { ProvidersDiscoveryService } from "./services/providers-discovery.service";
 import type { Storage } from "./shared/model";
 
+/**
+ * @publicApi
+ */
 @Module({})
 export class RateLimiterModule {
+    /**
+     * Sync module configuration.
+     *
+     * @param options Default rate limiting options.
+     * @returns Module.
+     */
     public static forRoot(options: RateLimiterModuleOptions): DynamicModule {
         const fullOptions = mergeDefaultOptions(options);
 
@@ -33,6 +42,12 @@ export class RateLimiterModule {
         };
     }
 
+    /**
+     * Async module configuration.
+     *
+     * @param options Dynamic default rate limiting options.
+     * @returns Module.
+     */
     public static forRootAsync(options: RateLimiterModuleAsyncOptions): DynamicModule {
         const moduleOptionsProvider: FactoryProvider<RateLimiterModuleFullOptions> = {
             provide: MODULE_OPTIONS_TOKEN,
