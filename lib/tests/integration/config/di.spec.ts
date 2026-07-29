@@ -3,7 +3,7 @@ import { it } from "node:test";
 import { Test, type TestingModule } from "@nestjs/testing";
 import { RateLimiterModule, RateLimitGuard } from "../../../src";
 import { mergeDefaultOptions } from "../../../src/config/defaults";
-import type { RateLimiterModuleFullOptions, RateLimiterModuleOptions, RateLimitGuardOptions } from "../../../src/config/options";
+import type { RateLimiterModuleAsyncOptions, RateLimiterModuleFullOptions, RateLimiterModuleOptions, RateLimitGuardOptions } from "../../../src/config/options";
 import { BuiltinErrorFactory } from "../../../src/custom/error-factories";
 import { BuiltinKeyExtractor } from "../../../src/custom/key-extractors";
 import { GUARD_OPTIONS_TOKEN, MODULE_OPTIONS_TOKEN, STORAGE_TOKEN } from "../../../src/di";
@@ -12,28 +12,39 @@ import { ProvidersDiscoveryService } from "../../../src/services/providers-disco
 
 const nonOptionsProviders = [STORAGE_TOKEN, BuiltinKeyExtractor, BuiltinErrorFactory, ProvidersDiscoveryService, InMemoryGarbageCollector, RateLimitGuard];
 
+const syncOptions: RateLimiterModuleOptions = {
+    storage: {
+        type: "redis",
+        instance: {
+            eval: () => Promise.resolve(1)
+        }
+    }
+};
+
+const asyncOptions: RateLimiterModuleAsyncOptions = {
+    imports: [],
+    inject: [],
+    useFactory: () => syncOptions
+};
+
 describe("Dependency injection", () => {
-    describe("Sync configuration", () => {
+    describe.each([
+        ["forRoot", syncOptions],
+        ["forRootAsync", asyncOptions]
+    ])("RateLimiterModule.%1", (method, options) => {
         let module: TestingModule;
-        const options: RateLimiterModuleOptions = {
-            storage: {
-                type: "redis",
-                instance: {
-                    eval: () => Promise.resolve(1)
-                }
-            }
-        };
 
         beforeEach(async () => {
             module = await Test.createTestingModule({
-                imports: [RateLimiterModule.forRoot(options)]
+                // biome-ignore lint/suspicious/noExplicitAny: `any` type is necessary for testing sync/async configuration single way.
+                imports: [RateLimiterModule[method](options as any)]
             }).compile();
         });
 
         it("should inject valid module options", () => {
             const moduleOptions = module.get(MODULE_OPTIONS_TOKEN);
 
-            const expectedOptions = mergeDefaultOptions(options);
+            const expectedOptions = mergeDefaultOptions(syncOptions);
 
             expect(moduleOptions).toEqual(expectedOptions);
         });
@@ -64,6 +75,4 @@ describe("Dependency injection", () => {
             }
         });
     });
-
-    describe("Async configuration", () => {});
 });
