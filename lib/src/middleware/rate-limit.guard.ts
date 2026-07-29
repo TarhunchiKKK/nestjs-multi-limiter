@@ -17,6 +17,8 @@ type RunOptions = StrategyOptions & {
 
 /**
  * Guard that executes rate limiting checks on handlers.
+ *
+ * @publicApi
  */
 @Injectable()
 export class RateLimitGuard implements CanActivate {

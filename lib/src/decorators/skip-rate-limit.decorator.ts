@@ -6,6 +6,8 @@ export const SkipRateLimitDecorator = Reflector.createDecorator<true>();
 
 /**
  * Decorator that excludes handler/controller from rate limiting check.
+ *
+ * @publicApi
  */
 export function SkipRateLimit() {
     return applyDecorators(SkipRateLimitDecorator(true));
