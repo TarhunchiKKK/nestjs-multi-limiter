@@ -8,12 +8,10 @@ export const DEFAULT_IN_MEMORY_GC_TIME = 15 * MS_IN_MINUTE;
 
 export const RATE_LIMITER_MODULE_DEFAULT_OPTIONS = {
     scope: DEFAULT_SCOPE,
-
     storage: {
         type: "in-memory",
         gcTime: DEFAULT_IN_MEMORY_GC_TIME
     },
-
     strategy: "fixed-window",
     strategyOptions: {
         fixedWindow: {
@@ -39,7 +37,6 @@ export const RATE_LIMITER_MODULE_DEFAULT_OPTIONS = {
             ttl: 3 * MS_IN_MINUTE
         }
     },
-
     defaultProviders: {
         keyExtractor: BuiltinKeyExtractor,
         errorFactory: BuiltinErrorFactory,
