@@ -27,12 +27,12 @@ export class RateLimitGuard implements CanActivate {
         const skip = this.checkSkip(context);
 
         if (skip) {
-            return true;
+            return true; 
         }
 
         const options = await this.getOptions(context);
 
-        const key = options.keyExtractor.extract(context);
+        const key = await options.keyExtractor.extract(context);
 
         const requestAllowed = await this.checkRate(key, options);
 
