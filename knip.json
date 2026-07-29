@@ -1,8 +1,7 @@
 {
     "$schema": "https://unpkg.com/knip@5/schema.json",
-    "ignore": ["./e2e/**/*", "./lib/tests/integration/**/*", "./lib/tests/shared/**/*"],
-    "ignoreBinaries": [],
-    "ignoreDependencies": [],
+    "ignore": ["./e2e/**/*", "./lib/tests/**/*.ts"],
+    "ignoreDependencies": ["redis"],
     "rules": {
         "files": "error",
         "types": "error",
