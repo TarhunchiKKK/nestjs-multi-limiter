@@ -52,11 +52,14 @@ class NodeRedisAdapter implements RedisAdapter, OnModuleInit, OnModuleDestroy {
     }
 }
 
+const ADAPTER_TOKEN = "adapter-token";
+
 describe("Different redis adapters", () => {
     describe.each([
         ['"ioredis" client', IoRedisClient, []],
         ['"ioredis" adapter', IoRedisAdapter, [IoRedisAdapter]],
-        ['"node-redis" adapter', NodeRedisAdapter, [NodeRedisAdapter]]
+        ['"node-redis" adapter', NodeRedisAdapter, [NodeRedisAdapter]],
+        ['"node-redis" adapter (by token)', ADAPTER_TOKEN, [{ provide: ADAPTER_TOKEN, useClass: NodeRedisAdapter }]]
     ])("%1", (_, adapter, providers) => {
         let executor: FixedWindowRedisExecutor;
         const key = "rate-limiter:fixed-window:redis-adapters:scope";
@@ -67,7 +70,6 @@ describe("Different redis adapters", () => {
                     RateLimiterModule.forRoot({
                         storage: {
                             type: "redis",
-                            // FIX: typing
                             adapter: adapter
                         }
                     })
