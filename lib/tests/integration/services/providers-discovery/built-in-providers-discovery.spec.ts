@@ -1,5 +1,4 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-import { ModulesContainer, Reflector } from "@nestjs/core";
 import { Test } from "@nestjs/testing";
 import { RateLimiterModule } from "../../../../src";
 import { RATE_LIMITER_MODULE_DEFAULT_OPTIONS } from "../../../../src/config/defaults/default-options.constants";
@@ -12,10 +11,7 @@ describe("ProvidersDiscoveryService - built-in providers discovery", () => {
 
     beforeAll(async () => {
         const module = await Test.createTestingModule({
-            imports: [RateLimiterModule.forRoot(RATE_LIMITER_MODULE_DEFAULT_OPTIONS)],
-
-            // DELETE: are this providers necessary?
-            providers: [ModulesContainer, Reflector]
+            imports: [RateLimiterModule.forRoot(RATE_LIMITER_MODULE_DEFAULT_OPTIONS)]
         }).compile();
 
         service = module.get(ProvidersDiscoveryService);

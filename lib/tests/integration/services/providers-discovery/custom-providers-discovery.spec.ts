@@ -1,5 +1,4 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-import { ModulesContainer, Reflector } from "@nestjs/core";
 import { Test } from "@nestjs/testing";
 import { ErrorFactory, type IErrorFactory, type IKeyExtractor, type IOptionsFactory, KeyExtractor, OptionsFactory, RateLimiterModule } from "../../../../src";
 import { RATE_LIMITER_MODULE_DEFAULT_OPTIONS } from "../../../../src/config/defaults/default-options.constants";
@@ -41,9 +40,7 @@ describe("ProvidersDiscoveryService - custom providers discovery", () => {
                     }
                 })
             ],
-
-            // DELETE: are first 2 providers necessary?
-            providers: [ModulesContainer, Reflector, CustomKeyExtractor, CustomErrorFactory, CustomOptionsFactory]
+            providers: [CustomKeyExtractor, CustomErrorFactory, CustomOptionsFactory]
         }).compile();
 
         service = module.get(ProvidersDiscoveryService);
