@@ -25,22 +25,22 @@
 - [Table of Contents](#table-of-contents)
 - [Features](#features)
 - [Algorithms Reference](#algorithms-reference)
-    - [Comprehensive Guides](#comprehensive-guides)
-    - [Use Cases](#use-cases)
+  - [Comprehensive Guides](#comprehensive-guides)
+  - [Use Cases](#use-cases)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Configuration](#configuration)
-    - [Module Configuration](#module-configuration)
-    - [Default Module Options](#default-module-options)
-    - [Decorator Options](#decorator-options)
+  - [Module Configuration](#module-configuration)
+  - [Default Module Options](#default-module-options)
+  - [Decorator Options](#decorator-options)
 - [Custom Providers](#custom-providers)
-    - [Key Extractors](#key-extractors)
-    - [Error Factories](#error-factories)
-    - [Options Factories](#options-factories)
+  - [Key Extractors](#key-extractors)
+  - [Error Factories](#error-factories)
+  - [Options Factories](#options-factories)
 - [Techniques](#techniques)
-    - [Async Configuration](#async-configuration)
-    - [Redis](#redis)
-    - [Skipping](#skipping)
+  - [Async Configuration](#async-configuration)
+  - [Redis Integration](#redis-integration)
+  - [Skipping](#skipping)
 - [License](#license)
 
 ## Features
@@ -403,7 +403,7 @@ RateLimiterModule.forRootAsync({
 });
 ```
 
-### Redis
+### Redis Integration
 
 For using Redis storage you need to create object or provider that implements `RedisAdapter` type.
 
