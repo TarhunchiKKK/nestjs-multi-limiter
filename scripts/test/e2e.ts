@@ -3,7 +3,7 @@ import { $ } from "bun";
 try {
     console.log("🚀 Starting containers...");
 
-    await $`docker compose -f ./scripts/docker-compose.yaml up --wait`;
+    await $`docker compose -f ./scripts/test/docker-compose.yaml up --wait`;
 
     console.log("🧪 Running tests...");
 
@@ -19,7 +19,7 @@ try {
 } finally {
     console.log("🧹 Stopping containers...");
 
-    await $`docker compose -f ./scripts/docker-compose.yaml down -v`;
+    await $`docker compose -f ./scripts/test/docker-compose.yaml down -v`;
 
     console.log("✅ Containers stopped");
 }
