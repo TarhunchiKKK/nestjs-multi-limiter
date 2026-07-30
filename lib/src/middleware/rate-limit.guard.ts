@@ -4,7 +4,7 @@ import { normalizeOptions } from "../config/helpers";
 import type { RateLimitGuardOptions, RateLimitNormalizedOptions, StrategyOptions } from "../config/options";
 import type { ErrorFactoryOptions, IErrorFactory } from "../custom/error-factories";
 import type { IKeyExtractor } from "../custom/key-extractors";
-import { RateLimit, SkipRateLimitDecorator } from "../decorators";
+import { RateLimit, SkipRateLimit } from "../decorators";
 import { GUARD_OPTIONS_TOKEN } from "../di";
 import { ProvidersDiscoveryService } from "../services/providers-discovery.service";
 import { getKey, type Scope } from "../shared/model";
@@ -56,7 +56,7 @@ export class RateLimitGuard implements CanActivate {
     }
 
     private checkSkip(context: ExecutionContext) {
-        const shouldSkip = this.reflector.get(SkipRateLimitDecorator, context.getHandler());
+        const shouldSkip = this.reflector.get(SkipRateLimit, context.getHandler());
 
         if (shouldSkip) {
             return true;

@@ -67,7 +67,6 @@ describe("Different redis adapters", () => {
                     RateLimiterModule.forRoot({
                         storage: {
                             type: "redis",
-                            // FIX: typing
                             adapter: adapter
                         }
                     })

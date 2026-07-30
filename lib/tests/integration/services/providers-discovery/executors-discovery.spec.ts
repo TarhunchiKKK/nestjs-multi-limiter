@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, it } from "bun:test";
-import { ModulesContainer, Reflector } from "@nestjs/core";
 import { Test } from "@nestjs/testing";
 import { RateLimiterModule, type RateLimiterModuleOptions, type StorageTypes, type Strategies } from "../../../../src";
 import { RATE_LIMITER_MODULE_DEFAULT_OPTIONS } from "../../../../src/config/defaults/default-options.constants";
@@ -16,10 +15,7 @@ describe.each<[StorageTypes, RateLimiterModuleOptions]>([
 
     beforeEach(async () => {
         const module = await Test.createTestingModule({
-            imports: [RateLimiterModule.forRoot(options)],
-
-            // DELETE: are this providers necessary?
-            providers: [ModulesContainer, Reflector]
+            imports: [RateLimiterModule.forRoot(options)]
         }).compile();
 
         service = module.get(ProvidersDiscoveryService);

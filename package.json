@@ -10,14 +10,15 @@
         "build": "turbo run build",
         "build:lib": "turbo run build --filter=nestjs-rate-limiter",
         "test:unit": "turbo run test:unit",
-        "test:integration": "bun run ./scripts/test-integration.ts",
-        "test:e2e": "bun run ./scripts/test-e2e.ts",
+        "test:integration": "bun run ./scripts/test/integration.ts",
+        "test:e2e": "bun run ./scripts/test/e2e.ts",
         "format:check": "biome format",
         "format:fix": "biome format --write",
         "lint:check": "biome lint",
         "lint:fix": "biome lint --write",
         "knip": "knip",
-        "clean": "bun run ./scripts/clean.ts",
+        "clean:deps": "bun run ./scripts/clean/deps.ts",
+        "clean:cache": "bun run ./scripts/clean/cache.ts",
         "sync-meta": "bun run ./scripts/sync-meta.ts"
     },
     "devDependencies": {

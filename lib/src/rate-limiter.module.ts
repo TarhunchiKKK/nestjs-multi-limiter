@@ -1,4 +1,4 @@
-import { type DynamicModule, type FactoryProvider, Module } from "@nestjs/common";
+import { type DynamicModule, type FactoryProvider, Module, type Provider } from "@nestjs/common";
 import { mergeDefaultOptions } from "./config/defaults";
 import { getExecutorsByStorage } from "./config/helpers";
 import type { RateLimiterModuleAsyncOptions, RateLimiterModuleFullOptions, RateLimiterModuleOptions, RateLimitGuardOptions } from "./config/options";
@@ -9,6 +9,7 @@ import { AVAILABLE_EXECUTORS } from "./executors";
 import { RateLimitGuard } from "./middleware";
 import { InMemoryGarbageCollector } from "./services/in-memory.garbage-collector";
 import { ProvidersDiscoveryService } from "./services/providers-discovery.service";
+import { isProvider } from "./shared/lib";
 import type { Storage } from "./shared/model";
 
 /**
@@ -30,8 +31,7 @@ export class RateLimiterModule {
             module: RateLimiterModule,
             providers: [
                 { provide: MODULE_OPTIONS_TOKEN, useValue: fullOptions },
-                // QUESTION: Maybe use `useExisting` for Redis storage?
-                { provide: STORAGE_TOKEN, useValue: RateLimiterModule.getStorageProvider(fullOptions) },
+                RateLimiterModule.getStorageProvider(fullOptions),
 
                 ...getExecutorsByStorage(options.storage.type),
                 ...RateLimiterModule.getBuiltinProviders(),
@@ -62,7 +62,17 @@ export class RateLimiterModule {
         const storageProvider: FactoryProvider<Storage> = {
             provide: STORAGE_TOKEN,
             inject: [MODULE_OPTIONS_TOKEN],
-            useFactory: (moduleOptions: RateLimiterModuleFullOptions) => RateLimiterModule.getStorageProvider(moduleOptions)
+            useFactory: (moduleOptions: RateLimiterModuleFullOptions) => {
+                if (moduleOptions.storage.type === "in-memory") {
+                    return new Map();
+                }
+
+                if (isProvider(moduleOptions.storage.adapter)) {
+                    throw new Error("Redis adapter provider is not initialized.");
+                }
+
+                return moduleOptions.storage.adapter;
+            }
         };
 
         const guardOptionsProvider: FactoryProvider<RateLimitGuardOptions> = {
@@ -88,8 +98,25 @@ export class RateLimiterModule {
         };
     }
 
-    private static getStorageProvider(options: RateLimiterModuleFullOptions) {
-        return options.storage.type === "redis" ? options.storage.adapter : new Map();
+    private static getStorageProvider(options: RateLimiterModuleFullOptions): Provider<Storage> {
+        if (options.storage.type === "in-memory") {
+            return {
+                provide: STORAGE_TOKEN,
+                useValue: new Map()
+            };
+        }
+
+        if (isProvider(options.storage.adapter)) {
+            return {
+                provide: STORAGE_TOKEN,
+                useClass: options.storage.adapter
+            };
+        } else {
+            return {
+                provide: STORAGE_TOKEN,
+                useValue: options.storage.adapter
+            };
+        }
     }
 
     private static getGuardOptions(options: RateLimiterModuleFullOptions): RateLimitGuardOptions {

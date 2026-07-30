@@ -4,7 +4,6 @@ import type { IErrorFactory } from "../../custom/error-factories";
 import type { IKeyExtractor } from "../../custom/key-extractors";
 import type { IOptionsFactory } from "../../custom/options-factories";
 import type { AllStrategiesOptions } from "../../executors";
-import type { TokenType } from "../../shared/lib";
 import type { Scope, Strategies } from "../../shared/model";
 import type { StorageOptions } from "./common.options";
 
@@ -44,12 +43,9 @@ export type RateLimiterModuleOptions = {
      * Providers that are used by default.
      */
     defaultProviders?: {
-        // FIX: should `TokenType` be here?
-        // `ProvidersDiscoveryService` looks for metadata added by corresponding decorators.
-        // No-classes cannot have such metadata
-        keyExtractor?: Type<IKeyExtractor> | TokenType;
-        errorFactory?: Type<IErrorFactory> | TokenType;
-        optionsFactory?: Type<IOptionsFactory> | TokenType;
+        keyExtractor?: Type<IKeyExtractor>;
+        errorFactory?: Type<IErrorFactory>;
+        optionsFactory?: Type<IOptionsFactory>;
     };
 };
 
@@ -88,8 +84,8 @@ export type RateLimiterModuleFullOptions = {
     };
 
     defaultProviders: {
-        keyExtractor: Type<IKeyExtractor> | TokenType;
-        errorFactory: Type<IErrorFactory> | TokenType;
-        optionsFactory?: Type<IOptionsFactory> | TokenType;
+        keyExtractor: Type<IKeyExtractor>;
+        errorFactory: Type<IErrorFactory>;
+        optionsFactory?: Type<IOptionsFactory>;
     };
 };
