@@ -36,7 +36,7 @@ describe("ProvidersDiscoveryService - custom providers discovery", () => {
                     ...RATE_LIMITER_MODULE_DEFAULT_OPTIONS,
                     defaultProviders: {
                         keyExtractor: CustomKeyExtractor,
-                        // CustomErrorFactoryis not listed as default provider
+                        // CustomErrorFactory not listed as default provider
                         optionsFactory: CustomOptionsFactory
                     }
                 })
