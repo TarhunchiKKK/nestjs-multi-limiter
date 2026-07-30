@@ -40,8 +40,8 @@
 - [Techniques](#techniques)
   - [Async Configuration](#async-configuration)
   - [Redis Integration](#redis-integration)
-    - [Via Provider](#via-provider)
     - [Via Object](#via-object)
+    - [Via Provider](#via-provider)
   - [Skipping](#skipping)
 - [License](#license)
 
@@ -415,6 +415,36 @@ For using Redis storage you need to create object or provider that implements `R
 >
 > You can use it as adapter.
 
+#### Via Object
+
+1. Setup your adapter object:
+
+```typescript
+import Redis, { type RedisValue } from "ioredis";
+import type { RedisAdapter } from "nestjs-rate-limiter";
+
+// 📌 TRICK: This client already can be used as adapter
+export const RedisClient = new Redis(/* ... */);
+
+export const MyRedisAdapter: RedisAdapter = {
+    eval: async (script, numkeys, ...args) => {
+        return await RedisClient.eval(script, numkeys, ...args);
+    }
+} 
+```
+
+2. Inject your Redis provider:
+
+```typescript
+RateLimiterModule.forRoot({
+    storage: {
+        type: "redis",
+        adapter: MyRedisAdapter, // or use `RedisClient` directly
+    },
+    // ...
+});
+```
+
 #### Via Provider
 
 1. Setting up your provider:
@@ -469,36 +499,6 @@ RateLimiterModule.forRootAsync({
         },
         // ...
     }),
-});
-```
-
-#### Via Object
-
-1. Setup your adapter object:
-
-```typescript
-import Redis, { type RedisValue } from "ioredis";
-import type { RedisAdapter } from "nestjs-rate-limiter";
-
-// 📌 TRICK: This client already can be used as adapter
-export const RedisClient = new Redis(/* ... */);
-
-export const MyRedisAdapter: RedisAdapter = {
-    eval: async (script, numkeys, ...args) => {
-        return await RedisClient.eval(script, numkeys, ...args);
-    }
-} 
-```
-
-2. Inject your Redis provider:
-
-```typescript
-RateLimiterModule.forRoot({
-    storage: {
-        type: "redis",
-        adapter: MyRedisAdapter, // or use `RedisClient` directly
-    },
-    // ...
 });
 ```
 
