@@ -20,7 +20,7 @@ body:
     id: environment
     attributes:
       label: Environment info
-      placeholder: "e.g., Node.js v20.11.0, Chrome 122, Python 3.11"
+      placeholder: "e.g., Node.js v20.11.0"
     validations:
       required: true
 
@@ -30,10 +30,9 @@ body:
       label: Minimal reproducible example
       description: Provide a short, isolated code snippet that triggers the issue.
       placeholder: |
-        ```javascript
+        ```typescript
         
         ```
-        
     validations:
       required: true
 

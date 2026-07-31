@@ -1,0 +1,30 @@
+name: "🚀 Feature Request"
+description: Suggest an idea or improvement for this library
+title: "[FEATURE]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Is your feature request related to a problem?
+      description: Describe the problem you are trying to solve and why current features are not enough.
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Describe the desired solution
+      description: How should the API or library behavior look from your perspective?
+      placeholder: |
+        ```typescript
+        
+        ```
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Describe alternatives you've considered
+      description: Have you considered any alternative solutions, workarounds, or third-party plugins?
