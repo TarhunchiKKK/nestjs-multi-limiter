@@ -1,5 +1,4 @@
-import { afterEach, beforeEach, describe, expect, jest } from "bun:test";
-import { it } from "node:test";
+import { afterEach, beforeEach, describe, expect, it, jest } from "bun:test";
 import type { RateLimiterModuleFullOptions } from "../../../src/config/options";
 import { InMemoryGarbageCollector } from "../../../src/services/in-memory.garbage-collector";
 import type { BaseStrategyState, InMemoryStorage } from "../../../src/shared/model";

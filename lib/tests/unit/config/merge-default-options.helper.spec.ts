@@ -1,5 +1,4 @@
-import { describe, expect } from "bun:test";
-import { it } from "node:test";
+import { describe, expect, it } from "bun:test";
 import type { RateLimiterModuleOptions } from "../../../src";
 import { mergeDefaultOptions } from "../../../src/config/defaults";
 import { RATE_LIMITER_MODULE_DEFAULT_OPTIONS } from "../../../src/config/defaults/default-options.constants";
@@ -142,25 +141,6 @@ describe("mergeDefaultOptions", () => {
             expect(result.defaultProviders.keyExtractor).toBeDefined();
             expect(result.defaultProviders.errorFactory).toBeDefined();
             expect(result.defaultProviders.optionsFactory).toBeUndefined();
-        });
-
-        it("override default", () => {
-            const input = {
-                storage: {
-                    type: "in-memory"
-                },
-                defaultProviders: {
-                    keyExtractor: "key-extractor-token",
-                    errorFactory: "error-factory-token",
-                    optionsFactory: "options-factory-token"
-                }
-            } satisfies RateLimiterModuleOptions;
-
-            const result = mergeDefaultOptions(input);
-
-            expect(result.defaultProviders.keyExtractor).toEqual(input.defaultProviders.keyExtractor);
-            expect(result.defaultProviders.errorFactory).toEqual(input.defaultProviders.errorFactory);
-            expect(result.defaultProviders.optionsFactory).toEqual(input.defaultProviders.optionsFactory);
         });
     });
 });

@@ -7,7 +7,7 @@ try {
 
     console.log("🧪 Running tests...");
 
-    await $`bun run test:e2e`;
+    await $`turbo run test:e2e`;
 
     console.log("✅ Tests succeed");
 } catch (error) {

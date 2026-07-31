@@ -39,7 +39,7 @@ describe("LeakyBucketRedisExecutor", () => {
     it("should fill the bucket up to capacity and then leak further requests", async () => {
         const options: LeakyBucketOptions = {
             capacity: 3,
-            leakRate: 1 / 10_000,
+            leakRate: 1 / (10 * MS_IN_SECOND),
             ttl: 5 * MS_IN_SECOND
         };
 
@@ -60,7 +60,6 @@ describe("LeakyBucketRedisExecutor", () => {
             ttl: 5 * MS_IN_SECOND
         };
 
-        // Fill bucket
         for (let i = 0; i <= options.capacity; i++) {
             const check = await executor.check(key, options);
 

@@ -36,7 +36,7 @@ local previousWindowWeight = 1 - (timeElapsedInCurrentWindow / windowMs)
 local calculatedCount = currentCount + (previousCount * previousWindowWeight)
 
 -- Check limit
-if calculatedCount < limit then
+if calculatedCount + 1 <= limit then
     currentCount = currentCount + 1
     redis.call('hmset', key, 'windowStart', storedWindowStart, 'currentCount', currentCount, 'previousCount', previousCount)
     redis.call('pexpire', key, windowMs * 2)

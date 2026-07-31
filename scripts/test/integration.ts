@@ -7,13 +7,13 @@ try {
 
     console.log("🧪 Running tests...");
 
-    await $`bun run test:integration`;
+    await $`turbo run test:integration`;
 
     console.log("✅ Tests succeed");
-} catch (error) {
+} catch (_) {
     console.error("❌ Tests failed");
 
-    console.error(error);
+    // console.error(error);
 
     process.exitCode = 1;
 } finally {

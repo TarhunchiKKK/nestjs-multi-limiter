@@ -1,5 +1,4 @@
-import { beforeEach, describe, expect } from "bun:test";
-import { it } from "node:test";
+import { beforeEach, describe, expect, it } from "bun:test";
 import { Test, type TestingModule } from "@nestjs/testing";
 import { RateLimiterModule, type RateLimiterModuleOptions } from "../../../src";
 import {
@@ -45,7 +44,7 @@ const executorsMap = {
 describe.each([
     ["in-memory", inMemoryOptions],
     ["redis", redisOptions]
-] as const)("Executors filtration (%1 storage)", (storageType, options) => {
+] as const)("Executors filtration (%s storage)", (storageType, options) => {
     let module: TestingModule;
 
     beforeEach(async () => {
@@ -68,9 +67,9 @@ describe.each([
         const invalidExecutors = executorsMap[storageType === "in-memory" ? "redis" : "in-memory"];
 
         for (const token of invalidExecutors) {
-            const executor = module.get(token);
-
-            expect(executor).not.toBeDefined();
+            expect(() => {
+                module.get(token);
+            }).toThrow();
         }
     });
 });

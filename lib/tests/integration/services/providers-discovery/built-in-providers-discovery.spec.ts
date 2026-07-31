@@ -1,20 +1,30 @@
-import { beforeAll, describe, expect, it } from "bun:test";
-import { Test } from "@nestjs/testing";
+import { afterEach, beforeAll, describe, expect, it } from "bun:test";
+import { Test, type TestingModule } from "@nestjs/testing";
 import { RateLimiterModule } from "../../../../src";
 import { RATE_LIMITER_MODULE_DEFAULT_OPTIONS } from "../../../../src/config/defaults/default-options.constants";
 import { BuiltinErrorFactory } from "../../../../src/custom/error-factories";
 import { BuiltinKeyExtractor } from "../../../../src/custom/key-extractors";
 import { ProvidersDiscoveryService } from "../../../../src/services/providers-discovery.service";
 
-describe("ProvidersDiscoveryService - built-in providers discovery", () => {
+describe.each([
+    ["sync", "forRoot", RATE_LIMITER_MODULE_DEFAULT_OPTIONS],
+    ["async", "forRootAsync", { useFactory: () => RATE_LIMITER_MODULE_DEFAULT_OPTIONS }]
+])("ProvidersDiscoveryService - built-in providers discovery (%s configuration)", (_, method, options) => {
     let service: ProvidersDiscoveryService;
+    let module: TestingModule;
 
     beforeAll(async () => {
-        const module = await Test.createTestingModule({
-            imports: [RateLimiterModule.forRoot(RATE_LIMITER_MODULE_DEFAULT_OPTIONS)]
+        module = await Test.createTestingModule({
+            imports: [RateLimiterModule[method](options)]
         }).compile();
 
         service = module.get(ProvidersDiscoveryService);
+
+        await module.init();
+    });
+
+    afterEach(async () => {
+        await module.close();
     });
 
     it("should find built-in key extractor", () => {
