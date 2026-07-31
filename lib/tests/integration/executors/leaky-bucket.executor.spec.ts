@@ -60,7 +60,6 @@ describe("LeakyBucketRedisExecutor", () => {
             ttl: 5 * MS_IN_SECOND
         };
 
-        // Fill bucket
         for (let i = 0; i <= options.capacity; i++) {
             const check = await executor.check(key, options);
 
