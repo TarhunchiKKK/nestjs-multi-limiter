@@ -57,7 +57,7 @@ describe("Different redis adapters", () => {
         ['"ioredis" client', IoRedisClient, []],
         ['"ioredis" adapter', IoRedisAdapter, [IoRedisAdapter]],
         ['"node-redis" adapter', NodeRedisAdapter, [NodeRedisAdapter]]
-    ])("%1", (_, adapter, providers) => {
+    ])("%s", (_, adapter, providers) => {
         let executor: FixedWindowRedisExecutor;
         const key = "rate-limiter:fixed-window:redis-adapters:scope";
 

@@ -45,7 +45,7 @@ const executorsMap = {
 describe.each([
     ["in-memory", inMemoryOptions],
     ["redis", redisOptions]
-] as const)("Executors filtration (%1 storage)", (storageType, options) => {
+] as const)("Executors filtration (%s storage)", (storageType, options) => {
     let module: TestingModule;
 
     beforeEach(async () => {
@@ -68,9 +68,9 @@ describe.each([
         const invalidExecutors = executorsMap[storageType === "in-memory" ? "redis" : "in-memory"];
 
         for (const token of invalidExecutors) {
-            const executor = module.get(token);
-
-            expect(executor).not.toBeDefined();
+            expect(() => {
+                module.get(token);
+            }).toThrow();
         }
     });
 });
