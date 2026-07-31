@@ -43,7 +43,7 @@ describe("SlidingWindowLogRedisExecutor", () => {
         };
 
         for (let i = 0; i < options.limit; i++) {
-            const check = executor.check(key, options);
+            const check = await executor.check(key, options);
 
             expect(check).toBeTrue();
         }
@@ -87,7 +87,6 @@ describe("SlidingWindowLogRedisExecutor", () => {
             windowMs: 100
         };
 
-        // Fill log
         for (let i = 0; i < options.limit; i++) {
             await executor.check(key, options);
         }
@@ -95,7 +94,7 @@ describe("SlidingWindowLogRedisExecutor", () => {
         const overflowCheck = await executor.check(key, options);
         expect(overflowCheck).toBeFalse();
 
-        jest.advanceTimersByTime(options.limit + 50);
+        jest.advanceTimersByTime(options.windowMs + 50);
 
         const newCheck = await executor.check(key, options);
         expect(newCheck).toBeTrue();
