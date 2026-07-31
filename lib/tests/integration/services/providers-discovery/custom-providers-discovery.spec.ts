@@ -1,38 +1,9 @@
 import { afterEach, beforeAll, describe, expect, it } from "bun:test";
 import { Test, type TestingModule } from "@nestjs/testing";
-import {
-    ErrorFactory,
-    type IErrorFactory,
-    type IKeyExtractor,
-    type IOptionsFactory,
-    KeyExtractor,
-    OptionsFactory,
-    RateLimiterModule,
-    type RateLimiterModuleOptions
-} from "../../../../src";
+import { RateLimiterModule, type RateLimiterModuleOptions } from "../../../../src";
 import { RATE_LIMITER_MODULE_DEFAULT_OPTIONS } from "../../../../src/config/defaults/default-options.constants";
 import { ProvidersDiscoveryService } from "../../../../src/services/providers-discovery.service";
-
-@KeyExtractor()
-class CustomKeyExtractor implements IKeyExtractor {
-    public extract() {
-        return "key";
-    }
-}
-
-@ErrorFactory()
-class CustomErrorFactory implements IErrorFactory {
-    public getError() {
-        return new Error();
-    }
-}
-
-@OptionsFactory()
-class CustomOptionsFactory implements IOptionsFactory {
-    public getOptions() {
-        return {};
-    }
-}
+import { CustomErrorFactory, CustomKeyExtractor, CustomOptionsFactory } from "../../../shared";
 
 const optionsWihDefaultProviders = {
     ...RATE_LIMITER_MODULE_DEFAULT_OPTIONS,
