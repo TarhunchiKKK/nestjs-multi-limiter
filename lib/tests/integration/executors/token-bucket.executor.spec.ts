@@ -49,7 +49,7 @@ describe("TokenBucketRedisExecutor", () => {
             expect(check).toBeTrue();
         }
 
-        const blockedCheck = executor.check(key, options);
+        const blockedCheck = await executor.check(key, options);
 
         expect(blockedCheck).toBeFalse();
     });
