@@ -1,5 +1,5 @@
-import { beforeEach, describe } from "bun:test";
-import { afterEach } from "node:test";
+import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import type { ExecutionContext } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { Test } from "@nestjs/testing";
 import { RateLimitGuard } from "../../../src";
@@ -51,5 +51,17 @@ describe("RateLimitGuard", () => {
     afterEach(() => {
         clearMock(reflectorMock);
         clearMock(discoveryServiceMock);
+    });
+
+    it("should skip rate limiting", async () => {
+        reflectorMock.get.mockReturnValue(true);
+
+        const context = {
+            getHandler: () => null
+        };
+
+        const result = await guard.canActivate(context as unknown as ExecutionContext);
+
+        expect(result).toBeTrue();
     });
 });
