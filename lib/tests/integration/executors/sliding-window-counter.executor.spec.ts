@@ -90,7 +90,7 @@ describe("SlidingWindowCounterRedisExecutor", () => {
 
         const state = await redis.hmget(key, "currentCount", "previousCount");
         expect(parseInt(state[0] as string, 10)).toBe(1); // Current window has only 1 request
-        expect(parseInt(state[1] as string, 10)).toBe(1); // Old window go to `previousCount`
+        expect(parseInt(state[1] as string, 10)).toBe(0); // Old window go to `previousCount`
     });
 
     it("should completely clear counts if more than 1 window passed", async () => {

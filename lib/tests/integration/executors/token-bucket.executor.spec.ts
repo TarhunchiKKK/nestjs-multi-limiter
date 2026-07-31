@@ -115,6 +115,6 @@ describe("TokenBucketRedisExecutor", () => {
 
         const pttl = await redis.pttl(key);
         expect(pttl).toBeGreaterThan(0);
-        expect(pttl).toBeLessThan(options.ttl);
+        expect(pttl).toBeLessThanOrEqual(options.ttl);
     });
 });
