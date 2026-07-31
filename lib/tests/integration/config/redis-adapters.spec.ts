@@ -78,11 +78,11 @@ describe("Different redis adapters", () => {
 
             executor = module.get(FixedWindowRedisExecutor);
 
-            // await module.init();
+            await module.init();
         });
 
         afterEach(async () => {
-            // await module.close();
+            await module.close();
         });
 
         it("should allow request", async () => {
