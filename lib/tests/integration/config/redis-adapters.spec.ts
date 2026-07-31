@@ -1,7 +1,6 @@
-import { describe, expect } from "bun:test";
-import { beforeEach, it } from "node:test";
+import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { Injectable, type OnModuleDestroy, type OnModuleInit } from "@nestjs/common";
-import { Test } from "@nestjs/testing";
+import { Test, type TestingModule } from "@nestjs/testing";
 import type { RedisValue } from "ioredis";
 import { createClient } from "redis";
 import { RateLimiterModule, type RedisAdapter } from "../../../src";
@@ -23,21 +22,23 @@ class IoRedisAdapter implements RedisAdapter {
 class NodeRedisAdapter implements RedisAdapter, OnModuleInit, OnModuleDestroy {
     private client: ReturnType<typeof createClient>;
 
-    constructor() {
-        this.client = createClient();
+    public constructor() {
+        this.client = createClient({
+            url: "redis://localhost:6379"
+        });
 
         this.client.on("error", (err) => console.error("Redis Client Error", err));
     }
 
-    async onModuleInit() {
+    public async onModuleInit() {
         await this.client.connect();
     }
 
-    async onModuleDestroy() {
-        await this.client.disconnect();
+    public async onModuleDestroy() {
+        await this.client.quit();
     }
 
-    async eval(...args: [script: string | Buffer, numkeys: number | string, ...args: RedisValue[]]) {
+    public async eval(...args: [script: string | Buffer, numkeys: number | string, ...args: RedisValue[]]) {
         const [script, numkeys, ...rest] = args;
 
         const keysCount = typeof numkeys === "string" ? parseInt(numkeys, 10) : numkeys;
@@ -59,10 +60,11 @@ describe("Different redis adapters", () => {
         ['"node-redis" adapter', NodeRedisAdapter, [NodeRedisAdapter]]
     ])("%s", (_, adapter, providers) => {
         let executor: FixedWindowRedisExecutor;
+        let module: TestingModule;
         const key = "rate-limiter:fixed-window:redis-adapters:scope";
 
         beforeEach(async () => {
-            const module = await Test.createTestingModule({
+            module = await Test.createTestingModule({
                 imports: [
                     RateLimiterModule.forRoot({
                         storage: {
@@ -75,6 +77,12 @@ describe("Different redis adapters", () => {
             }).compile();
 
             executor = module.get(FixedWindowRedisExecutor);
+
+            await module.init();
+        });
+
+        afterEach(async () => {
+            await module.close();
         });
 
         it("should allow request", async () => {

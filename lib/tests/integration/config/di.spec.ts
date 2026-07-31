@@ -1,5 +1,4 @@
-import { beforeEach, describe, expect } from "bun:test";
-import { it } from "node:test";
+import { beforeEach, describe, expect, it } from "bun:test";
 import { Test, type TestingModule } from "@nestjs/testing";
 import { RateLimiterModule, RateLimitGuard } from "../../../src";
 import { mergeDefaultOptions } from "../../../src/config/defaults";
