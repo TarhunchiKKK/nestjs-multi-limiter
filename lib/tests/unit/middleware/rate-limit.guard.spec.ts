@@ -5,9 +5,11 @@ import { Test } from "@nestjs/testing";
 import { RateLimiterModule, RateLimitGuard } from "../../../src";
 import { RATE_LIMITER_MODULE_DEFAULT_OPTIONS } from "../../../src/config/defaults/default-options.constants";
 import type { RateLimitGuardOptions, RateLimitOptions } from "../../../src/config/options";
+import { BuiltinKeyExtractor } from "../../../src/custom/key-extractors";
 import { GUARD_OPTIONS_TOKEN } from "../../../src/di";
 import { ProvidersDiscoveryService } from "../../../src/services/providers-discovery.service";
 import {
+    CustomError,
     CustomErrorFactory,
     CustomKeyExtractor,
     CustomOptionsFactory,
@@ -90,6 +92,39 @@ describe("RateLimitGuard", () => {
             expect(discoveryServiceMock.getKeyExtractor).toHaveBeenCalledWith(CustomKeyExtractor);
             expect(discoveryServiceMock.getErrorFactory).toHaveBeenCalledWith(CustomErrorFactory);
             expect(discoveryServiceMock.getOptionsFactory).toHaveBeenCalledWith(CustomOptionsFactory);
+        });
+    });
+
+    describe("custom providers", async () => {
+        it("should throw custom error", () => {
+            reflectorMock.get.mockReturnValueOnce(false).mockReturnValueOnce({
+                errorFactory: CustomErrorFactory
+            } satisfies RateLimitOptions);
+
+            discoveryServiceMock.getExecutor.mockReturnValue({ check: () => false });
+            discoveryServiceMock.getKeyExtractor.mockReturnValue(new CustomKeyExtractor());
+            discoveryServiceMock.getErrorFactory.mockReturnValue(new CustomErrorFactory());
+
+            const resultPromise = guard.canActivate(context as unknown as ExecutionContext);
+
+            expect(resultPromise).rejects.toThrow(CustomError);
+        });
+
+        it("should not override static options", async () => {
+            reflectorMock.get.mockReturnValueOnce(false).mockReturnValueOnce({
+                keyExtractor: CustomKeyExtractor,
+                factory: CustomOptionsFactory
+            } satisfies RateLimitOptions);
+
+            discoveryServiceMock.getExecutor.mockReturnValue({ check: () => true });
+            discoveryServiceMock.getKeyExtractor.mockReturnValue(new CustomKeyExtractor());
+            discoveryServiceMock.getErrorFactory.mockReturnValue(new CustomErrorFactory());
+            discoveryServiceMock.getOptionsFactory.mockReturnValue({ getOptions: () => ({ keyExtractor: BuiltinKeyExtractor }) });
+
+            const result = await guard.canActivate(context as unknown as ExecutionContext);
+
+            expect(result).toBeTrue();
+            expect(discoveryServiceMock.getKeyExtractor).toHaveBeenCalledWith(CustomKeyExtractor);
         });
     });
 });

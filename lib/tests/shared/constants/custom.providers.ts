@@ -7,10 +7,16 @@ export class CustomKeyExtractor implements IKeyExtractor {
     }
 }
 
+export class CustomError extends Error {
+    public constructor() {
+        super("Custom rate limit error");
+    }
+}
+
 @ErrorFactory()
 export class CustomErrorFactory implements IErrorFactory {
     public getError() {
-        return new Error();
+        return new CustomError();
     }
 }
 
