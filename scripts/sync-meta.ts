@@ -1,7 +1,7 @@
 import { join } from "node:path";
 
 const DESTINATION_DIR = "lib";
-const FILENAMES = ["readme.md", "license"];
+const FILENAMES = ["readme.md", "license", "contributing.md"];
 
 for (const filename of FILENAMES) {
     const srcFile = Bun.file(filename);

@@ -115,9 +115,7 @@ import { RateLimit, RateLimitGuard } from "nestjs-rate-limiter";
 @UseGuards(RateLimitGuard)
 export class AppController {
     @Get("/hello")
-    @RateLimit({
-        /* override default options */
-    })
+    @RateLimit({ /* override default options */ })
     public hello() {
         return "Hello";
     }
@@ -137,7 +135,7 @@ RateLimiterModule.forRoot({
     // storage configuration (Map or Redis)
     storage: {
         type: "in-memory",
-        gcTime: 15 * 60 * 1000, // Time to clear `old` data from memory
+        gcTime: 15 * 60 * 1000, // time to clear `old` data from memory
     },
 
     // strategy configuration
@@ -218,7 +216,6 @@ Your custom options will be merged with this:
 By default guard uses options provided in `RateLimiterModule` configuration. You can override this options in decorator:
 
 ```typescript
-// Your custom providers
 import {
     MyCustomKeyExtractor,
     MyCustomErrorFactory,
@@ -355,12 +352,9 @@ export class MyCustomOptionsFactory implements IOptionsFactory {
     public constructor(private readonly configService: ConfigService) {}
 
     public getOptions(context: ExecutionContext) {
-        const scope =
-            this.configService.get("RATE_LIMITER_SCOPE") ?? "custom-scope";
+        const scope = this.configService.get("RATE_LIMITER_SCOPE") ?? "custom-scope";
 
-        return {
-            scope,
-        };
+        return { scope };
     }
 }
 ```
@@ -393,12 +387,8 @@ RateLimiterModule.forRoot({
 
 ```typescript
 RateLimiterModule.forRootAsync({
-    imports: [
-        /* ... */
-    ],
-    inject: [
-        /* ... */
-    ],
+    imports: [/* ... */],
+    inject: [/* ... */],
     useFactory: (/* ... */) => ({
         // This options are same to `forRoot` method excluding `custom` property
     }),
