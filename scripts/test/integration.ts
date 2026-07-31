@@ -13,8 +13,6 @@ try {
 } catch (_) {
     console.error("❌ Tests failed");
 
-    // console.error(error);
-
     process.exitCode = 1;
 } finally {
     console.log("🧹 Stopping containers...");

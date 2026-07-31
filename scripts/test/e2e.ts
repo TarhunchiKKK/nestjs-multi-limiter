@@ -10,10 +10,8 @@ try {
     await $`turbo run test:e2e`;
 
     console.log("✅ Tests succeed");
-} catch (error) {
+} catch (_) {
     console.error("❌ Tests failed");
-
-    console.error(error);
 
     process.exitCode = 1;
 } finally {
