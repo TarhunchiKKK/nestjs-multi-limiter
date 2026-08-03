@@ -238,7 +238,7 @@ import {
 
 ## Custom Providers
 
-> ⚠️ Important ⚠️
+> ⚠️ **Important** ⚠️
 >
 > Your custom providers (key extractors, error factories and options factories) will be called on every request.
 > Do not perform any expensive computations here. It can significantly hurt performance.
