@@ -2,9 +2,14 @@ import { afterEach, beforeEach, describe } from "bun:test";
 import type { INestApplication } from "@nestjs/common";
 import { Test, type TestingModule } from "@nestjs/testing";
 import type { App } from "supertest/types";
-import { AppModule } from "../src/app.module";
+import { BuiltinProvidersModule } from "../src/modules/builtin-providers.module";
+import { CustomProvidersModule } from "../src/modules/custom-providers.module";
+import { RedisAdapter } from "../src/providers/redis.adapter";
 
-describe("AppController (e2e)", () => {
+describe.each([
+    ["built-in providers", BuiltinProvidersModule],
+    ["custom providers", CustomProvidersModule]
+])("App (%s)", (_, AppModule) => {
     let app: INestApplication<App>;
 
     beforeEach(async () => {
@@ -13,6 +18,9 @@ describe("AppController (e2e)", () => {
         }).compile();
 
         app = moduleFixture.createNestApplication();
+
+        app.enableCors();
+
         await app.init();
     });
 
@@ -21,6 +29,10 @@ describe("AppController (e2e)", () => {
     // });
 
     afterEach(async () => {
+        const redisAdapter = app.get(RedisAdapter);
+
+        await redisAdapter.flush();
+
         await app.close();
     });
 });
