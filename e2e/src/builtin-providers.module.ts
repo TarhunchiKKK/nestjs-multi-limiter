@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
-import { JwtModule } from "@nestjs/jwt";
 import { RateLimiterModule } from "nestjs-rate-limiter";
+import { AuthModule } from "./auth/auth.module";
 import { FIXED_WINDOW_LIMIT, FIXED_WINDOW_TTL, TOKEN_BUCKET_CAPACITY, TOKEN_BUCKET_REFILL_RATE } from "./constants";
 import { MoviesModule } from "./movies/movies.module";
 import { RedisModule } from "./redis/redis.module";
@@ -12,17 +12,6 @@ import { UsersModule } from "./users/users.module";
     imports: [
         ConfigModule.forRoot({
             isGlobal: true
-        }),
-        JwtModule.registerAsync({
-            imports: [ConfigModule],
-            inject: [ConfigService],
-            useFactory: (configService: ConfigService) => ({
-                global: true,
-                secret: configService.getOrThrow("JWT_SECRET"),
-                signOptions: {
-                    expiresIn: configService.getOrThrow("JWT_EXPIRATION")
-                }
-            })
         }),
         RateLimiterModule.forRootAsync({
             imports: [ConfigModule, RedisModule],
@@ -45,6 +34,7 @@ import { UsersModule } from "./users/users.module";
                 }
             })
         }),
+        AuthModule,
         UsersModule,
         MoviesModule,
         RedisModule
