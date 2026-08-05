@@ -16,11 +16,11 @@ import { UsersModule } from "./users/users.module";
         RateLimiterModule.forRootAsync({
             imports: [ConfigModule, RedisModule],
             inject: [ConfigService, RedisService],
-            useFactory: (configService: ConfigService) => ({
+            useFactory: (configService: ConfigService, redisService: RedisService) => ({
                 scope: configService.getOrThrow("RATE_LIMIT_SCOPE"),
                 storage: {
                     type: "redis",
-                    adapter: RedisService
+                    adapter: redisService
                 },
                 strategyOptions: {
                     fixedWindow: {

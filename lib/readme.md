@@ -495,7 +495,7 @@ RateLimiterModule.forRootAsync({
     useFactory: (redisService: RedisService) => ({
         storage: {
             type: "redis",
-            adapter: RedisService, // or use `redisService.getClient()`
+            adapter: redisService, // or use `redisService.getClient()`
         },
         // ...
     }),
