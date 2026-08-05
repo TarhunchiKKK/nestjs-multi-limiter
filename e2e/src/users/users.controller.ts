@@ -1,6 +1,6 @@
 import { Controller, Get, Inject, Param, Post, UseGuards } from "@nestjs/common";
 import { RateLimit, RateLimitGuard, SkipRateLimit } from "nestjs-rate-limiter";
-import { TOKEN_BUCKET_CAPACITY } from "../constants";
+import { SIGN_IN_CAPACITY } from "../constants";
 import { UsersService } from "./users.service";
 
 @Controller("users")
@@ -15,7 +15,7 @@ export class UsersController {
     }
 
     @Post("sign-in/:index")
-    @RateLimit({ strategy: "token-bucket", capacity: TOKEN_BUCKET_CAPACITY })
+    @RateLimit({ strategy: "token-bucket", capacity: SIGN_IN_CAPACITY })
     public signIn(@Param("index") index: string) {
         return this.usersService.singIn(+index);
     }
