@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe } from "bun:test";
 import type { INestApplication } from "@nestjs/common";
 import { Test, type TestingModule } from "@nestjs/testing";
 import type { App } from "supertest/types";
-import { BuiltinProvidersModule } from "../src/modules/builtin-providers.module";
-import { CustomProvidersModule } from "../src/modules/custom-providers.module";
+import { BuiltinProvidersModule } from "../src/builtin-providers.module";
+import { CustomProvidersModule } from "../src/custom-providers.module";
 import { IoRedisAdapter } from "../src/providers/redis.adapter";
 
 describe.each([

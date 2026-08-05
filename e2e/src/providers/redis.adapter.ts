@@ -14,8 +14,8 @@ export class IoRedisAdapter implements RedisAdapter, OnModuleDestroy {
         });
     }
 
-    public async eval(script: string | Buffer<ArrayBufferLike>, numkeys: string | number, ...args: RedisValue[]) {
-        return await this.client.eval(script, numkeys, ...args);
+    public async eval(script: string | Buffer<ArrayBufferLike>, numKeys: string | number, ...args: RedisValue[]) {
+        return await this.client.eval(script, numKeys, ...args);
     }
 
     public async flush() {
