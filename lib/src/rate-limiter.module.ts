@@ -1,4 +1,4 @@
-import { type DynamicModule, type FactoryProvider, Module, type Provider } from "@nestjs/common";
+import { type DynamicModule, type FactoryProvider, Global, Module, type Provider } from "@nestjs/common";
 import { mergeDefaultOptions } from "./config/defaults";
 import { getExecutorsByStorage } from "./config/helpers";
 import type { RateLimiterModuleAsyncOptions, RateLimiterModuleFullOptions, RateLimiterModuleOptions, RateLimitGuardOptions } from "./config/options";
@@ -15,6 +15,7 @@ import type { Storage } from "./shared/model";
 /**
  * @publicApi
  */
+@Global()
 @Module({})
 export class RateLimiterModule {
     /**
@@ -27,7 +28,6 @@ export class RateLimiterModule {
         const fullOptions = mergeDefaultOptions(options);
 
         return {
-            global: true,
             module: RateLimiterModule,
             providers: [
                 { provide: MODULE_OPTIONS_TOKEN, useValue: fullOptions },
@@ -82,7 +82,6 @@ export class RateLimiterModule {
         };
 
         return {
-            global: true,
             module: RateLimiterModule,
             imports: options.imports ?? [],
             providers: [
