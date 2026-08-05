@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, it } from "bun:test";
 import { HttpStatus, type INestApplication } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { Test, type TestingModule } from "@nestjs/testing";
 import request from "supertest";
 import type { App } from "supertest/types";
@@ -36,21 +37,49 @@ describe.each([
 
     describe("/users", () => {
         it("should skip rate limiting", async () => {
+            const token = "jwt";
+
             for (let i = 0; i < SIGN_IN_CAPACITY; i++) {
-                await request(app.getHttpServer()).get("/users").expect(HttpStatus.OK);
+                await request(app.getHttpServer()).get("/users").set("Authorization", `Bearer ${token}`).expect(HttpStatus.OK);
             }
 
-            await request(app.getHttpServer()).get("/users").expect(HttpStatus.OK);
+            await request(app.getHttpServer()).get("/users").set("Authorization", `Bearer ${token}`).expect(HttpStatus.TOO_MANY_REQUESTS);
         });
 
         it("should override default capacity", async () => {
+            const token = "jwt";
+
             for (let i = 0; i < SIGN_IN_CAPACITY; i++) {
-                await request(app.getHttpServer()).get("/users").expect(HttpStatus.OK);
+                await request(app.getHttpServer()).post("/users/sign-in/:0").set("Authorization", `Bearer ${token}`).expect(HttpStatus.OK);
             }
 
-            await request(app.getHttpServer()).get("/users").expect(HttpStatus.TOO_MANY_REQUESTS);
+            await request(app.getHttpServer()).post("/users/sign-in/:0").set("Authorization", `Bearer ${token}`).expect(HttpStatus.OK);
         });
     });
 
-    describe("/movies", () => {});
+    describe("/movies", () => {
+        it("should override default limit", async () => {
+            const { token } = (await request(app.getHttpServer()).post("/users/sign-in/:0").set("Authorization", `Bearer jwt`)).body;
+
+            for (let i = 0; i < SIGN_IN_CAPACITY; i++) {
+                await request(app.getHttpServer()).get("/movies").set("Authorization", `Bearer ${token}`).expect(HttpStatus.OK);
+            }
+
+            await request(app.getHttpServer()).get("/movies").set("Authorization", `Bearer ${token}`).expect(HttpStatus.TOO_MANY_REQUESTS);
+        });
+
+        it("should use dynamic options factory", async () => {
+            const configService = app.get(ConfigService);
+
+            const standardLimit = +configService.getOrThrow<string>("STANDARD_SUBSCRIPTION_LIMIT");
+
+            const { token } = (await request(app.getHttpServer()).post("/users/sign-in/:0").set("Authorization", `Bearer jwt`)).body;
+
+            for (let i = 0; i < standardLimit; i++) {
+                await request(app.getHttpServer()).get("/movies/0").set("Authorization", `Bearer ${token}`).expect(HttpStatus.OK);
+            }
+
+            await request(app.getHttpServer()).get("/movies/0").set("Authorization", `Bearer ${token}`).expect(HttpStatus.TOO_MANY_REQUESTS);
+        });
+    });
 });

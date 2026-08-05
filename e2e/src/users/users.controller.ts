@@ -10,14 +10,14 @@ export class UsersController {
 
     @Get()
     @HttpCode(HttpStatus.OK)
-    @SkipRateLimit()
+    @RateLimit({ strategy: "token-bucket", capacity: SIGN_IN_CAPACITY })
     public async findAll() {
         return await this.usersService.findAll();
     }
 
     @Post("sign-in/:index")
     @HttpCode(HttpStatus.OK)
-    @RateLimit({ strategy: "token-bucket", capacity: SIGN_IN_CAPACITY })
+    @SkipRateLimit()
     public signIn(@Param("index") index: string) {
         return this.usersService.singIn(+index);
     }

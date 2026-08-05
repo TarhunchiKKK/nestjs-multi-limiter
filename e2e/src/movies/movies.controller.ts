@@ -1,6 +1,6 @@
 import { Controller, Get, HttpCode, HttpStatus, Inject, Param, UseGuards } from "@nestjs/common";
 import { RateLimit, RateLimitGuard } from "nestjs-rate-limiter";
-import { FIND_ALL_MOVIES_LIMIT } from "../constants";
+import { FIND_ALL_MOVIES_LIMIT, FIXED_WINDOW_TTL } from "../constants";
 import { MoviesService } from "./movies.service";
 import { MoviesErrorFactory } from "./providers/movies.error-factory";
 import { MoviesKeyExtractor } from "./providers/movies.key-extractor";
@@ -21,7 +21,7 @@ export class MoviesController {
 
     @Get(":id")
     @HttpCode(HttpStatus.OK)
-    @RateLimit({ ttl: 24 * 60 * 1000, keyExtractor: MoviesKeyExtractor, factory: MoviesOptionsFactory })
+    @RateLimit({ ttl: FIXED_WINDOW_TTL, keyExtractor: MoviesKeyExtractor, factory: MoviesOptionsFactory })
     public async findOne(@Param("id") id: string) {
         return await this.moviesService.findOne(id);
     }

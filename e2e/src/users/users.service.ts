@@ -12,7 +12,7 @@ export class UsersService {
             id: faker.string.uuid(),
             name: faker.person.fullName(),
             language: faker.helpers.arrayElement(["ru", "en"]),
-            subscriptionType: faker.helpers.arrayElement(["standard", "pro"])
+            subscriptionType: faker.helpers.arrayElement(["standard"])
         }));
     }
 
@@ -29,6 +29,8 @@ export class UsersService {
     public singIn(index: number) {
         const user = this.users[index];
 
-        return this.jwtService.signAsync({ id: user.id });
+        return {
+            token: this.jwtService.signAsync({ id: user.id })
+        };
     }
 }

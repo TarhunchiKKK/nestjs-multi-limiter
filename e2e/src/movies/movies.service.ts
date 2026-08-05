@@ -7,8 +7,8 @@ export class MoviesService {
     private readonly movies: Movie[];
 
     public constructor() {
-        this.movies = Array.from({ length: 20 }).map(() => ({
-            id: faker.string.uuid(),
+        this.movies = Array.from({ length: 20 }).map((_, index) => ({
+            id: String(index),
             title: faker.lorem.sentence({ min: 1, max: 4 })
         }));
     }
