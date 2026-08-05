@@ -1,4 +1,4 @@
-import { Controller, Get, Inject, Param, UseGuards } from "@nestjs/common";
+import { Controller, Get, HttpCode, HttpStatus, Inject, Param, UseGuards } from "@nestjs/common";
 import { RateLimit, RateLimitGuard } from "nestjs-rate-limiter";
 import { FIND_ALL_MOVIES_LIMIT } from "../constants";
 import { MoviesService } from "./movies.service";
@@ -13,12 +13,14 @@ export class MoviesController {
     public constructor(@Inject(MoviesService) private readonly moviesService: MoviesService) {}
 
     @Get()
+    @HttpCode(HttpStatus.OK)
     @RateLimit({ strategy: "fixed-window", limit: FIND_ALL_MOVIES_LIMIT })
     public async findAll() {
         return await this.moviesService.findAll();
     }
 
     @Get(":id")
+    @HttpCode(HttpStatus.OK)
     @RateLimit({ ttl: 24 * 60 * 1000, keyExtractor: MoviesKeyExtractor, factory: MoviesOptionsFactory })
     public async findOne(@Param("id") id: string) {
         return await this.moviesService.findOne(id);
