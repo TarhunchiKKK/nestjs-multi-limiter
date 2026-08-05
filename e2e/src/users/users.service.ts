@@ -1,10 +1,19 @@
+import { faker } from "@faker-js/faker";
 import { Injectable } from "@nestjs/common";
 import type { User } from "./types/users.types";
-import { Users } from "./users.data";
 
 @Injectable()
 export class UsersService {
-    private users = Users;
+    private users: User[];
+
+    public constructor() {
+        this.users = Array.from({ length: 20 }).map(() => ({
+            id: faker.string.uuid(),
+            name: faker.person.fullName(),
+            language: faker.helpers.arrayElement(["ru", "en"]),
+            subscriptionType: faker.helpers.arrayElement(["standard", "pro"])
+        }));
+    }
 
     public async create(user: User) {
         this.users.push(user);

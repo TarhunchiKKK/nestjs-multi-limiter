@@ -1,6 +1,6 @@
-export type SubscriptionTypes = "community" | "standard" | "pro";
+export type SubscriptionTypes = "standard" | "pro";
 
-export type Languages = "ru" | "en" | "fr";
+export type Languages = "ru" | "en";
 
 export type User = {
     id: string;
