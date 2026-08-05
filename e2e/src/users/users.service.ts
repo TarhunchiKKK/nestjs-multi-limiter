@@ -1,18 +1,18 @@
 import { faker } from "@faker-js/faker";
 import { Inject, Injectable } from "@nestjs/common";
-import type { JwtService } from "@nestjs/jwt";
+import { AuthService } from "../auth/auth.service";
 import type { User } from "./types/users.types";
 
 @Injectable()
 export class UsersService {
     private users: User[];
 
-    public constructor(@Inject() private readonly jwtService: JwtService) {
+    public constructor(@Inject(AuthService) private readonly authService: AuthService) {
         this.users = Array.from({ length: 20 }).map(() => ({
             id: faker.string.uuid(),
             name: faker.person.fullName(),
             language: faker.helpers.arrayElement(["ru", "en"]),
-            subscriptionType: faker.helpers.arrayElement(["standard", "pro"])
+            subscriptionType: faker.helpers.arrayElement(["standard"])
         }));
     }
 
@@ -29,6 +29,8 @@ export class UsersService {
     public singIn(index: number) {
         const user = this.users[index];
 
-        return this.jwtService.signAsync({ id: user.id });
+        return {
+            token: this.authService.sign({ id: user.id })
+        };
     }
 }

@@ -1,7 +1,7 @@
 import { type ExecutionContext, HttpException, HttpStatus, Inject, NotFoundException, UnauthorizedException } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
 import type { Request } from "express";
 import { ErrorFactory, type ErrorFactoryOptions, type IErrorFactory } from "nestjs-rate-limiter";
+import { AuthService } from "../../auth/auth.service";
 import { UsersService } from "../../users/users.service";
 
 export class MoviesRateLimitException extends HttpException {
@@ -14,7 +14,7 @@ export class MoviesRateLimitException extends HttpException {
 export class MoviesErrorFactory implements IErrorFactory {
     public constructor(
         @Inject(UsersService) private readonly usersService: UsersService,
-        @Inject(JwtService) private readonly jwtService: JwtService
+        @Inject(AuthService) private readonly authService: AuthService
     ) {}
 
     public async getError(context: ExecutionContext, options: ErrorFactoryOptions) {
@@ -43,7 +43,7 @@ export class MoviesErrorFactory implements IErrorFactory {
     }
 
     private async getUser(token: string) {
-        const { id } = this.jwtService.verify(token);
+        const { id } = this.authService.verify(token);
 
         if (!id) {
             throw new UnauthorizedException("User id cannot be extracted");

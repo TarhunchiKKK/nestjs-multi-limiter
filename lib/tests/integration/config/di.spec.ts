@@ -6,10 +6,20 @@ import type { RateLimiterModuleAsyncOptions, RateLimiterModuleFullOptions, RateL
 import { BuiltinErrorFactory } from "../../../src/custom/error-factories";
 import { BuiltinKeyExtractor } from "../../../src/custom/key-extractors";
 import { GUARD_OPTIONS_TOKEN, MODULE_OPTIONS_TOKEN, STORAGE_TOKEN } from "../../../src/di";
+import {
+    FixedWindowInMemoryExecutor,
+    FixedWindowRedisExecutor,
+    LeakyBucketInMemoryExecutor,
+    LeakyBucketRedisExecutor,
+    SlidingWindowCounterInMemoryExecutor,
+    SlidingWindowCounterRedisExecutor,
+    SlidingWindowLogInMemoryExecutor,
+    SlidingWindowLogRedisExecutor,
+    TokenBucketInMemoryExecutor,
+    TokenBucketRedisExecutor
+} from "../../../src/executors";
 import { InMemoryGarbageCollector } from "../../../src/services/in-memory.garbage-collector";
 import { ProvidersDiscoveryService } from "../../../src/services/providers-discovery.service";
-
-const nonOptionsProviders = [STORAGE_TOKEN, BuiltinKeyExtractor, BuiltinErrorFactory, ProvidersDiscoveryService, InMemoryGarbageCollector, RateLimitGuard];
 
 const syncOptions: RateLimiterModuleOptions = {
     storage: {
@@ -65,10 +75,40 @@ describe.each([
     });
 
     it("should inject non-options providers", () => {
+        const nonOptionsProviders = [
+            STORAGE_TOKEN,
+            BuiltinKeyExtractor,
+            BuiltinErrorFactory,
+            ProvidersDiscoveryService,
+            InMemoryGarbageCollector,
+            RateLimitGuard
+        ];
+
         for (const token of nonOptionsProviders) {
             const provider = module.get(token);
 
             expect(provider).toBeDefined();
+        }
+    });
+
+    it("should find appropriate executors", () => {
+        const executors = [
+            FixedWindowInMemoryExecutor,
+            TokenBucketInMemoryExecutor,
+            SlidingWindowCounterInMemoryExecutor,
+            SlidingWindowLogInMemoryExecutor,
+            LeakyBucketInMemoryExecutor,
+            FixedWindowRedisExecutor,
+            TokenBucketRedisExecutor,
+            SlidingWindowCounterRedisExecutor,
+            SlidingWindowLogRedisExecutor,
+            LeakyBucketRedisExecutor
+        ];
+
+        for (const token of executors) {
+            const executor = module.get(token);
+
+            expect(executor).toBeDefined();
         }
     });
 });

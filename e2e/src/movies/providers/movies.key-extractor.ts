@@ -1,11 +1,11 @@
 import { type ExecutionContext, Inject, UnauthorizedException } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
 import type { Request } from "express";
 import { type IKeyExtractor, KeyExtractor } from "nestjs-rate-limiter";
+import { AuthService } from "../../auth/auth.service";
 
 @KeyExtractor()
 export class MoviesKeyExtractor implements IKeyExtractor {
-    public constructor(@Inject(JwtService) private readonly jwtService: JwtService) {}
+    public constructor(@Inject(AuthService) private readonly authService: AuthService) {}
 
     public async extract(context: ExecutionContext) {
         const token = this.getToken(context);
@@ -28,7 +28,7 @@ export class MoviesKeyExtractor implements IKeyExtractor {
     }
 
     private getUserId(token: string) {
-        const { id } = this.jwtService.verify(token);
+        const { id } = this.authService.verify(token);
 
         if (!id) {
             throw new UnauthorizedException("User id cannot be extracted");

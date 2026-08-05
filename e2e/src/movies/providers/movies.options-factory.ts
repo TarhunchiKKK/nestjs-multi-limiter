@@ -1,8 +1,8 @@
 import { type ExecutionContext, Inject, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { JwtService } from "@nestjs/jwt";
 import type { Request } from "express";
 import { type IOptionsFactory, OptionsFactory, type RateLimitOptions } from "nestjs-rate-limiter";
+import { AuthService } from "../../auth/auth.service";
 import { UsersService } from "../../users/users.service";
 
 @OptionsFactory()
@@ -12,7 +12,7 @@ export class MoviesOptionsFactory implements IOptionsFactory {
 
     public constructor(
         @Inject(UsersService) private readonly usersService: UsersService,
-        @Inject(JwtService) private readonly jwtService: JwtService,
+        @Inject(AuthService) private readonly authService: AuthService,
         @Inject(ConfigService) private readonly configService: ConfigService
     ) {
         this.standardSubscriptionLimit = +this.configService.getOrThrow("STANDARD_SUBSCRIPTION_LIMIT");
@@ -51,7 +51,7 @@ export class MoviesOptionsFactory implements IOptionsFactory {
     }
 
     private async getUser(token: string) {
-        const { id } = this.jwtService.verify(token);
+        const { id } = this.authService.verify(token);
 
         if (!id) {
             throw new UnauthorizedException("User id cannot be extracted");

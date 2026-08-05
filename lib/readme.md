@@ -50,7 +50,7 @@
 - **NestJS Native**: Dependency injection and async configuration.
 - **Different limiting strategies**: _Fixed Window_, _Token Bucket_, _Sliding Window Counter_, _Sliding Window Log_ and _Leaky Bucket_.
 - **Different Storages**: In-memory (Map) and <a href="https://redis.io/?ref=soroushjp.com">Redis</a> (With <a href="https://www.lua.org/">Lua</a> scripts).
-- **Library Independency**: <a href="https://redis.io/?ref=soroushjp.com">Redis</a> integration does not on a specific library.   
+- **Library Independency**: <a href="https://redis.io/?ref=soroushjp.com">Redis</a> integration does not depend on a specific library.   
 - **Custom Key Extractors**: Provide your custom key extraction logic.
 - **Custom Error Factories**: Customize you rate limit exhausted error.
 - **Dynamic Configuration**: Provide dynamic rate limiting options.
@@ -495,7 +495,7 @@ RateLimiterModule.forRootAsync({
     useFactory: (redisService: RedisService) => ({
         storage: {
             type: "redis",
-            adapter: RedisService, // or use `redisService.getClient()`
+            adapter: redisService, // or use `redisService.getClient()`
         },
         // ...
     }),
