@@ -21,21 +21,6 @@ import {
 import { InMemoryGarbageCollector } from "../../../src/services/in-memory.garbage-collector";
 import { ProvidersDiscoveryService } from "../../../src/services/providers-discovery.service";
 
-const nonOptionsProviders = [STORAGE_TOKEN, BuiltinKeyExtractor, BuiltinErrorFactory, ProvidersDiscoveryService, InMemoryGarbageCollector, RateLimitGuard];
-
-const executors = [
-    FixedWindowInMemoryExecutor,
-    TokenBucketInMemoryExecutor,
-    SlidingWindowCounterInMemoryExecutor,
-    SlidingWindowLogInMemoryExecutor,
-    LeakyBucketInMemoryExecutor,
-    FixedWindowRedisExecutor,
-    TokenBucketRedisExecutor,
-    SlidingWindowCounterRedisExecutor,
-    SlidingWindowLogRedisExecutor,
-    LeakyBucketRedisExecutor
-];
-
 const syncOptions: RateLimiterModuleOptions = {
     storage: {
         type: "redis",
@@ -90,6 +75,15 @@ describe.each([
     });
 
     it("should inject non-options providers", () => {
+        const nonOptionsProviders = [
+            STORAGE_TOKEN,
+            BuiltinKeyExtractor,
+            BuiltinErrorFactory,
+            ProvidersDiscoveryService,
+            InMemoryGarbageCollector,
+            RateLimitGuard
+        ];
+
         for (const token of nonOptionsProviders) {
             const provider = module.get(token);
 
@@ -98,6 +92,19 @@ describe.each([
     });
 
     it("should find appropriate executors", () => {
+        const executors = [
+            FixedWindowInMemoryExecutor,
+            TokenBucketInMemoryExecutor,
+            SlidingWindowCounterInMemoryExecutor,
+            SlidingWindowLogInMemoryExecutor,
+            LeakyBucketInMemoryExecutor,
+            FixedWindowRedisExecutor,
+            TokenBucketRedisExecutor,
+            SlidingWindowCounterRedisExecutor,
+            SlidingWindowLogRedisExecutor,
+            LeakyBucketRedisExecutor
+        ];
+
         for (const token of executors) {
             const executor = module.get(token);
 
