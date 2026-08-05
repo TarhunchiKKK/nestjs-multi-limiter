@@ -40,10 +40,11 @@ import type { Storage } from "./shared/model";
         BuiltinKeyExtractor,
         BuiltinErrorFactory,
         ProvidersDiscoveryService,
+        // QUESTION: Should this provider be exported?
         InMemoryGarbageCollector,
         RateLimitGuard
     ],
-    exports: [RateLimitGuard]
+    exports: [RateLimitGuard, ProvidersDiscoveryService, GUARD_OPTIONS_TOKEN]
 })
 export class RateLimiterModule {
     /**
@@ -149,9 +150,5 @@ export class RateLimiterModule {
             errorFactory: options.defaultProviders.errorFactory,
             factory: options.defaultProviders.optionsFactory
         };
-    }
-
-    private static getBuiltinProviders() {
-        return [BuiltinKeyExtractor, BuiltinErrorFactory, ProvidersDiscoveryService, InMemoryGarbageCollector, RateLimitGuard];
     }
 }
