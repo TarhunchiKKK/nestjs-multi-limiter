@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { InjectStorage } from "../../../di";
-import type { Key, RedisAdapter } from "../../../shared/model";
+import type { IRedisAdapter, Key } from "../../../shared/model";
 import { Executor, type IExecutor } from "../../lib";
 import type { LeakyBucketOptions } from "./types";
 
@@ -9,7 +9,7 @@ import type { LeakyBucketOptions } from "./types";
 export class LeakyBucketRedisExecutor implements IExecutor<LeakyBucketOptions> {
     private readonly luaScript: string;
 
-    public constructor(@InjectStorage() private readonly redis: RedisAdapter) {
+    public constructor(@InjectStorage() private readonly redis: IRedisAdapter) {
         const luaScriptPath = path.join(__dirname, "../../../../lua/leaky-bucket.lua");
         this.luaScript = fs.readFileSync(luaScriptPath, "utf-8");
     }

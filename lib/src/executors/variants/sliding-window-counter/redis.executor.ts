@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { InjectStorage } from "../../../di";
-import type { Key, RedisAdapter } from "../../../shared/model";
+import type { IRedisAdapter, Key } from "../../../shared/model";
 import { Executor, type IExecutor } from "../../lib";
 import type { SlidingWindowCounterOptions } from "./types";
 
@@ -9,7 +9,7 @@ import type { SlidingWindowCounterOptions } from "./types";
 export class SlidingWindowCounterRedisExecutor implements IExecutor<SlidingWindowCounterOptions> {
     private readonly luaScript: string;
 
-    public constructor(@InjectStorage() private readonly redis: RedisAdapter) {
+    public constructor(@InjectStorage() private readonly redis: IRedisAdapter) {
         const luaScriptPath = path.join(__dirname, "../../../../lua/sliding-window-counter.lua");
         this.luaScript = fs.readFileSync(luaScriptPath, "utf-8");
     }

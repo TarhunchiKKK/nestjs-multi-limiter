@@ -1,7 +1,7 @@
 import type { Type } from "@nestjs/common";
 import type { AllStrategiesOptions } from "../../executors";
 import type { ExtractMember } from "../../shared/lib";
-import type { RedisAdapter, StorageTypes, Strategies } from "../../shared/model";
+import type { IRedisAdapter, StorageTypes, Strategies } from "../../shared/model";
 
 /**
  * Options for rate limiting data storage.
@@ -27,7 +27,7 @@ export type StorageOptions =
           /**
            * Custom adapter for Redis access.
            */
-          adapter: Type<RedisAdapter> | RedisAdapter;
+          adapter: Type<IRedisAdapter> | IRedisAdapter;
       };
 
 export type StrategyOptions = {
