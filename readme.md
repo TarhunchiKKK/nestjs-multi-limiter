@@ -50,6 +50,7 @@
 - **NestJS Native**: Dependency injection and async configuration.
 - **Different limiting strategies**: _Fixed Window_, _Token Bucket_, _Sliding Window Counter_, _Sliding Window Log_ and _Leaky Bucket_.
 - **Different Storages**: In-memory (Map) and <a href="https://redis.io/?ref=soroushjp.com">Redis</a> (With <a href="https://www.lua.org/">Lua</a> scripts).
+- **Library Independency**: <a href="https://redis.io/?ref=soroushjp.com">Redis</a> integration does not on a specific library.   
 - **Custom Key Extractors**: Provide your custom key extraction logic.
 - **Custom Error Factories**: Customize you rate limit exhausted error.
 - **Dynamic Configuration**: Provide dynamic rate limiting options.
@@ -291,6 +292,11 @@ MyModule.forRoot({
 })
 ```
 
+> ⚠️ **Important** 
+>
+> When implementing your custom key extractors, take care of the uniqueness and determinacy of the key. 
+> If not, it can lead to unpredictable behavior.
+
 ### Error Factories
 
 1. Define your custom error factory:
@@ -339,6 +345,10 @@ MyModule.forRoot({
 })
 ```
 
+> 📌 **Remember**
+>
+> The factory should not throw an error, it should only create it.
+
 ### Options Factories
 
 1. Define your custom options factory:
@@ -377,7 +387,7 @@ RateLimiterModule.forRoot({
 })
 ```
 
-> ⚠️ **Note**
+> 📌 **Note**
 >
 > If `RateLimit` decorator has static options (like `scope`) this static options will override corresponding properties returned by `factory`.
 
