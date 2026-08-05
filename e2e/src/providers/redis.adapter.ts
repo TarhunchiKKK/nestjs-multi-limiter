@@ -1,9 +1,10 @@
 import { Inject, Injectable, type OnModuleDestroy } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Redis, type RedisValue } from "ioredis";
+import type { RedisAdapter } from "nestjs-rate-limiter";
 
 @Injectable()
-export class RedisAdapter implements OnModuleDestroy {
+export class IoRedisAdapter implements RedisAdapter, OnModuleDestroy {
     private client: Redis;
 
     public constructor(@Inject(ConfigService) private readonly configService: ConfigService) {

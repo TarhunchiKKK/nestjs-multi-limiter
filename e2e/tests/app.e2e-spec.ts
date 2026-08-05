@@ -4,7 +4,7 @@ import { Test, type TestingModule } from "@nestjs/testing";
 import type { App } from "supertest/types";
 import { BuiltinProvidersModule } from "../src/modules/builtin-providers.module";
 import { CustomProvidersModule } from "../src/modules/custom-providers.module";
-import { RedisAdapter } from "../src/providers/redis.adapter";
+import { IoRedisAdapter } from "../src/providers/redis.adapter";
 
 describe.each([
     ["built-in providers", BuiltinProvidersModule],
@@ -29,7 +29,7 @@ describe.each([
     // });
 
     afterEach(async () => {
-        const redisAdapter = app.get(RedisAdapter);
+        const redisAdapter = app.get(IoRedisAdapter);
 
         await redisAdapter.flush();
 
