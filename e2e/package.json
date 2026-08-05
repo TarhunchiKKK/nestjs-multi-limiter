@@ -2,7 +2,7 @@
     "name": "e2e",
     "scripts": {
         "build": "nest build",
-        "test:e2e": "bun test e2e --preload ../scripts/test/preload.ts"
+        "test:e2e": "bun test tests --preload ../scripts/test/preload.ts"
     },
     "dependencies": {
         "@faker-js/faker": "^10.5.0",

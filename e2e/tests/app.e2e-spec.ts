@@ -10,8 +10,8 @@ import { CustomProvidersModule } from "../src/custom-providers.module";
 import { RedisService } from "../src/redis/redis.service";
 
 describe.each([
-    ["built-in providers", BuiltinProvidersModule],
-    ["custom providers", CustomProvidersModule]
+    ["BuiltinProvidersModule", BuiltinProvidersModule],
+    ["CustomProvidersModule", CustomProvidersModule]
 ])("App (%s)", (_, AppModule) => {
     let app: INestApplication<App>;
 
