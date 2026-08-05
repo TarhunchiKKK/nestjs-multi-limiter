@@ -1,11 +1,21 @@
-import { type DynamicModule, type FactoryProvider, Global, Module, type Provider } from "@nestjs/common";
+import { type DynamicModule, type FactoryProvider, Module, type Provider } from "@nestjs/common";
 import { mergeDefaultOptions } from "./config/defaults";
-import { getExecutorsByStorage } from "./config/helpers";
 import type { RateLimiterModuleAsyncOptions, RateLimiterModuleFullOptions, RateLimiterModuleOptions, RateLimitGuardOptions } from "./config/options";
 import { BuiltinErrorFactory } from "./custom/error-factories";
 import { BuiltinKeyExtractor } from "./custom/key-extractors";
 import { GUARD_OPTIONS_TOKEN, MODULE_OPTIONS_TOKEN, STORAGE_TOKEN } from "./di";
-import { AVAILABLE_EXECUTORS } from "./executors";
+import {
+    FixedWindowInMemoryExecutor,
+    FixedWindowRedisExecutor,
+    LeakyBucketInMemoryExecutor,
+    LeakyBucketRedisExecutor,
+    SlidingWindowCounterInMemoryExecutor,
+    SlidingWindowCounterRedisExecutor,
+    SlidingWindowLogInMemoryExecutor,
+    SlidingWindowLogRedisExecutor,
+    TokenBucketInMemoryExecutor,
+    TokenBucketRedisExecutor
+} from "./executors";
 import { RateLimitGuard } from "./middleware";
 import { InMemoryGarbageCollector } from "./services/in-memory.garbage-collector";
 import { ProvidersDiscoveryService } from "./services/providers-discovery.service";
@@ -15,8 +25,26 @@ import type { Storage } from "./shared/model";
 /**
  * @publicApi
  */
-@Global()
-@Module({})
+@Module({
+    providers: [
+        FixedWindowInMemoryExecutor,
+        FixedWindowRedisExecutor,
+        TokenBucketInMemoryExecutor,
+        TokenBucketRedisExecutor,
+        SlidingWindowCounterInMemoryExecutor,
+        SlidingWindowCounterRedisExecutor,
+        SlidingWindowLogInMemoryExecutor,
+        SlidingWindowLogRedisExecutor,
+        LeakyBucketInMemoryExecutor,
+        LeakyBucketRedisExecutor,
+        BuiltinKeyExtractor,
+        BuiltinErrorFactory,
+        ProvidersDiscoveryService,
+        InMemoryGarbageCollector,
+        RateLimitGuard
+    ],
+    exports: [RateLimitGuard]
+})
 export class RateLimiterModule {
     /**
      * Sync module configuration.
@@ -32,13 +60,9 @@ export class RateLimiterModule {
             providers: [
                 { provide: MODULE_OPTIONS_TOKEN, useValue: fullOptions },
                 RateLimiterModule.getStorageProvider(fullOptions),
-
-                ...getExecutorsByStorage(options.storage.type),
-                ...RateLimiterModule.getBuiltinProviders(),
-
                 { provide: GUARD_OPTIONS_TOKEN, useValue: RateLimiterModule.getGuardOptions(fullOptions) }
             ],
-            exports: [RateLimitGuard]
+            global: true
         };
     }
 
@@ -84,16 +108,8 @@ export class RateLimiterModule {
         return {
             module: RateLimiterModule,
             imports: options.imports ?? [],
-            providers: [
-                moduleOptionsProvider,
-                storageProvider,
-
-                ...AVAILABLE_EXECUTORS,
-                ...RateLimiterModule.getBuiltinProviders(),
-
-                guardOptionsProvider
-            ],
-            exports: [RateLimitGuard]
+            providers: [moduleOptionsProvider, storageProvider, guardOptionsProvider],
+            global: true
         };
     }
 
