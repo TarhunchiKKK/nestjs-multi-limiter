@@ -2,6 +2,8 @@ import { Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
 import { MoviesModule } from "./movies/movies.module";
+import { CustomErrorFactory } from "./providers/custom.error-factory";
+import { CustomKeyExtractor } from "./providers/custom.key-extractor";
 import { RedisModule } from "./redis/redis.module";
 import { UsersModule } from "./users/users.module";
 
@@ -24,6 +26,7 @@ import { UsersModule } from "./users/users.module";
         UsersModule,
         MoviesModule,
         RedisModule
-    ]
+    ],
+    providers: [CustomKeyExtractor, CustomErrorFactory]
 })
 export class CustomProvidersModule {}
