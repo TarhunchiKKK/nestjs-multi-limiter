@@ -5,10 +5,14 @@
         "test:e2e": "bun test e2e --preload ../scripts/test/preload.ts"
     },
     "dependencies": {
+        "@faker-js/faker": "^10.5.0",
         "@nestjs/common": "^11.0.1",
         "@nestjs/config": "^4.0.4",
         "@nestjs/core": "^11.0.1",
+        "@nestjs/jwt": "^11.0.2",
         "@nestjs/platform-express": "^11.0.1",
+        "express": "^5.2.1",
+        "ioredis": "^6.0.0",
         "nestjs-rate-limiter": "*",
         "reflect-metadata": "^0.2.2",
         "rxjs": "^7.8.1"

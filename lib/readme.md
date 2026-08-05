@@ -397,11 +397,11 @@ RateLimiterModule.forRootAsync({
 
 ### Redis Integration
 
-For using Redis storage you need to create object or provider that implements `RedisAdapter` type.
+For using Redis storage you need to create object or provider that implements `IRedisAdapter` type.
 
 > 📌 **Trick**
 >
-> `Redis` instance from  `ioredis` package already implements `RedisAdapter` type.
+> `Redis` instance from  `ioredis` package already implements `IRedisAdapter` type.
 >
 > You can use it as adapter.
 
@@ -411,12 +411,12 @@ For using Redis storage you need to create object or provider that implements `R
 
 ```typescript
 import Redis, { type RedisValue } from "ioredis";
-import type { RedisAdapter } from "nestjs-rate-limiter";
+import type { IRedisAdapter } from "nestjs-rate-limiter";
 
 // 📌 TRICK: This client already can be used as adapter
 export const RedisClient = new Redis(/* ... */);
 
-export const MyRedisAdapter: RedisAdapter = {
+export const MyRedisAdapter: IRedisAdapter = {
     eval: async (script, numkeys, ...args) => {
         return await RedisClient.eval(script, numkeys, ...args);
     }
@@ -441,10 +441,10 @@ RateLimiterModule.forRoot({
 
 ```typescript
 import Redis, { type RedisValue } from "ioredis";
-import type { RedisAdapter } from "nestjs-rate-limiter";
+import type { IRedisAdapter } from "nestjs-rate-limiter";
 
 @Injectable()
-export class RedisService implements RedisAdapter {
+export class RedisService implements IRedisAdapter {
     private readonly client: Redis;
 
     public constructor(private readonly configService: ConfigService) {

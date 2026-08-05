@@ -16,8 +16,8 @@ export type InMemoryStorage<Value> = Map<Key, Value>;
  *
  * @publicApi
  */
-export type RedisAdapter = {
+export type IRedisAdapter = {
     eval(...args: [script: string | Buffer, numkeys: number | string, ...args: RedisValue[]]): ReturnType<Redis["eval"]>;
 };
 
-export type Storage = InMemoryStorage<unknown> | RedisAdapter;
+export type Storage = InMemoryStorage<unknown> | IRedisAdapter;

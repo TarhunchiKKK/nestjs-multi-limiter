@@ -3,23 +3,23 @@ import { Injectable, type OnModuleDestroy, type OnModuleInit } from "@nestjs/com
 import { Test, type TestingModule } from "@nestjs/testing";
 import type { RedisValue } from "ioredis";
 import { createClient } from "redis";
-import { RateLimiterModule, type RedisAdapter } from "../../../src";
+import { type IRedisAdapter, RateLimiterModule } from "../../../src";
 import { type FixedWindowOptions, FixedWindowRedisExecutor } from "../../../src/executors";
 import { createRedisClient, MS_IN_MINUTE } from "../../shared";
 
 const IoRedisClient = createRedisClient();
 
 @Injectable()
-class IoRedisAdapter implements RedisAdapter {
+class IoRedisAdapter implements IRedisAdapter {
     private client = createRedisClient();
 
-    public eval(script: string | Buffer<ArrayBufferLike>, numkeys: string | number, ...args: RedisValue[]) {
-        return this.client.eval(script, numkeys, ...args);
+    public async eval(script: string | Buffer<ArrayBufferLike>, numkeys: string | number, ...args: RedisValue[]) {
+        return await this.client.eval(script, numkeys, ...args);
     }
 }
 
 @Injectable()
-class NodeRedisAdapter implements RedisAdapter, OnModuleInit, OnModuleDestroy {
+class NodeRedisAdapter implements IRedisAdapter, OnModuleInit, OnModuleDestroy {
     private client: ReturnType<typeof createClient>;
 
     public constructor() {
@@ -46,7 +46,7 @@ class NodeRedisAdapter implements RedisAdapter, OnModuleInit, OnModuleDestroy {
         const keys = rest.slice(0, keysCount).map(String);
         const argv = rest.slice(keysCount).map(String);
 
-        return this.client.eval(script.toString(), {
+        return await this.client.eval(script.toString(), {
             keys: keys,
             arguments: argv
         });
