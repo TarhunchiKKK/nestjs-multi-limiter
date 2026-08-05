@@ -11,24 +11,19 @@ jobs:
     name: Build and Publish
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Environment
+        uses: ./.github/actions/setup
 
-    - name: Setup Bun
-      uses: oven-sh/setup-bun@v2
-      with:
-        bun-version: latest
+      - name: Build Library
+        run: bun run build:lib
 
-    - name: Install Dependencies
-      run: bun install --frozen-lockfile
-
-    - name: Build Library
-      run: bun run build:lib
-
-    - name: Publish to npm
-      run: |
-        cd lib
-        echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
-        npm publish --access public
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish to npm
+        run: |
+          cd lib
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+          npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -18,11 +18,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
-
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
+      - name: Setup Environment
+        uses: ./.github/actions/setup
 
       - name: Build
         run: bun run build:lib
@@ -37,11 +34,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
-
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
+      - name: Setup Environment
+        uses: ./.github/actions/setup
 
       - name: Build
         run: bun run build
