@@ -17,25 +17,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Setup Environment
+        uses: ./.github/actions/setup
 
-    - name: Setup Bun
-      uses: oven-sh/setup-bun@v2
-      with:
-        bun-version: latest
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+          queries: +security-extended, +security-and-quality
 
-    - name: Install dependencies
-      run: bun install --frozen-lockfile
+      - name: Build Library
+        run: bun run build:lib
 
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
-      with:
-        languages: javascript-typescript
-        queries: +security-extended, +security-and-quality
-
-    - name: Build Library
-      run: bun run build:lib
-
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
