@@ -1,5 +1,5 @@
 import { type DynamicModule, type FactoryProvider, Module, type Provider } from "@nestjs/common";
-import { DiscoveryModule } from "@nestjs/core";
+import { DiscoveryModule, ModuleRef } from "@nestjs/core";
 import { mergeDefaultOptions } from "./config/defaults";
 import type { RateLimiterModuleAsyncOptions, RateLimiterModuleFullOptions, RateLimiterModuleOptions, RateLimitGuardOptions } from "./config/options";
 import { BuiltinErrorFactory } from "./custom/error-factories";
@@ -20,7 +20,7 @@ import {
 import { RateLimitGuard } from "./middleware";
 import { InMemoryGarbageCollector } from "./services/in-memory.garbage-collector";
 import { ProvidersResolver } from "./services/providers.resolver";
-import { isProvider } from "./shared/lib";
+import { isInjectionToken } from "./shared/lib";
 import type { Storage } from "./shared/model";
 
 /**
@@ -88,14 +88,14 @@ export class RateLimiterModule {
 
         const storageProvider: FactoryProvider<Storage> = {
             provide: STORAGE_TOKEN,
-            inject: [MODULE_OPTIONS_TOKEN],
-            useFactory: (moduleOptions: RateLimiterModuleFullOptions) => {
+            inject: [MODULE_OPTIONS_TOKEN, ModuleRef],
+            useFactory: (moduleOptions: RateLimiterModuleFullOptions, moduleRef: ModuleRef) => {
                 if (moduleOptions.storage.type === "in-memory") {
                     return new Map();
                 }
 
-                if (isProvider(moduleOptions.storage.adapter)) {
-                    throw new Error("Redis adapter provider is not initialized.");
+                if (isInjectionToken(moduleOptions.storage.adapter)) {
+                    return moduleRef.get(moduleOptions.storage.adapter, { strict: false });
                 }
 
                 return moduleOptions.storage.adapter;
@@ -124,10 +124,10 @@ export class RateLimiterModule {
             };
         }
 
-        if (isProvider(options.storage.adapter)) {
+        if (isInjectionToken(options.storage.adapter)) {
             return {
                 provide: STORAGE_TOKEN,
-                useClass: options.storage.adapter
+                useExisting: options.storage.adapter
             };
         } else {
             return {

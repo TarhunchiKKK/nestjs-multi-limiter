@@ -1,4 +1,4 @@
-import type { Type } from "@nestjs/common";
+import type { InjectionToken } from "@nestjs/common";
 import type { AllStrategiesOptions } from "../../executors";
 import type { ExtractMember } from "../../shared/lib";
 import type { IRedisAdapter, StorageTypes, Strategies } from "../../shared/model";
@@ -27,7 +27,7 @@ export type StorageOptions =
           /**
            * Custom adapter for Redis access.
            */
-          adapter: Type<IRedisAdapter> | IRedisAdapter;
+          adapter: InjectionToken<IRedisAdapter> | IRedisAdapter;
       };
 
 export type StrategyOptions = {
