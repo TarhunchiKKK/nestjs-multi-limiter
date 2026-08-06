@@ -1,9 +1,9 @@
 name: "CodeQL Analysis"
 
 on:
-  workflow_dispatch:
   schedule:
     - cron: '0 17 * * 4'
+  workflow_dispatch:
 
 permissions:
   contents: read

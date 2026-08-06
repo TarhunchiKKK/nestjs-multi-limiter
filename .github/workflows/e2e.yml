@@ -2,10 +2,17 @@ name: Integration & E2e Testing
 
 on:
   pull_request:
-    branches: 
-      -main
-    types: [closed]
+    branches:
+      - main
+    paths:
+      - 'lib/**'
+      - 'e2e/**'
+      - 'package.json'
+      - 'bun.lock'
+  schedule:
+    - cron: '0 3 * * *'
   workflow_dispatch:
+
 
 permissions:
   contents: read
