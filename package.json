@@ -20,7 +20,8 @@
         "clean:deps": "bun run ./scripts/clean/deps.ts",
         "clean:cache": "bun run ./scripts/clean/cache.ts",
         "sync-meta": "bun run ./scripts/sync-meta.ts",
-        "prepare": "husky"
+        "prepare": "husky",
+        "release": "release-it"
     },
     "devDependencies": {
         "@biomejs/biome": "^2.5.1",

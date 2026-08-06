@@ -22,13 +22,13 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Setup Environment
         uses: ./.github/actions/setup
 
-      - name: Build
+      - name: Build Library
         run: bun run build:lib
 
       - name: Integration Tests
@@ -38,7 +38,7 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Setup Environment
