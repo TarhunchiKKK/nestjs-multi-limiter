@@ -71,8 +71,8 @@ export class RateLimitGuard implements CanActivate {
         if (!options) {
             return {
                 ...this.options,
-                keyExtractor: this.discoveryService.getKeyExtractor(this.options.keyExtractor),
-                errorFactory: this.discoveryService.getErrorFactory(this.options.errorFactory)
+                keyExtractor: await this.discoveryService.getKeyExtractor(this.options.keyExtractor),
+                errorFactory: await this.discoveryService.getErrorFactory(this.options.errorFactory)
             };
         }
 
@@ -82,7 +82,7 @@ export class RateLimitGuard implements CanActivate {
 
         let finalDecoratorOptions: RateLimitNormalizedOptions = options;
         if (optionsFactoryToken) {
-            const optionsFactoryInstance = this.discoveryService.getOptionsFactory(optionsFactoryToken);
+            const optionsFactoryInstance = await this.discoveryService.getOptionsFactory(optionsFactoryToken);
 
             const dynamicOptions = await optionsFactoryInstance.getOptions(context);
 
@@ -94,8 +94,8 @@ export class RateLimitGuard implements CanActivate {
 
         return {
             scope: finalDecoratorOptions.scope ?? this.options.scope,
-            keyExtractor: this.discoveryService.getKeyExtractor(keyExtractorToken),
-            errorFactory: this.discoveryService.getErrorFactory(errorFactoryToken),
+            keyExtractor: await this.discoveryService.getKeyExtractor(keyExtractorToken),
+            errorFactory: await this.discoveryService.getErrorFactory(errorFactoryToken),
             strategy: finalDecoratorOptions.strategy ?? this.options.strategy,
             strategyOptions: !options.strategy
                 ? this.options.strategyOptions
