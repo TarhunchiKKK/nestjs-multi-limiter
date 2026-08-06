@@ -6,7 +6,7 @@ import type { ErrorFactoryOptions, IErrorFactory } from "../custom/error-factori
 import type { IKeyExtractor } from "../custom/key-extractors";
 import { RateLimit, SkipRateLimit } from "../decorators";
 import { GUARD_OPTIONS_TOKEN } from "../di";
-import { ProvidersDiscoveryService } from "../services/providers-discovery.service";
+import { ProvidersResolver } from "../services/providers.resolver";
 import { getKey, type Scope } from "../shared/model";
 
 type RunOptions = StrategyOptions & {
@@ -24,7 +24,7 @@ type RunOptions = StrategyOptions & {
 export class RateLimitGuard implements CanActivate {
     public constructor(
         @Inject(GUARD_OPTIONS_TOKEN) private readonly options: RateLimitGuardOptions,
-        @Inject(ProvidersDiscoveryService) private readonly discoveryService: ProvidersDiscoveryService,
+        @Inject(ProvidersResolver) private readonly discoveryService: ProvidersResolver,
         @Inject(Reflector) private readonly reflector: Reflector
     ) {}
 

@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { Test, type TestingModule } from "@nestjs/testing";
 import { RateLimiterModule, type RateLimiterModuleOptions, type StorageTypes, type Strategies } from "../../../../src";
 import { RATE_LIMITER_MODULE_DEFAULT_OPTIONS } from "../../../../src/config/defaults/default-options.constants";
-import { ProvidersDiscoveryService } from "../../../../src/services/providers-discovery.service";
+import { ProvidersResolver } from "../../../../src/services/providers.resolver";
 import { createRedisClient } from "../../../shared";
 
 const strategies: Strategies[] = ["fixed-window", "token-bucket", "sliding-window-counter", "sliding-window-log", "leaky-bucket"];
@@ -10,8 +10,8 @@ const strategies: Strategies[] = ["fixed-window", "token-bucket", "sliding-windo
 describe.each<[StorageTypes, RateLimiterModuleOptions]>([
     ["in-memory", RATE_LIMITER_MODULE_DEFAULT_OPTIONS],
     ["redis", { ...RATE_LIMITER_MODULE_DEFAULT_OPTIONS, storage: { type: "redis", adapter: createRedisClient() } }]
-])("ProvidersDiscoveryService - executors discovery (%s storage)", (storageType, options) => {
-    let service: ProvidersDiscoveryService;
+])("ProvidersResolver - executors discovery (%s storage)", (storageType, options) => {
+    let resolver: ProvidersResolver;
     let module: TestingModule;
 
     beforeEach(async () => {
@@ -19,7 +19,7 @@ describe.each<[StorageTypes, RateLimiterModuleOptions]>([
             imports: [RateLimiterModule.forRoot(options)]
         }).compile();
 
-        service = module.get(ProvidersDiscoveryService);
+        resolver = module.get(ProvidersResolver);
 
         await module.init();
     });
@@ -30,7 +30,7 @@ describe.each<[StorageTypes, RateLimiterModuleOptions]>([
 
     it(`should find all executors (${storageType} storage)`, () => {
         for (const strategy of strategies) {
-            const executor = service.getExecutor(strategy);
+            const executor = resolver.getExecutor(strategy);
 
             expect(executor).toBeDefined();
             expect(executor.check).toBeFunction();

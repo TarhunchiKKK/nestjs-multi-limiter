@@ -10,7 +10,7 @@ import { type AllStrategiesOptions, EXECUTOR_METADATA_KEY, type ExecutorMetadata
 import type { Strategies } from "../shared/model";
 
 @Injectable()
-export class ProvidersDiscoveryService implements OnModuleInit {
+export class ProvidersResolver implements OnModuleInit {
     private readonly executorsMap = new Map<Strategies, IExecutor<unknown>>();
     private readonly keyExtractorsMap = new Map<InjectionToken, InstanceWrapper<IKeyExtractor>>();
     private readonly errorFactoriesMap = new Map<InjectionToken, InstanceWrapper<IErrorFactory>>();

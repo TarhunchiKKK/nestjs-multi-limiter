@@ -7,7 +7,7 @@ import { RATE_LIMITER_MODULE_DEFAULT_OPTIONS } from "../../../src/config/default
 import type { RateLimitGuardOptions, RateLimitOptions } from "../../../src/config/options";
 import { BuiltinKeyExtractor } from "../../../src/custom/key-extractors";
 import { GUARD_OPTIONS_TOKEN } from "../../../src/di";
-import { ProvidersDiscoveryService } from "../../../src/services/providers-discovery.service";
+import { ProvidersResolver } from "../../../src/services/providers.resolver";
 import {
     CustomError,
     CustomErrorFactory,
@@ -35,7 +35,7 @@ describe("RateLimitGuard", () => {
         })
             .overrideProvider(Reflector)
             .useValue(reflectorMock)
-            .overrideProvider(ProvidersDiscoveryService)
+            .overrideProvider(ProvidersResolver)
             .useValue(discoveryServiceMock)
             .compile();
 

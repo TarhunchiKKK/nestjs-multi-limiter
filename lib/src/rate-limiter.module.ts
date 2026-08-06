@@ -19,7 +19,7 @@ import {
 } from "./executors";
 import { RateLimitGuard } from "./middleware";
 import { InMemoryGarbageCollector } from "./services/in-memory.garbage-collector";
-import { ProvidersDiscoveryService } from "./services/providers-discovery.service";
+import { ProvidersResolver } from "./services/providers.resolver";
 import { isProvider } from "./shared/lib";
 import type { Storage } from "./shared/model";
 
@@ -41,12 +41,12 @@ import type { Storage } from "./shared/model";
         LeakyBucketRedisExecutor,
         BuiltinKeyExtractor,
         BuiltinErrorFactory,
-        ProvidersDiscoveryService,
+        ProvidersResolver,
         // QUESTION: Should this provider be exported?
         InMemoryGarbageCollector,
         RateLimitGuard
     ],
-    exports: [RateLimitGuard, ProvidersDiscoveryService, GUARD_OPTIONS_TOKEN]
+    exports: [RateLimitGuard, ProvidersResolver, GUARD_OPTIONS_TOKEN]
 })
 export class RateLimiterModule {
     /**
