@@ -1,0 +1,36 @@
+{
+    "$schema": "https://unpkg.com",
+    "git": {
+        "commitMessage": "chore(release): v${version}",
+        "tagName": "v${version}",
+        "requireCleanWorkingDir": true,
+        "requireBranch": "main"
+    },
+    "github": {
+        "release": true,
+        "releaseName": "Release v${version}"
+    },
+    "npm": {
+        "publish": true,
+        "publishPath": "lib"
+    },
+    "plugins": {
+        "@release-it/conventional-changelog": {
+            "preset": {
+                "name": "conventionalcommits"
+            },
+            "infile": "changelog.md",
+            "gitRawCommitsOpts": {
+                "path": "lib"
+            }
+        },
+        "@release-it/bumper": {
+            "out": ["package.json", "lib/package.json"]
+        }
+    },
+    "hooks": {
+        "before:init": [],
+        "before:git:release": "bun run sync-meta && git add lib/",
+        "after:bump": "bun run build:lib"
+    }
+}
