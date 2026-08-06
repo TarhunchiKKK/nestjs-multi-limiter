@@ -42,7 +42,7 @@ jobs:
 
       - name: Run Release-It
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Токен для создания релиза на GitHub [ориг. 1.1.4]
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           if [ "${{ github.event.inputs.release_type }}" = "auto" ]; then
             bun run release --ci
