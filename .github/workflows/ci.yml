@@ -8,6 +8,7 @@ permissions:
 
 jobs:
   lint:
+    if: "!contains(github.event.head_commit.message, 'chore(release):')"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -26,6 +27,7 @@ jobs:
         run: bun knip
 
   build:
+    if: "!contains(github.event.head_commit.message, 'chore(release):')"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -38,6 +40,7 @@ jobs:
         run: bun run build:lib
 
   test:
+    if: "!contains(github.event.head_commit.message, 'chore(release):')"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
