@@ -1,29 +1,51 @@
-name: "Release"
+name: Release (GitHub & NPM)
 
 on:
   workflow_dispatch:
-
-permissions:
-  contents: read
+    inputs:
+      release_type:
+        description: 'Release type (optional)'
+        required: false
+        default: 'auto'
+        type: choice
+        options:
+          - auto
+          - patch
+          - minor
+          - major
 
 jobs:
-  publish:
-    name: Build and Publish
+  release:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write 
+
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v4
-        
-      - name: Setup Environment
+        with:
+          fetch-depth: 0
+
+      - name: Initialize Environment
         uses: ./.github/actions/setup
 
-      - name: Build Library
-        run: bun run build:lib
-
-      - name: Publish to npm
+      - name: Initialize Git User
         run: |
-          cd lib
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
-          npm publish --access public
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Setup NPM Authentication
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Run Release-It
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Токен для создания релиза на GitHub [ориг. 1.1.4]
+        run: |
+          if [ "${{ github.event.inputs.release_type }}" = "auto" ]; then
+            bun run release --ci
+          else
+            bun run release ${{ github.event.inputs.release_type }} --ci
+          fi
