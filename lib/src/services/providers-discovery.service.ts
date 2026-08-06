@@ -65,11 +65,11 @@ export class ProvidersDiscoveryService implements OnModuleInit {
 
     private async resolveCustomProvider<T>(token: InjectionToken, wrapper: InstanceWrapper<T>): Promise<T> {
         if (wrapper.isDependencyTreeStatic()) {
-            // If provider is static
+            // DOC: If provider is static
             return wrapper.instance;
         }
 
-        // If provider is request scoped
+        // DOC: If provider is request scoped
         return await this.moduleRef.resolve<T>(token, undefined, { strict: false });
     }
 
@@ -77,27 +77,28 @@ export class ProvidersDiscoveryService implements OnModuleInit {
         const providers = this.discoveryService.getProviders();
 
         for (const wrapper of providers) {
-            if (!wrapper.metatype) {
+            if (!wrapper.instance) {
                 continue;
             }
 
-            if (this.isValidProvider<IExecutor<unknown>>(wrapper.addCtorMetadata, "check", EXECUTOR_METADATA_KEY)) {
+            if (this.isValidProvider<IExecutor<unknown>>(wrapper.instance, "check", EXECUTOR_METADATA_KEY)) {
                 const metadata = this.reflector.get<ExecutorMetadata>(EXECUTOR_METADATA_KEY, wrapper.instance.constructor);
 
                 if (metadata && metadata.storage === this.moduleOptions.storage.type) {
-                    this.executorsMap.set(metadata.strategy, wrapper.instance);
+                    // FIX: type casting
+                    this.executorsMap.set(metadata.strategy, wrapper.instance as unknown as IExecutor<unknown>);
                 }
             }
 
-            if (this.isValidProvider<IKeyExtractor>(wrapper.metatype, "extract", KEY_EXTRACTOR_METADATA)) {
+            if (this.isValidProvider<IKeyExtractor>(wrapper.instance, "extract", KEY_EXTRACTOR_METADATA)) {
                 this.keyExtractorsMap.set(wrapper.token, wrapper);
             }
 
-            if (this.isValidProvider<IErrorFactory>(wrapper.metatype, "getError", ERROR_FACTORY_METADATA)) {
+            if (this.isValidProvider<IErrorFactory>(wrapper.instance, "getError", ERROR_FACTORY_METADATA)) {
                 this.errorFactoriesMap.set(wrapper.token, wrapper);
             }
 
-            if (this.isValidProvider<IOptionsFactory>(wrapper.metatype, "getOptions", OPTIONS_FACTORY_METADATA)) {
+            if (this.isValidProvider<IOptionsFactory>(wrapper.instance, "getOptions", OPTIONS_FACTORY_METADATA)) {
                 this.optionsFactoriesMap.set(wrapper.token, wrapper);
             }
         }

@@ -36,22 +36,22 @@ describe.each([
         await module.close();
     });
 
-    it("should find custom key extractor", () => {
-        const keyExtractor = service.getKeyExtractor(CustomKeyExtractor);
+    it("should find custom key extractor", async () => {
+        const keyExtractor = await service.getKeyExtractor(CustomKeyExtractor);
 
         expect(keyExtractor).toBeDefined();
         expect(keyExtractor.extract).toBeFunction();
     });
 
-    it("should find custom error factory", () => {
-        const errorFactory = service.getErrorFactory(CustomErrorFactory);
+    it("should find custom error factory", async () => {
+        const errorFactory = await service.getErrorFactory(CustomErrorFactory);
 
         expect(errorFactory).toBeDefined();
         expect(errorFactory.getError).toBeFunction();
     });
 
-    it("should find custom options factory", () => {
-        const optionsFactory = service.getOptionsFactory(CustomOptionsFactory);
+    it("should find custom options factory", async () => {
+        const optionsFactory = await service.getOptionsFactory(CustomOptionsFactory);
 
         expect(optionsFactory).toBeDefined();
         expect(optionsFactory.getOptions).toBeFunction();

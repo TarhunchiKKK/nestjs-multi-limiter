@@ -1,4 +1,5 @@
 import { type DynamicModule, type FactoryProvider, Module, type Provider } from "@nestjs/common";
+import { DiscoveryModule } from "@nestjs/core";
 import { mergeDefaultOptions } from "./config/defaults";
 import type { RateLimiterModuleAsyncOptions, RateLimiterModuleFullOptions, RateLimiterModuleOptions, RateLimitGuardOptions } from "./config/options";
 import { BuiltinErrorFactory } from "./custom/error-factories";
@@ -26,6 +27,7 @@ import type { Storage } from "./shared/model";
  * @publicApi
  */
 @Module({
+    imports: [DiscoveryModule],
     providers: [
         FixedWindowInMemoryExecutor,
         FixedWindowRedisExecutor,

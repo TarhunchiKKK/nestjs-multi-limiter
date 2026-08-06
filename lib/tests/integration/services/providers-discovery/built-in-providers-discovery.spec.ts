@@ -27,15 +27,15 @@ describe.each([
         await module.close();
     });
 
-    it("should find built-in key extractor", () => {
-        const keyExtractor = service.getKeyExtractor(BuiltinKeyExtractor);
+    it("should find built-in key extractor", async () => {
+        const keyExtractor = await service.getKeyExtractor(BuiltinKeyExtractor);
 
         expect(keyExtractor).toBeDefined();
         expect(keyExtractor.extract).toBeFunction();
     });
 
-    it("should find built-in error factory", () => {
-        const errorFactory = service.getErrorFactory(BuiltinErrorFactory);
+    it("should find built-in error factory", async () => {
+        const errorFactory = await service.getErrorFactory(BuiltinErrorFactory);
 
         expect(errorFactory).toBeDefined();
         expect(errorFactory.getError).toBeFunction();
