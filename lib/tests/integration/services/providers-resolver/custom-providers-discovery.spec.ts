@@ -2,7 +2,7 @@ import { afterEach, beforeAll, describe, expect, it } from "bun:test";
 import { Test, type TestingModule } from "@nestjs/testing";
 import { RateLimiterModule, type RateLimiterModuleOptions } from "../../../../src";
 import { RATE_LIMITER_MODULE_DEFAULT_OPTIONS } from "../../../../src/config/defaults/default-options.constants";
-import { ProvidersDiscoveryService } from "../../../../src/services/providers-discovery.service";
+import { ProvidersResolver } from "../../../../src/services/providers.resolver";
 import { CustomErrorFactory, CustomKeyExtractor, CustomOptionsFactory } from "../../../shared";
 
 const optionsWihDefaultProviders = {
@@ -17,8 +17,8 @@ const optionsWihDefaultProviders = {
 describe.each([
     ["sync", "forRoot", optionsWihDefaultProviders],
     ["async", "forRootAsync", { useFactory: () => optionsWihDefaultProviders }]
-])("ProvidersDiscoveryService - custom providers discovery (%s configuration)", (_, method, options) => {
-    let service: ProvidersDiscoveryService;
+])("ProvidersResolver - custom providers discovery (%s configuration)", (_, method, options) => {
+    let resolver: ProvidersResolver;
     let module: TestingModule;
 
     beforeAll(async () => {
@@ -27,7 +27,7 @@ describe.each([
             providers: [CustomKeyExtractor, CustomErrorFactory, CustomOptionsFactory]
         }).compile();
 
-        service = module.get(ProvidersDiscoveryService);
+        resolver = module.get(ProvidersResolver);
 
         await module.init();
     });
@@ -36,22 +36,22 @@ describe.each([
         await module.close();
     });
 
-    it("should find custom key extractor", () => {
-        const keyExtractor = service.getKeyExtractor(CustomKeyExtractor);
+    it("should find custom key extractor", async () => {
+        const keyExtractor = await resolver.getKeyExtractor(CustomKeyExtractor);
 
         expect(keyExtractor).toBeDefined();
         expect(keyExtractor.extract).toBeFunction();
     });
 
-    it("should find custom error factory", () => {
-        const errorFactory = service.getErrorFactory(CustomErrorFactory);
+    it("should find custom error factory", async () => {
+        const errorFactory = await resolver.getErrorFactory(CustomErrorFactory);
 
         expect(errorFactory).toBeDefined();
         expect(errorFactory.getError).toBeFunction();
     });
 
-    it("should find custom options factory", () => {
-        const optionsFactory = service.getOptionsFactory(CustomOptionsFactory);
+    it("should find custom options factory", async () => {
+        const optionsFactory = await resolver.getOptionsFactory(CustomOptionsFactory);
 
         expect(optionsFactory).toBeDefined();
         expect(optionsFactory.getOptions).toBeFunction();

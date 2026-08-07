@@ -1,4 +1,5 @@
-import { type DynamicModule, type FactoryProvider, Module, type Provider } from "@nestjs/common";
+import { type DynamicModule, type FactoryProvider, Module } from "@nestjs/common";
+import { DiscoveryModule } from "@nestjs/core";
 import { mergeDefaultOptions } from "./config/defaults";
 import type { RateLimiterModuleAsyncOptions, RateLimiterModuleFullOptions, RateLimiterModuleOptions, RateLimitGuardOptions } from "./config/options";
 import { BuiltinErrorFactory } from "./custom/error-factories";
@@ -18,7 +19,7 @@ import {
 } from "./executors";
 import { RateLimitGuard } from "./middleware";
 import { InMemoryGarbageCollector } from "./services/in-memory.garbage-collector";
-import { ProvidersDiscoveryService } from "./services/providers-discovery.service";
+import { ProvidersResolver } from "./services/providers.resolver";
 import { isProvider } from "./shared/lib";
 import type { Storage } from "./shared/model";
 
@@ -26,6 +27,7 @@ import type { Storage } from "./shared/model";
  * @publicApi
  */
 @Module({
+    imports: [DiscoveryModule],
     providers: [
         FixedWindowInMemoryExecutor,
         FixedWindowRedisExecutor,
@@ -39,12 +41,12 @@ import type { Storage } from "./shared/model";
         LeakyBucketRedisExecutor,
         BuiltinKeyExtractor,
         BuiltinErrorFactory,
-        ProvidersDiscoveryService,
+        ProvidersResolver,
         // QUESTION: Should this provider be exported?
         InMemoryGarbageCollector,
         RateLimitGuard
     ],
-    exports: [RateLimitGuard, ProvidersDiscoveryService, GUARD_OPTIONS_TOKEN]
+    exports: [RateLimitGuard, ProvidersResolver, GUARD_OPTIONS_TOKEN]
 })
 export class RateLimiterModule {
     /**
@@ -60,7 +62,7 @@ export class RateLimiterModule {
             module: RateLimiterModule,
             providers: [
                 { provide: MODULE_OPTIONS_TOKEN, useValue: fullOptions },
-                RateLimiterModule.getStorageProvider(fullOptions),
+                { provide: STORAGE_TOKEN, useValue: options.storage.type === "redis" ? options.storage.adapter : new Map() },
                 { provide: GUARD_OPTIONS_TOKEN, useValue: RateLimiterModule.getGuardOptions(fullOptions) }
             ],
             global: true
@@ -112,27 +114,6 @@ export class RateLimiterModule {
             providers: [moduleOptionsProvider, storageProvider, guardOptionsProvider],
             global: true
         };
-    }
-
-    private static getStorageProvider(options: RateLimiterModuleFullOptions): Provider<Storage> {
-        if (options.storage.type === "in-memory") {
-            return {
-                provide: STORAGE_TOKEN,
-                useValue: new Map()
-            };
-        }
-
-        if (isProvider(options.storage.adapter)) {
-            return {
-                provide: STORAGE_TOKEN,
-                useClass: options.storage.adapter
-            };
-        } else {
-            return {
-                provide: STORAGE_TOKEN,
-                useValue: options.storage.adapter
-            };
-        }
     }
 
     private static getGuardOptions(options: RateLimiterModuleFullOptions): RateLimitGuardOptions {

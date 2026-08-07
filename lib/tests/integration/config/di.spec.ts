@@ -19,7 +19,7 @@ import {
     TokenBucketRedisExecutor
 } from "../../../src/executors";
 import { InMemoryGarbageCollector } from "../../../src/services/in-memory.garbage-collector";
-import { ProvidersDiscoveryService } from "../../../src/services/providers-discovery.service";
+import { ProvidersResolver } from "../../../src/services/providers.resolver";
 
 const syncOptions: RateLimiterModuleOptions = {
     storage: {
@@ -75,14 +75,7 @@ describe.each([
     });
 
     it("should inject non-options providers", () => {
-        const nonOptionsProviders = [
-            STORAGE_TOKEN,
-            BuiltinKeyExtractor,
-            BuiltinErrorFactory,
-            ProvidersDiscoveryService,
-            InMemoryGarbageCollector,
-            RateLimitGuard
-        ];
+        const nonOptionsProviders = [STORAGE_TOKEN, BuiltinKeyExtractor, BuiltinErrorFactory, ProvidersResolver, InMemoryGarbageCollector, RateLimitGuard];
 
         for (const token of nonOptionsProviders) {
             const provider = module.get(token);

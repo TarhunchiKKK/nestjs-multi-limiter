@@ -6,7 +6,7 @@ import type { ErrorFactoryOptions, IErrorFactory } from "../custom/error-factori
 import type { IKeyExtractor } from "../custom/key-extractors";
 import { RateLimit, SkipRateLimit } from "../decorators";
 import { GUARD_OPTIONS_TOKEN } from "../di";
-import { ProvidersDiscoveryService } from "../services/providers-discovery.service";
+import { ProvidersResolver } from "../services/providers.resolver";
 import { getKey, type Scope } from "../shared/model";
 
 type RunOptions = StrategyOptions & {
@@ -24,7 +24,7 @@ type RunOptions = StrategyOptions & {
 export class RateLimitGuard implements CanActivate {
     public constructor(
         @Inject(GUARD_OPTIONS_TOKEN) private readonly options: RateLimitGuardOptions,
-        @Inject(ProvidersDiscoveryService) private readonly discoveryService: ProvidersDiscoveryService,
+        @Inject(ProvidersResolver) private readonly discoveryService: ProvidersResolver,
         @Inject(Reflector) private readonly reflector: Reflector
     ) {}
 
@@ -71,8 +71,8 @@ export class RateLimitGuard implements CanActivate {
         if (!options) {
             return {
                 ...this.options,
-                keyExtractor: this.discoveryService.getKeyExtractor(this.options.keyExtractor),
-                errorFactory: this.discoveryService.getErrorFactory(this.options.errorFactory)
+                keyExtractor: await this.discoveryService.getKeyExtractor(this.options.keyExtractor),
+                errorFactory: await this.discoveryService.getErrorFactory(this.options.errorFactory)
             };
         }
 
@@ -82,7 +82,7 @@ export class RateLimitGuard implements CanActivate {
 
         let finalDecoratorOptions: RateLimitNormalizedOptions = options;
         if (optionsFactoryToken) {
-            const optionsFactoryInstance = this.discoveryService.getOptionsFactory(optionsFactoryToken);
+            const optionsFactoryInstance = await this.discoveryService.getOptionsFactory(optionsFactoryToken);
 
             const dynamicOptions = await optionsFactoryInstance.getOptions(context);
 
@@ -94,8 +94,8 @@ export class RateLimitGuard implements CanActivate {
 
         return {
             scope: finalDecoratorOptions.scope ?? this.options.scope,
-            keyExtractor: this.discoveryService.getKeyExtractor(keyExtractorToken),
-            errorFactory: this.discoveryService.getErrorFactory(errorFactoryToken),
+            keyExtractor: await this.discoveryService.getKeyExtractor(keyExtractorToken),
+            errorFactory: await this.discoveryService.getErrorFactory(errorFactoryToken),
             strategy: finalDecoratorOptions.strategy ?? this.options.strategy,
             strategyOptions: !options.strategy
                 ? this.options.strategyOptions
