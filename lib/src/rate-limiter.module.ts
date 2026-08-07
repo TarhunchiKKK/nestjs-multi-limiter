@@ -1,4 +1,4 @@
-import { type DynamicModule, type FactoryProvider, Module, type Provider } from "@nestjs/common";
+import { type DynamicModule, type FactoryProvider, Module } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
 import { mergeDefaultOptions } from "./config/defaults";
 import type { RateLimiterModuleAsyncOptions, RateLimiterModuleFullOptions, RateLimiterModuleOptions, RateLimitGuardOptions } from "./config/options";
@@ -62,7 +62,7 @@ export class RateLimiterModule {
             module: RateLimiterModule,
             providers: [
                 { provide: MODULE_OPTIONS_TOKEN, useValue: fullOptions },
-                RateLimiterModule.getStorageProvider(fullOptions),
+                { provide: STORAGE_TOKEN, useValue: options.storage.type === "redis" ? options.storage.adapter : new Map() },
                 { provide: GUARD_OPTIONS_TOKEN, useValue: RateLimiterModule.getGuardOptions(fullOptions) }
             ],
             global: true
@@ -114,27 +114,6 @@ export class RateLimiterModule {
             providers: [moduleOptionsProvider, storageProvider, guardOptionsProvider],
             global: true
         };
-    }
-
-    private static getStorageProvider(options: RateLimiterModuleFullOptions): Provider<Storage> {
-        if (options.storage.type === "in-memory") {
-            return {
-                provide: STORAGE_TOKEN,
-                useValue: new Map()
-            };
-        }
-
-        if (isProvider(options.storage.adapter)) {
-            return {
-                provide: STORAGE_TOKEN,
-                useClass: options.storage.adapter
-            };
-        } else {
-            return {
-                provide: STORAGE_TOKEN,
-                useValue: options.storage.adapter
-            };
-        }
     }
 
     private static getGuardOptions(options: RateLimiterModuleFullOptions): RateLimitGuardOptions {
