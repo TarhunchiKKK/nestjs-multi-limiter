@@ -1,5 +1,5 @@
 import { type DynamicModule, type FactoryProvider, Module, type Provider } from "@nestjs/common";
-import { DiscoveryModule, ModuleRef } from "@nestjs/core";
+import { DiscoveryModule } from "@nestjs/core";
 import { mergeDefaultOptions } from "./config/defaults";
 import type { RateLimiterModuleAsyncOptions, RateLimiterModuleFullOptions, RateLimiterModuleOptions, RateLimitGuardOptions } from "./config/options";
 import { BuiltinErrorFactory } from "./custom/error-factories";
@@ -20,7 +20,7 @@ import {
 import { RateLimitGuard } from "./middleware";
 import { InMemoryGarbageCollector } from "./services/in-memory.garbage-collector";
 import { ProvidersResolver } from "./services/providers.resolver";
-import { isInjectionToken } from "./shared/lib";
+import { isProvider } from "./shared/lib";
 import type { Storage } from "./shared/model";
 
 /**
@@ -79,7 +79,8 @@ export class RateLimiterModule {
         const moduleOptionsProvider: FactoryProvider<RateLimiterModuleFullOptions> = {
             provide: MODULE_OPTIONS_TOKEN,
             inject: options.inject ?? [],
-            useFactory: async (...args: unknown[]) => {
+            // biome-ignore lint/suspicious/noExplicitAny: `any` type is necessary for factory customization
+            useFactory: async (...args: any[]) => {
                 const calculatedOptions = await options.useFactory(...args);
                 return mergeDefaultOptions(calculatedOptions);
             }
@@ -87,14 +88,14 @@ export class RateLimiterModule {
 
         const storageProvider: FactoryProvider<Storage> = {
             provide: STORAGE_TOKEN,
-            inject: [MODULE_OPTIONS_TOKEN, ModuleRef],
-            useFactory: (moduleOptions: RateLimiterModuleFullOptions, moduleRef: ModuleRef) => {
+            inject: [MODULE_OPTIONS_TOKEN],
+            useFactory: (moduleOptions: RateLimiterModuleFullOptions) => {
                 if (moduleOptions.storage.type === "in-memory") {
                     return new Map();
                 }
 
-                if (isInjectionToken(moduleOptions.storage.adapter)) {
-                    return moduleRef.get(moduleOptions.storage.adapter, { strict: false });
+                if (isProvider(moduleOptions.storage.adapter)) {
+                    throw new Error("Redis adapter provider is not initialized.");
                 }
 
                 return moduleOptions.storage.adapter;
@@ -123,10 +124,10 @@ export class RateLimiterModule {
             };
         }
 
-        if (isInjectionToken(options.storage.adapter)) {
+        if (isProvider(options.storage.adapter)) {
             return {
                 provide: STORAGE_TOKEN,
-                useExisting: options.storage.adapter
+                useClass: options.storage.adapter
             };
         } else {
             return {

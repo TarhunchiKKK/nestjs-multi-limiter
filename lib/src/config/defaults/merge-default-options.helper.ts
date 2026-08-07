@@ -1,13 +1,8 @@
-import type { OmitFields } from "../../shared/lib";
-import type { BaseModuleOptions, RateLimiterModuleFullOptions, StorageOptions } from "../options";
+import type { RateLimiterModuleFullOptions, RateLimiterModuleOptions, StorageOptions } from "../options";
 import { DEFAULT_IN_MEMORY_GC_TIME, RATE_LIMITER_MODULE_DEFAULT_OPTIONS } from "./default-options.constants";
 
-type InputOptions = OmitFields<BaseModuleOptions<"sync">, "storage"> & {
-    storage: RateLimiterModuleFullOptions["storage"];
-};
-
-export function mergeDefaultOptions(options: InputOptions) {
-    const storageOptions: Required<StorageOptions<"async">> =
+export function mergeDefaultOptions(options: RateLimiterModuleOptions) {
+    const storageOptions: Required<StorageOptions> =
         options.storage.type === "redis" ? options.storage : { type: "in-memory", gcTime: options.storage.gcTime ?? DEFAULT_IN_MEMORY_GC_TIME };
 
     return {

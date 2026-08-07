@@ -12,7 +12,7 @@ import type { StorageOptions } from "./common.options";
  *
  * @publicApi
  */
-export type BaseModuleOptions<T extends "sync" | "async"> = {
+export type RateLimiterModuleOptions = {
     /**
      * Default scope.
      */
@@ -21,7 +21,7 @@ export type BaseModuleOptions<T extends "sync" | "async"> = {
     /**
      * Storage options.
      */
-    storage: StorageOptions<T>;
+    storage: StorageOptions;
 
     /**
      * Default rate limiting algorithm.
@@ -49,8 +49,6 @@ export type BaseModuleOptions<T extends "sync" | "async"> = {
     };
 };
 
-export type RateLimiterModuleOptions = BaseModuleOptions<"sync">;
-
 /**
  * Async options for `RateLimiterModule` configuration.
  *
@@ -68,13 +66,13 @@ export type RateLimiterModuleAsyncOptions = Pick<ModuleMetadata, "imports"> & {
      * @param args Injected dependencies.
      * @returns Dynamic options.
      */
-    useFactory: (...args: any[]) => BaseModuleOptions<"async"> | Promise<BaseModuleOptions<"async">>;
+    useFactory: (...args: any[]) => RateLimiterModuleOptions | Promise<RateLimiterModuleOptions>;
 };
 
 export type RateLimiterModuleFullOptions = {
     scope: Scope;
 
-    storage: StorageOptions<"async">;
+    storage: Required<StorageOptions>;
 
     strategy: Strategies;
     strategyOptions: {
