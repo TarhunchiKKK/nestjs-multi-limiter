@@ -20,7 +20,6 @@ import {
 import { RateLimitGuard } from "./middleware";
 import { InMemoryGarbageCollector } from "./services/in-memory.garbage-collector";
 import { ProvidersResolver } from "./services/providers.resolver";
-import { isProvider } from "./shared/lib";
 import type { Storage } from "./shared/model";
 
 /**
@@ -92,10 +91,6 @@ export class RateLimiterModule {
             useFactory: (moduleOptions: RateLimiterModuleFullOptions) => {
                 if (moduleOptions.storage.type === "in-memory") {
                     return new Map();
-                }
-
-                if (isProvider(moduleOptions.storage.adapter)) {
-                    throw new Error("Redis adapter provider is not initialized.");
                 }
 
                 return moduleOptions.storage.adapter;

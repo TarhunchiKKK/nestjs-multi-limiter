@@ -1,5 +1,5 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: `any` type is necessary for real type providing */
-import type { ModuleMetadata, Type } from "@nestjs/common";
+import type { InjectionToken, ModuleMetadata } from "@nestjs/common";
 import type { IErrorFactory } from "../../custom/error-factories";
 import type { IKeyExtractor } from "../../custom/key-extractors";
 import type { IOptionsFactory } from "../../custom/options-factories";
@@ -43,9 +43,9 @@ export type RateLimiterModuleOptions = {
      * Providers that are used by default.
      */
     defaultProviders?: {
-        keyExtractor?: Type<IKeyExtractor>;
-        errorFactory?: Type<IErrorFactory>;
-        optionsFactory?: Type<IOptionsFactory>;
+        keyExtractor?: InjectionToken<IKeyExtractor>;
+        errorFactory?: InjectionToken<IErrorFactory>;
+        optionsFactory?: InjectionToken<IOptionsFactory>;
     };
 };
 
@@ -84,8 +84,8 @@ export type RateLimiterModuleFullOptions = {
     };
 
     defaultProviders: {
-        keyExtractor: Type<IKeyExtractor>;
-        errorFactory: Type<IErrorFactory>;
-        optionsFactory?: Type<IOptionsFactory>;
+        keyExtractor: InjectionToken<IKeyExtractor>;
+        errorFactory: InjectionToken<IErrorFactory>;
+        optionsFactory?: InjectionToken<IOptionsFactory>;
     };
 };

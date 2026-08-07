@@ -247,6 +247,8 @@ import {
 > 📌 **Remember**
 >
 > If you specify you custom providers (key extractors, error factories and options factories) as default providers in `RateLimiterModule` configuration it will become not required to specify them in `RateLimit` decorator.
+>
+> For using your custom providers as default you should provide exactly your providers injection tokens in `RateLimiterModule` configuration.
 
 ### Key Extractors
 
