@@ -65,11 +65,11 @@ export class ProvidersResolver implements OnModuleInit {
 
     private async resolveCustomProvider<T>(token: InjectionToken, wrapper: InstanceWrapper<T>): Promise<T> {
         if (wrapper.isDependencyTreeStatic()) {
-            // DOC: If provider is static
+            // For static provider
             return wrapper.instance;
         }
 
-        // DOC: If provider is request scoped
+        // For request scoped provider
         return await this.moduleRef.resolve<T>(token, undefined, { strict: false });
     }
 
