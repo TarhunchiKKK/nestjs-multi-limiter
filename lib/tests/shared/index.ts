@@ -1,5 +1,6 @@
 export * from "./constants/custom.providers";
 export * from "./constants/date.constants";
+export * from "./constants/redis.adapters";
 export { createRedisClient } from "./helpers/redis.helpers";
 export { createInMemoryStorage } from "./helpers/storage.helpers";
 export { clearMock } from "./mocks/clear-mock.helper";

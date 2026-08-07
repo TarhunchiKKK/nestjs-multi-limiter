@@ -79,8 +79,7 @@ export class RateLimiterModule {
         const moduleOptionsProvider: FactoryProvider<RateLimiterModuleFullOptions> = {
             provide: MODULE_OPTIONS_TOKEN,
             inject: options.inject ?? [],
-            // biome-ignore lint/suspicious/noExplicitAny: `any` type is necessary for factory customization
-            useFactory: async (...args: any[]) => {
+            useFactory: async (...args: unknown[]) => {
                 const calculatedOptions = await options.useFactory(...args);
                 return mergeDefaultOptions(calculatedOptions);
             }
