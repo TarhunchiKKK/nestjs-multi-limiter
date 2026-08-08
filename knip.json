@@ -1,8 +1,6 @@
 {
     "$schema": "https://unpkg.com/knip@5/schema.json",
-    "ignore": ["./e2e/**/*", "./lib/tests/**/*.ts"],
-    "ignoreDependencies": ["release-it"],
-    "ignoreBinaries": ["release-it"],
+    "ignore": ["./lib/tests/**/*.ts"],
     "rules": {
         "files": "error",
         "types": "error",

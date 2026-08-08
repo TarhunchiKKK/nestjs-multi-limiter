@@ -4,6 +4,7 @@ import { Test } from "@nestjs/testing";
 import { RateLimiterModule } from "nestjs-rate-limiter";
 import request from "supertest";
 import { USER_LIMIT } from "../dynamic-configuration/providers";
+import { AppController } from "./controllers";
 
 const LIMIT = 3;
 
@@ -24,7 +25,8 @@ describe("Skipping", () => {
                         }
                     }
                 })
-            ]
+            ],
+            controllers: [AppController]
         }).compile();
 
         app = moduleFixture.createNestApplication();

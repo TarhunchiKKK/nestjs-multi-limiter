@@ -6,6 +6,7 @@ import { Redis } from "ioredis";
 import { RateLimiterModule, RateLimitGuard } from "nestjs-rate-limiter";
 import request from "supertest";
 import { USER_LIMIT } from "../dynamic-configuration/providers";
+import { AppController } from "./controllers";
 
 const LIMIT = 3;
 
@@ -33,6 +34,7 @@ describe("Global guard", () => {
                     }
                 })
             ],
+            controllers: [AppController],
             providers: [
                 {
                     provide: APP_GUARD,
