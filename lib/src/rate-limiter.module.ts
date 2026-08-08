@@ -41,7 +41,6 @@ import type { Storage } from "./shared/model";
         BuiltinKeyExtractor,
         BuiltinErrorFactory,
         ProvidersResolver,
-        // QUESTION: Should this provider be exported?
         InMemoryGarbageCollector,
         RateLimitGuard
     ],

@@ -1,10 +1,10 @@
 import { afterEach, beforeAll, describe, expect, it } from "bun:test";
 import { Test, type TestingModule } from "@nestjs/testing";
-import { RateLimiterModule } from "../../../../src";
-import { RATE_LIMITER_MODULE_DEFAULT_OPTIONS } from "../../../../src/config/defaults/default-options.constants";
-import { BuiltinErrorFactory } from "../../../../src/custom/error-factories";
-import { BuiltinKeyExtractor } from "../../../../src/custom/key-extractors";
-import { ProvidersResolver } from "../../../../src/services/providers.resolver";
+import { RateLimiterModule } from "../../../src";
+import { RATE_LIMITER_MODULE_DEFAULT_OPTIONS } from "../../../src/config/defaults/default-options.constants";
+import { BuiltinErrorFactory } from "../../../src/custom/error-factories";
+import { BuiltinKeyExtractor } from "../../../src/custom/key-extractors";
+import { ProvidersResolver } from "../../../src/services/providers.resolver";
 
 describe.each([
     ["sync", "forRoot", RATE_LIMITER_MODULE_DEFAULT_OPTIONS],

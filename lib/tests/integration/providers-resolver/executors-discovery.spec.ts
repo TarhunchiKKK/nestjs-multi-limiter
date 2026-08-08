@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { Test, type TestingModule } from "@nestjs/testing";
-import { RateLimiterModule, type RateLimiterModuleOptions, type StorageTypes, type Strategies } from "../../../../src";
-import { RATE_LIMITER_MODULE_DEFAULT_OPTIONS } from "../../../../src/config/defaults/default-options.constants";
-import { ProvidersResolver } from "../../../../src/services/providers.resolver";
-import { createRedisClient } from "../../../shared";
+import { RateLimiterModule, type RateLimiterModuleOptions, type StorageTypes, type Strategies } from "../../../src";
+import { RATE_LIMITER_MODULE_DEFAULT_OPTIONS } from "../../../src/config/defaults/default-options.constants";
+import { ProvidersResolver } from "../../../src/services/providers.resolver";
+import { createRedisClient } from "../../shared";
 
 const strategies: Strategies[] = ["fixed-window", "token-bucket", "sliding-window-counter", "sliding-window-log", "leaky-bucket"];
 
