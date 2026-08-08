@@ -1,8 +1,8 @@
 import { Controller, Get, UseGuards } from "@nestjs/common";
-import { SkipRateLimit } from "nestjs-rate-limiter";
+import { RateLimitGuard, SkipRateLimit } from "nestjs-rate-limiter";
 
 @Controller("app")
-@UseGuards()
+@UseGuards(RateLimitGuard)
 export class AppController {
     @Get("test")
     @SkipRateLimit()
