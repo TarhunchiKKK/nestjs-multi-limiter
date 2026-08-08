@@ -97,13 +97,13 @@ export class RateLimitGuard implements CanActivate {
             keyExtractor: await this.discoveryService.getKeyExtractor(keyExtractorToken),
             errorFactory: await this.discoveryService.getErrorFactory(errorFactoryToken),
             strategy: finalDecoratorOptions.strategy ?? this.options.strategy,
-            strategyOptions: !options.strategy
+            strategyOptions: !finalDecoratorOptions.strategy
                 ? this.options.strategyOptions
                 : {
                       ...this.options.strategyOptions,
-                      [options.strategy]: {
-                          ...this.options.strategyOptions[options.strategy],
-                          ...finalDecoratorOptions.strategyOptions?.[options.strategy]
+                      [finalDecoratorOptions.strategy]: {
+                          ...this.options.strategyOptions[finalDecoratorOptions.strategy],
+                          ...finalDecoratorOptions.strategyOptions?.[finalDecoratorOptions.strategy]
                       }
                   }
         };
