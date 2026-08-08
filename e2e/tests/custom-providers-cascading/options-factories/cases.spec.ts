@@ -1,12 +1,19 @@
-import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { afterEach, beforeEach, describe, it } from "bun:test";
 import { HttpStatus, type INestApplication } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import { RateLimiterModule, type RateLimiterModuleOptions } from "nestjs-rate-limiter";
 import request from "supertest";
 import { ControllerLevelController, ModuleLevelController, RouteLevelController } from "./controllers";
-import { ControllerLevelErrorFactory, ModuleLevelErrorFactory, RouteLevelErrorFactory } from "./providers";
+import {
+    CONTROLLER_LEVEL_LIMIT,
+    ControllerLevelOptionsFactory,
+    MODULE_LEVEL_LIMIT,
+    ModuleLevelOptionsFactory,
+    ROUTE_LEVEL_LIMIT,
+    RouteLevelOptionsFactory
+} from "./providers";
 
-const LIMIT = 3;
+const DEFAULT_LIMIT = 3;
 
 const createSyncOptions = (setDefault: boolean) =>
     ({
@@ -16,11 +23,11 @@ const createSyncOptions = (setDefault: boolean) =>
         strategy: "fixed-window",
         strategyOptions: {
             fixedWindow: {
-                limit: LIMIT
+                limit: DEFAULT_LIMIT
             }
         },
         defaultProviders: {
-            errorFactory: setDefault ? ModuleLevelErrorFactory : undefined
+            optionsFactory: setDefault ? ModuleLevelOptionsFactory : undefined
         }
     }) satisfies RateLimiterModuleOptions;
 
@@ -28,7 +35,7 @@ const createAsyncOptions = (setDefault: boolean) => ({
     useFactory: () => createSyncOptions(setDefault)
 });
 
-describe("Custom Error Factories", () => {
+describe("Custom options factories cascading", () => {
     describe.each([
         ["sync", "forRoot", createSyncOptions(false)],
         ["async", "forRootAsync", createAsyncOptions(false)]
@@ -39,7 +46,7 @@ describe("Custom Error Factories", () => {
             const moduleFixture = await Test.createTestingModule({
                 imports: [RateLimiterModule[method](options)],
                 controllers: [ModuleLevelController, ControllerLevelController, RouteLevelController],
-                providers: [ControllerLevelErrorFactory, RouteLevelErrorFactory]
+                providers: [ControllerLevelOptionsFactory, RouteLevelOptionsFactory]
             }).compile();
 
             app = moduleFixture.createNestApplication();
@@ -51,31 +58,28 @@ describe("Custom Error Factories", () => {
             await app.close();
         });
 
-        it("should use built-in error factory", async () => {
-            for (let i = 0; i < LIMIT; i++) {
+        it("should use built-in options factory (undefined)", async () => {
+            for (let i = 0; i < DEFAULT_LIMIT; i++) {
                 await request(app.getHttpServer()).get("/module/override").expect(HttpStatus.OK);
             }
 
-            const response = await request(app.getHttpServer()).get("/module/override").expect(HttpStatus.TOO_MANY_REQUESTS);
-            expect(response.body).toBeString();
+            await request(app.getHttpServer()).get("/module/override").expect(HttpStatus.TOO_MANY_REQUESTS);
         });
 
-        it("should use controller-level error factory", async () => {
-            for (let i = 0; i < LIMIT; i++) {
+        it("should use controller-level options factory", async () => {
+            for (let i = 0; i < CONTROLLER_LEVEL_LIMIT; i++) {
                 await request(app.getHttpServer()).get("/controller/override").expect(HttpStatus.OK);
             }
 
-            const response = await request(app.getHttpServer()).get("/controller/override").expect(HttpStatus.TOO_MANY_REQUESTS);
-            expect(response.body.level).toBe("controller");
+            await request(app.getHttpServer()).get("/controller/override").expect(HttpStatus.TOO_MANY_REQUESTS);
         });
 
-        it("should use route-level error factory", async () => {
-            for (let i = 0; i < LIMIT; i++) {
+        it("should use route-level options factory", async () => {
+            for (let i = 0; i < ROUTE_LEVEL_LIMIT; i++) {
                 await request(app.getHttpServer()).get("/route/override").expect(HttpStatus.OK);
             }
 
-            const response = await request(app.getHttpServer()).get("/route/override").expect(HttpStatus.TOO_MANY_REQUESTS);
-            expect(response.body.level).toBe("route");
+            await request(app.getHttpServer()).get("/route/override").expect(HttpStatus.TOO_MANY_REQUESTS);
         });
     });
 
@@ -89,7 +93,7 @@ describe("Custom Error Factories", () => {
             const moduleFixture = await Test.createTestingModule({
                 imports: [RateLimiterModule[method](options)],
                 controllers: [ModuleLevelController],
-                providers: [ModuleLevelErrorFactory]
+                providers: [ModuleLevelOptionsFactory]
             }).compile();
 
             app = moduleFixture.createNestApplication();
@@ -101,13 +105,12 @@ describe("Custom Error Factories", () => {
             await app.close();
         });
 
-        it("should use module-level error factory", async () => {
-            for (let i = 0; i < LIMIT; i++) {
+        it("should use module-level options factory", async () => {
+            for (let i = 0; i < MODULE_LEVEL_LIMIT; i++) {
                 await request(app.getHttpServer()).get("/module/override").expect(HttpStatus.OK);
             }
 
-            const response = await request(app.getHttpServer()).get("/module/override").expect(HttpStatus.TOO_MANY_REQUESTS);
-            expect(response.body.level).toBe("module");
+            await request(app.getHttpServer()).get("/module/override").expect(HttpStatus.TOO_MANY_REQUESTS);
         });
     });
 });
