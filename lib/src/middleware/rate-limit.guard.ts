@@ -56,7 +56,7 @@ export class RateLimitGuard implements CanActivate {
     }
 
     private checkSkip(context: ExecutionContext) {
-        const shouldSkip = this.reflector.get(SkipRateLimit, context.getHandler());
+        const shouldSkip = this.reflector.getAllAndOverride(SkipRateLimit, [context.getHandler(), context.getClass()]);
 
         if (shouldSkip) {
             return true;
@@ -66,7 +66,7 @@ export class RateLimitGuard implements CanActivate {
     }
 
     private async getOptions(context: ExecutionContext): Promise<RunOptions> {
-        const options = this.reflector.get(RateLimit, context.getHandler());
+        const options = this.reflector.getAllAndOverride(RateLimit, [context.getHandler(), context.getClass()]);
 
         if (!options) {
             return {
