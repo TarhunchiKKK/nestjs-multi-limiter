@@ -10,7 +10,12 @@ const syncOptions: RateLimiterModuleOptions = {
     storage: {
         type: "in-memory"
     },
-    strategy: "fixed-window"
+    strategy: "fixed-window",
+    strategyOptions: {
+        fixedWindow: {
+            limit: 1
+        }
+    }
 };
 
 const asyncOptions: RateLimiterModuleAsyncOptions = {

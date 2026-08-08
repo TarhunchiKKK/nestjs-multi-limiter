@@ -27,7 +27,7 @@ const asyncOptions: RateLimiterModuleAsyncOptions = {
     useFactory: () => syncOptions
 };
 
-describe("Custom options factories cascading", () => {
+describe("Custom key extractors cascading", () => {
     describe.each([
         ["sync", "forRoot", syncOptions],
         ["async", "forRootAsync", asyncOptions]
@@ -57,7 +57,7 @@ describe("Custom options factories cascading", () => {
             await request(app.getHttpServer()).get("/module/test").set("module-id", "2").expect(HttpStatus.OK);
         });
 
-        it("should test module key extractor and isolate limits by controller-id (controller level)", async () => {
+        it("should use module key extractor and isolate limits by controller-id (controller level)", async () => {
             await request(app.getHttpServer()).get("/controller/test").set("controller-id", "1").set("module-id", "1").expect(HttpStatus.OK);
 
             await request(app.getHttpServer()).get("/controller/test").set("controller-id", "1").set("module-id", "2").expect(HttpStatus.TOO_MANY_REQUESTS);

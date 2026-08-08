@@ -11,7 +11,7 @@ export class ModuleLevelController {
     }
 }
 
-@Controller("module")
+@Controller("controller")
 @UseGuards(RateLimitGuard)
 @RateLimit({ keyExtractor: ControllerLevelKeyExtractor })
 export class ControllerLevelController {

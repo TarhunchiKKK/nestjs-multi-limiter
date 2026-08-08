@@ -57,7 +57,9 @@ describe("Custom error factories cascading", () => {
             }
 
             const response = await request(app.getHttpServer()).get("/module/test").expect(HttpStatus.TOO_MANY_REQUESTS);
-            expect(response.body).toBeString();
+
+            expect(response.body.message).toBe("Too many requests.");
+            expect(response.body.statusCode).toBe(HttpStatus.TOO_MANY_REQUESTS);
         });
 
         it("should use controller-level error factory", async () => {
