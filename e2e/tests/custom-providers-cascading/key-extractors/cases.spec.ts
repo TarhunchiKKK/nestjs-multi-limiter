@@ -51,18 +51,18 @@ describe("Custom options factories cascading", () => {
         });
 
         it("should isolate limits (module level)", async () => {
-            await request(app.getHttpServer()).get("/module/override").set("module-id", "1").expect(HttpStatus.OK);
-            await request(app.getHttpServer()).get("/module/override").set("module-id", "1").expect(HttpStatus.TOO_MANY_REQUESTS);
+            await request(app.getHttpServer()).get("/module/test").set("module-id", "1").expect(HttpStatus.OK);
+            await request(app.getHttpServer()).get("/module/test").set("module-id", "1").expect(HttpStatus.TOO_MANY_REQUESTS);
 
-            await request(app.getHttpServer()).get("/module/override").set("module-id", "2").expect(HttpStatus.OK);
+            await request(app.getHttpServer()).get("/module/test").set("module-id", "2").expect(HttpStatus.OK);
         });
 
-        it("should override module key extractor and isolate limits by controller-id (controller level)", async () => {
-            await request(app.getHttpServer()).get("/controller/override").set("controller-id", "1").set("module-id", "1").expect(HttpStatus.OK);
+        it("should test module key extractor and isolate limits by controller-id (controller level)", async () => {
+            await request(app.getHttpServer()).get("/controller/test").set("controller-id", "1").set("module-id", "1").expect(HttpStatus.OK);
 
-            await request(app.getHttpServer()).get("/controller/override").set("controller-id", "1").set("module-id", "2").expect(HttpStatus.TOO_MANY_REQUESTS);
+            await request(app.getHttpServer()).get("/controller/test").set("controller-id", "1").set("module-id", "2").expect(HttpStatus.TOO_MANY_REQUESTS);
 
-            await request(app.getHttpServer()).get("/controller/override").set("controller-id", "2").set("module-id", "1").expect(HttpStatus.OK);
+            await request(app.getHttpServer()).get("/controller/test").set("controller-id", "2").set("module-id", "1").expect(HttpStatus.OK);
         });
     });
 });

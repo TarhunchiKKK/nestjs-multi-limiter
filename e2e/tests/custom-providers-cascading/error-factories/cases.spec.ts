@@ -53,28 +53,28 @@ describe("Custom error factories cascading", () => {
 
         it("should use built-in error factory", async () => {
             for (let i = 0; i < LIMIT; i++) {
-                await request(app.getHttpServer()).get("/module/override").expect(HttpStatus.OK);
+                await request(app.getHttpServer()).get("/module/test").expect(HttpStatus.OK);
             }
 
-            const response = await request(app.getHttpServer()).get("/module/override").expect(HttpStatus.TOO_MANY_REQUESTS);
+            const response = await request(app.getHttpServer()).get("/module/test").expect(HttpStatus.TOO_MANY_REQUESTS);
             expect(response.body).toBeString();
         });
 
         it("should use controller-level error factory", async () => {
             for (let i = 0; i < LIMIT; i++) {
-                await request(app.getHttpServer()).get("/controller/override").expect(HttpStatus.OK);
+                await request(app.getHttpServer()).get("/controller/test").expect(HttpStatus.OK);
             }
 
-            const response = await request(app.getHttpServer()).get("/controller/override").expect(HttpStatus.TOO_MANY_REQUESTS);
+            const response = await request(app.getHttpServer()).get("/controller/test").expect(HttpStatus.TOO_MANY_REQUESTS);
             expect(response.body.level).toBe("controller");
         });
 
         it("should use route-level error factory", async () => {
             for (let i = 0; i < LIMIT; i++) {
-                await request(app.getHttpServer()).get("/route/override").expect(HttpStatus.OK);
+                await request(app.getHttpServer()).get("/route/test").expect(HttpStatus.OK);
             }
 
-            const response = await request(app.getHttpServer()).get("/route/override").expect(HttpStatus.TOO_MANY_REQUESTS);
+            const response = await request(app.getHttpServer()).get("/route/test").expect(HttpStatus.TOO_MANY_REQUESTS);
             expect(response.body.level).toBe("route");
         });
     });
@@ -103,10 +103,10 @@ describe("Custom error factories cascading", () => {
 
         it("should use module-level error factory", async () => {
             for (let i = 0; i < LIMIT; i++) {
-                await request(app.getHttpServer()).get("/module/override").expect(HttpStatus.OK);
+                await request(app.getHttpServer()).get("/module/test").expect(HttpStatus.OK);
             }
 
-            const response = await request(app.getHttpServer()).get("/module/override").expect(HttpStatus.TOO_MANY_REQUESTS);
+            const response = await request(app.getHttpServer()).get("/module/test").expect(HttpStatus.TOO_MANY_REQUESTS);
             expect(response.body.level).toBe("module");
         });
     });

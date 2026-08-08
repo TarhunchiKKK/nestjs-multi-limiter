@@ -5,8 +5,8 @@ import { ControllerLevelOptionsFactory, RouteLevelOptionsFactory } from "./provi
 @Controller("module")
 @UseGuards(RateLimitGuard)
 export class ModuleLevelController {
-    @Get("override")
-    public override() {
+    @Get("test")
+    public test() {
         return { success: true };
     }
 }
@@ -15,8 +15,8 @@ export class ModuleLevelController {
 @UseGuards(RateLimitGuard)
 @RateLimit({ factory: ControllerLevelOptionsFactory })
 export class ControllerLevelController {
-    @Get("override")
-    public override() {
+    @Get("test")
+    public test() {
         return { success: true };
     }
 }
@@ -24,9 +24,9 @@ export class ControllerLevelController {
 @Controller("route")
 @UseGuards(RateLimitGuard)
 export class RouteLevelController {
-    @Get("override")
+    @Get("test")
     @RateLimit({ factory: RouteLevelOptionsFactory })
-    public override() {
+    public test() {
         return { success: true };
     }
 }

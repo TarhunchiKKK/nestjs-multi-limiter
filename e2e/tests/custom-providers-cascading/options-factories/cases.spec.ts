@@ -60,26 +60,26 @@ describe("Custom options factories cascading", () => {
 
         it("should use built-in options factory (undefined)", async () => {
             for (let i = 0; i < DEFAULT_LIMIT; i++) {
-                await request(app.getHttpServer()).get("/module/override").expect(HttpStatus.OK);
+                await request(app.getHttpServer()).get("/module/test").expect(HttpStatus.OK);
             }
 
-            await request(app.getHttpServer()).get("/module/override").expect(HttpStatus.TOO_MANY_REQUESTS);
+            await request(app.getHttpServer()).get("/module/test").expect(HttpStatus.TOO_MANY_REQUESTS);
         });
 
         it("should use controller-level options factory", async () => {
             for (let i = 0; i < CONTROLLER_LEVEL_LIMIT; i++) {
-                await request(app.getHttpServer()).get("/controller/override").expect(HttpStatus.OK);
+                await request(app.getHttpServer()).get("/controller/test").expect(HttpStatus.OK);
             }
 
-            await request(app.getHttpServer()).get("/controller/override").expect(HttpStatus.TOO_MANY_REQUESTS);
+            await request(app.getHttpServer()).get("/controller/test").expect(HttpStatus.TOO_MANY_REQUESTS);
         });
 
         it("should use route-level options factory", async () => {
             for (let i = 0; i < ROUTE_LEVEL_LIMIT; i++) {
-                await request(app.getHttpServer()).get("/route/override").expect(HttpStatus.OK);
+                await request(app.getHttpServer()).get("/route/test").expect(HttpStatus.OK);
             }
 
-            await request(app.getHttpServer()).get("/route/override").expect(HttpStatus.TOO_MANY_REQUESTS);
+            await request(app.getHttpServer()).get("/route/test").expect(HttpStatus.TOO_MANY_REQUESTS);
         });
     });
 
@@ -107,10 +107,10 @@ describe("Custom options factories cascading", () => {
 
         it("should use module-level options factory", async () => {
             for (let i = 0; i < MODULE_LEVEL_LIMIT; i++) {
-                await request(app.getHttpServer()).get("/module/override").expect(HttpStatus.OK);
+                await request(app.getHttpServer()).get("/module/test").expect(HttpStatus.OK);
             }
 
-            await request(app.getHttpServer()).get("/module/override").expect(HttpStatus.TOO_MANY_REQUESTS);
+            await request(app.getHttpServer()).get("/module/test").expect(HttpStatus.TOO_MANY_REQUESTS);
         });
     });
 });

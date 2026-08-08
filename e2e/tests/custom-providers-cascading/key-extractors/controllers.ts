@@ -5,8 +5,8 @@ import { ControllerLevelKeyExtractor } from "./providers";
 @Controller("module")
 @UseGuards(RateLimitGuard)
 export class ModuleLevelController {
-    @Get("override")
-    public override() {
+    @Get("test")
+    public test() {
         return { success: true };
     }
 }
@@ -15,8 +15,8 @@ export class ModuleLevelController {
 @UseGuards(RateLimitGuard)
 @RateLimit({ keyExtractor: ControllerLevelKeyExtractor })
 export class ControllerLevelController {
-    @Get("override")
-    public override() {
+    @Get("test")
+    public test() {
         return { success: true };
     }
 }
