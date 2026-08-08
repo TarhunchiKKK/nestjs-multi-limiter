@@ -84,7 +84,7 @@ describe.each([
         }
     });
 
-    it("should find appropriate executors", () => {
+    it("should find all executors", () => {
         const executors = [
             FixedWindowInMemoryExecutor,
             TokenBucketInMemoryExecutor,
