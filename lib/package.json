@@ -10,10 +10,10 @@
         "email": "kostabarilo12@gmail.com",
         "url": "https://github.com/TarhunchiKKK"
     },
-    "homepage": "https://github.com/TarhunchiKKK/nestjs-rate-limiter.git#readme",
+    "homepage": "https://github.com/TarhunchiKKK/nestjs-multi-limiter.git#readme",
     "repository": {
         "type": "git",
-        "url": "https://github.com/TarhunchiKKK/nestjs-rate-limiter.git"
+        "url": "https://github.com/TarhunchiKKK/nestjs-multi-limiter.git"
     },
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
