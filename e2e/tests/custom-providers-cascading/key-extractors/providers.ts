@@ -1,6 +1,6 @@
 import type { ExecutionContext } from "@nestjs/common";
 import type { Request } from "express";
-import { type IKeyExtractor, KeyExtractor } from "nestjs-rate-limiter";
+import { type IKeyExtractor, KeyExtractor } from "nestjs-multi-limiter";
 
 @KeyExtractor()
 export class ModuleLevelKeyExtractor implements IKeyExtractor {

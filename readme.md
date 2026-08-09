@@ -78,7 +78,7 @@ This library implements 5 core rate limiting strategies. To understand their tra
 ## Installation
 
 ```bash
-npm install nestjs-rate-limiter
+npm install nestjs-multi-limiter
 ```
 
 ## Quick Start
@@ -86,7 +86,7 @@ npm install nestjs-rate-limiter
 ```typescript
 // app.module.ts
 import { Module } from "@nestjs/common";
-import { RateLimiterModule } from "nestjs-rate-limiter";
+import { RateLimiterModule } from "nestjs-multi-limiter";
 import { AppController } from "./app.controller.ts";
 
 @Module({
@@ -110,7 +110,7 @@ export class AppModule {}
 ```typescript
 // app.controller.ts
 import { Controller, Get, UseGuards } from "@nestjs/common";
-import { RateLimit, RateLimitGuard } from "nestjs-rate-limiter";
+import { RateLimit, RateLimitGuard } from "nestjs-multi-limiter";
 
 @Controller()
 @UseGuards(RateLimitGuard)
@@ -256,7 +256,7 @@ import {
 
 ```typescript
 import { type ExecutionContext } from "@nestjs/common";
-import { type IKeyExtractor, KeyExtractor } from "nestjs-rate-limiter";
+import { type IKeyExtractor, KeyExtractor } from "nestjs-multi-limiter";
 
 @KeyExtractor()
 export class MyCustomKeyExtractor implements IKeyExtractor {
@@ -309,7 +309,7 @@ import {
     ErrorFactory,
     type ErrorFactoryOptions,
     type IErrorFactory,
-} from "nestjs-rate-limiter";
+} from "nestjs-multi-limiter";
 
 export class RateLimitError extends HttpException {
     public constructor(message: string) {
@@ -357,7 +357,7 @@ MyModule.forRoot({
 
 ```typescript
 import { type ExecutionContext } from "@nestjs/common";
-import { type IOptionsFactory, OptionsFactory } from "nestjs-rate-limiter";
+import { type IOptionsFactory, OptionsFactory } from "nestjs-multi-limiter";
 
 @OptionsFactory()
 export class MyCustomOptionsFactory implements IOptionsFactory {
@@ -423,7 +423,7 @@ For using Redis storage you need to create object or provider that implements `I
 
 ```typescript
 import Redis, { type RedisValue } from "ioredis";
-import type { IRedisAdapter } from "nestjs-rate-limiter";
+import type { IRedisAdapter } from "nestjs-multi-limiter";
 
 // 📌 TRICK: This client already can be used as adapter
 export const RedisClient = new Redis(/* ... */);
@@ -453,7 +453,7 @@ RateLimiterModule.forRoot({
 
 ```typescript
 import Redis, { type RedisValue } from "ioredis";
-import type { IRedisAdapter } from "nestjs-rate-limiter";
+import type { IRedisAdapter } from "nestjs-multi-limiter";
 
 @Injectable()
 export class RedisService implements IRedisAdapter {
@@ -509,7 +509,7 @@ RateLimiterModule.forRootAsync({
 You can also skip rate limiting for method/controller:
 
 ```typescript
-import { RateLimitGuard, SkipRateLimit } from "nestjs-rate-limiter";
+import { RateLimitGuard, SkipRateLimit } from "nestjs-multi-limiter";
 
 @Controller()
 @UseGuards(RateLimitGuard)

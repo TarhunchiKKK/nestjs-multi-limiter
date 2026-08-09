@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, it } from "bun:test";
 import { HttpStatus, type INestApplication } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
-import { RateLimiterModule, type RateLimiterModuleAsyncOptions, type RateLimiterModuleOptions } from "nestjs-rate-limiter";
+import { RateLimiterModule, type RateLimiterModuleAsyncOptions, type RateLimiterModuleOptions } from "nestjs-multi-limiter";
 import request from "supertest";
 import { AppController } from "./controllers";
 import { ADMIN_LIMIT, RoleBasedOptionsFactory, USER_LIMIT } from "./providers";

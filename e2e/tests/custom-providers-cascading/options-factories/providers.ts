@@ -1,4 +1,4 @@
-import { type IOptionsFactory, OptionsFactory, type RateLimitOptions } from "nestjs-rate-limiter";
+import { type IOptionsFactory, OptionsFactory, type RateLimitOptions } from "nestjs-multi-limiter";
 
 export const MODULE_LEVEL_LIMIT = 3;
 

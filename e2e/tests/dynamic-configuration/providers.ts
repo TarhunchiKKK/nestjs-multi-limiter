@@ -1,6 +1,6 @@
 import type { ExecutionContext } from "@nestjs/common";
 import type { Request } from "express";
-import { type IOptionsFactory, OptionsFactory, type RateLimitOptions } from "nestjs-rate-limiter";
+import { type IOptionsFactory, OptionsFactory, type RateLimitOptions } from "nestjs-multi-limiter";
 
 export const USER_LIMIT = 3;
 

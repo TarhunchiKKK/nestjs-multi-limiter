@@ -1,5 +1,5 @@
 import { Controller, Get, UseGuards } from "@nestjs/common";
-import { RateLimitGuard, SkipRateLimit } from "nestjs-rate-limiter";
+import { RateLimitGuard, SkipRateLimit } from "nestjs-multi-limiter";
 
 @Controller("controller")
 @UseGuards(RateLimitGuard)

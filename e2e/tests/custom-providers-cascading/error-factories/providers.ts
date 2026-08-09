@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus } from "@nestjs/common";
-import { ErrorFactory, type IErrorFactory } from "nestjs-rate-limiter";
+import { ErrorFactory, type IErrorFactory } from "nestjs-multi-limiter";
 
 @ErrorFactory()
 export class ModuleLevelErrorFactory implements IErrorFactory {

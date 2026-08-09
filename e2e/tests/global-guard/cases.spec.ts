@@ -3,7 +3,7 @@ import { HttpStatus, type INestApplication } from "@nestjs/common";
 import { APP_GUARD } from "@nestjs/core";
 import { Test } from "@nestjs/testing";
 import { Redis } from "ioredis";
-import { RateLimiterModule, RateLimitGuard } from "nestjs-rate-limiter";
+import { RateLimiterModule, RateLimitGuard } from "nestjs-multi-limiter";
 import request from "supertest";
 import { USER_LIMIT } from "../dynamic-configuration/providers";
 import { AppController } from "./controllers";
