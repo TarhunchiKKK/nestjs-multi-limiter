@@ -239,10 +239,10 @@ import {
 
 ## Custom Providers
 
-> ⚠️ **Important** ⚠️
+> ⚠️ **Important**
 >
 > Your custom providers (key extractors, error factories and options factories) will be called on every request.
-> Do not perform any expensive computations here. It can significantly hurt performance.
+> **Do not perform any expensive computations here.** It can significantly hurt performance.
 
 > 📌 **Remember**
 >
@@ -429,8 +429,8 @@ import type { IRedisAdapter } from "nestjs-multi-limiter";
 export const RedisClient = new Redis(/* ... */);
 
 export const MyRedisAdapter: IRedisAdapter = {
-    eval: async (script, numkeys, ...args) => {
-        return await RedisClient.eval(script, numkeys, ...args);
+    eval: async (script, numKeys, ...args) => {
+        return await RedisClient.eval(script, numKeys, ...args);
     }
 } 
 ```
@@ -465,10 +465,10 @@ export class RedisService implements IRedisAdapter {
 
     public async eval(
         script: string | Buffer<ArrayBufferLike>,
-        numkeys: string | number,
+        numKeys: string | number,
         ...args: RedisValue[]
     ) {
-        return await this.client.eval(script, numkeys, ...args);
+        return await this.client.eval(script, numKeys, ...args);
     }
 
     // 📌 TRICK: Redis client can be used as adapter
@@ -514,6 +514,7 @@ import { RateLimitGuard, SkipRateLimit } from "nestjs-multi-limiter";
 @Controller()
 @UseGuards(RateLimitGuard)
 export class MyController {
+    // Rate limiting for this method will be enabled
     public method1() {}
 
     // Rate limiting for this method will be skipped
