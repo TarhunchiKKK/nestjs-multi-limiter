@@ -7,7 +7,7 @@ import type { IKeyExtractor } from "../custom/key-extractors";
 import { RateLimit, SkipRateLimit } from "../decorators";
 import { GUARD_OPTIONS_TOKEN } from "../di";
 import { ProvidersResolver } from "../services/providers.resolver";
-import { getKey, type Scope } from "../shared/model";
+import { getKey, Key, type Scope } from "../shared/model";
 
 type RunOptions = StrategyOptions & {
     scope: Scope;
@@ -34,7 +34,6 @@ export class RateLimitGuard implements CanActivate {
             return true;
         }
 
-
         const finalGuardOptions = await this.getFinalGuardOptions(context, metadataOptions);
 
         const key = await finalGuardOptions.keyExtractor.extract(context);
@@ -42,14 +41,7 @@ export class RateLimitGuard implements CanActivate {
         const requestAllowed = await this.checkRate(key, finalGuardOptions);
 
         if (!requestAllowed) {
-            const errorOptions: ErrorFactoryOptions = {
-                key: key,
-                scope: finalGuardOptions.scope,
-                strategy: finalGuardOptions.strategy,
-                strategyOptions: finalGuardOptions.strategyOptions[finalGuardOptions.strategy]
-            };
-
-            throw finalGuardOptions.errorFactory.getError(context, errorOptions);
+            this.rejectWithError(context, key, finalGuardOptions);
         }
 
         return true;
@@ -64,9 +56,9 @@ export class RateLimitGuard implements CanActivate {
             return true;
         }
 
-        const handlerOptions = this.reflector.get(RateLimit, handler)
+        const handlerOptions = this.reflector.get(RateLimit, handler);
         if (handlerOptions) {
-            return handlerOptions
+            return handlerOptions;
         }
 
         const classSkip = this.reflector.get(SkipRateLimit, targetClass);
@@ -74,14 +66,11 @@ export class RateLimitGuard implements CanActivate {
             return true;
         }
 
-        const classOptions = this.reflector.get(RateLimit, targetClass)
-        return classOptions
+        const classOptions = this.reflector.get(RateLimit, targetClass);
+        return classOptions;
     }
 
- 
-
     private async getFinalGuardOptions(context: ExecutionContext, metadatOptions?: RateLimitOptions): Promise<RunOptions> {
-
         if (!metadatOptions) {
             return {
                 ...this.options,
@@ -129,5 +118,16 @@ export class RateLimitGuard implements CanActivate {
         const executor = this.discoveryService.getExecutor(options.strategy);
 
         return await executor.check(finalKey, options.strategyOptions[options.strategy]);
+    }
+
+    private async rejectWithError(context: ExecutionContext, key: Key, options: RunOptions) {
+        const errorOptions: ErrorFactoryOptions = {
+            key: key,
+            scope: options.scope,
+            strategy: options.strategy,
+            strategyOptions: options.strategyOptions[options.strategy]
+        };
+
+        throw options.errorFactory.getError(context, errorOptions);
     }
 }
