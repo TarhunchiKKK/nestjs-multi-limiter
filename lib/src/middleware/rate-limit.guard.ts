@@ -71,13 +71,14 @@ export class RateLimitGuard implements CanActivate {
     }
 
     private async getFinalGuardOptions(context: ExecutionContext, metadatOptions?: RateLimitOptions): Promise<RunOptions> {
-        console.log(metadatOptions);
         if (!metadatOptions) {
+            const factory = this.options.factory ? await this.discoveryService.getOptionsFactory(this.options.factory) : undefined;
+
             return {
                 ...this.options,
+                ...(factory ? await factory.getOptions(context) : undefined),
                 keyExtractor: await this.discoveryService.getKeyExtractor(this.options.keyExtractor),
                 errorFactory: await this.discoveryService.getErrorFactory(this.options.errorFactory)
-                // QUESTION: Should `factory` be here
             };
         }
 
