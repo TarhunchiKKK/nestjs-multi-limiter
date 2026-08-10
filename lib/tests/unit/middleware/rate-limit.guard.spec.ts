@@ -72,7 +72,7 @@ describe("RateLimitGuard", () => {
         ["class-level", false]
     ])("providers (%s metadata)", (_, useRouteLevelMetadata) => {
         it("should use default providers", async () => {
-            reflectorMock.get.mockReturnValueOnce(undefined).mockReturnValueOnce(undefined).mockReturnValueOnce(undefined).mockReturnValueOnce(undefined);
+            reflectorMock.get.mockReturnValue(undefined);
 
             discoveryServiceMock.getExecutor.mockReturnValue({ check: () => true });
             discoveryServiceMock.getKeyExtractor.mockResolvedValue(new CustomKeyExtractor());
