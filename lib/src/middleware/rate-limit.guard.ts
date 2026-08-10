@@ -41,7 +41,7 @@ export class RateLimitGuard implements CanActivate {
         const requestAllowed = await this.checkRate(key, finalGuardOptions);
 
         if (!requestAllowed) {
-            this.rejectWithError(context, key, finalGuardOptions);
+            await this.rejectWithError(context, key, finalGuardOptions);
         }
 
         return true;
@@ -128,6 +128,8 @@ export class RateLimitGuard implements CanActivate {
             strategyOptions: options.strategyOptions[options.strategy]
         };
 
-        throw options.errorFactory.getError(context, errorOptions);
+        const error = await options.errorFactory.getError(context, errorOptions);
+
+        throw error;
     }
 }
