@@ -1,6 +1,6 @@
 {
     "name": "nestjs-multi-limiter",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Rate Limiter module for NestJS framework",
     "keywords": ["nestjs", "rate limit", "throttle", "nodejs"],
     "license": "MIT",

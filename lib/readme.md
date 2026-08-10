@@ -9,14 +9,14 @@
 </p>
 
 <p align="center">
-    <a href="https://www.npmjs.com/package/nestjs-rate-limitr">
-        <img src="https://img.shields.io/npm/v/nestjs-rate-limitr.svg" alt="NPM Version" />
+    <a href="https://www.npmjs.com/package/nestjs-multi-limiter">
+        <img src="https://img.shields.io/npm/v/nestjs-multi-limiter.svg" alt="NPM Version" />
     </a>
-    <a href="https://www.npmjs.com/package/nestjs-rate-limitr">
-        <img src="https://img.shields.io/npm/l/nestjs-rate-limitr.svg" alt="Package License" />
+    <a href="https://www.npmjs.com/package/nestjs-multi-limiter">
+        <img src="https://img.shields.io/npm/l/nestjs-multi-limiter.svg" alt="Package License" />
     </a>
-    <a href="https://www.npmjs.com/package/nestjs-rate-limitr">
-        <img src="https://img.shields.io/npm/dm/nestjs-rate-limitr.svg" alt="NPM Downloads" />
+    <a href="https://www.npmjs.com/package/nestjs-multi-limiter">
+        <img src="https://img.shields.io/npm/dm/nestjs-multi-limiter.svg" alt="NPM Downloads" />
     </a>
 </p>
 
