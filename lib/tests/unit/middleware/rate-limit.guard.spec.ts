@@ -50,8 +50,16 @@ describe("RateLimitGuard", () => {
     });
 
     describe("skipping", () => {
-        it("should skip rate limiting", async () => {
-            reflectorMock.getAllAndOverride.mockReturnValue(true);
+        it("should skip rate limiting (route level)", async () => {
+            reflectorMock.get.mockReturnValue(true);
+
+            const result = await guard.canActivate(context as unknown as ExecutionContext);
+
+            expect(result).toBeTrue();
+        });
+
+        it("should skip rate limiting (class level)", async () => {
+            reflectorMock.get.mockReturnValueOnce(undefined).mockReturnValueOnce(undefined).mockReturnValueOnce(true);
 
             const result = await guard.canActivate(context as unknown as ExecutionContext);
 
@@ -59,9 +67,12 @@ describe("RateLimitGuard", () => {
         });
     });
 
-    describe("providers", () => {
+    describe.each([
+        ["route-level", true],
+        ["class-level", false]
+    ])("providers (%s metadata)", (_, useRouteLevelMetadata) => {
         it("should use default providers", async () => {
-            reflectorMock.getAllAndOverride.mockReturnValueOnce(false).mockReturnValueOnce(undefined);
+            reflectorMock.get.mockReturnValue(undefined);
 
             discoveryServiceMock.getExecutor.mockReturnValue({ check: () => true });
             discoveryServiceMock.getKeyExtractor.mockResolvedValue(new CustomKeyExtractor());
@@ -76,7 +87,13 @@ describe("RateLimitGuard", () => {
         });
 
         it("should override default providers", async () => {
-            reflectorMock.getAllAndOverride.mockReturnValueOnce(false).mockReturnValueOnce({
+            reflectorMock.get.mockReturnValueOnce(undefined);
+
+            if (useRouteLevelMetadata) {
+                reflectorMock.get.mockReturnValueOnce(undefined).mockReturnValueOnce(undefined);
+            }
+
+            reflectorMock.get.mockReturnValueOnce({
                 keyExtractor: CustomKeyExtractor,
                 errorFactory: CustomErrorFactory,
                 factory: CustomOptionsFactory
@@ -96,9 +113,18 @@ describe("RateLimitGuard", () => {
         });
     });
 
-    describe("custom providers", async () => {
-        it("should throw custom error", () => {
-            reflectorMock.getAllAndOverride.mockReturnValueOnce(false).mockReturnValueOnce({
+    describe.each([
+        ["route-level", true],
+        ["class-level", false]
+    ])("custom providers (%s metadata)", (_, useRouteLevelMetadata) => {
+        it("should throw custom error", async () => {
+            reflectorMock.get.mockReturnValueOnce(undefined);
+
+            if (useRouteLevelMetadata) {
+                reflectorMock.get.mockReturnValueOnce(undefined).mockReturnValueOnce(undefined);
+            }
+
+            reflectorMock.get.mockReturnValueOnce({
                 errorFactory: CustomErrorFactory
             } satisfies RateLimitOptions);
 
@@ -112,7 +138,13 @@ describe("RateLimitGuard", () => {
         });
 
         it("should not override static options", async () => {
-            reflectorMock.getAllAndOverride.mockReturnValueOnce(false).mockReturnValueOnce({
+            reflectorMock.get.mockReturnValueOnce(false);
+
+            if (useRouteLevelMetadata) {
+                reflectorMock.get.mockReturnValueOnce(undefined).mockReturnValueOnce(undefined);
+            }
+
+            reflectorMock.get.mockReturnValueOnce({
                 keyExtractor: CustomKeyExtractor,
                 factory: CustomOptionsFactory
             } satisfies RateLimitOptions);

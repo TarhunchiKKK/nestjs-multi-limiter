@@ -3,6 +3,6 @@ import type { Reflector } from "@nestjs/core";
 
 export function createReflectorMock() {
     return {
-        getAllAndOverride: mock<Reflector["getAllAndOverride"]>(() => {})
+        get: mock<Reflector["get"]>(() => {})
     };
 }

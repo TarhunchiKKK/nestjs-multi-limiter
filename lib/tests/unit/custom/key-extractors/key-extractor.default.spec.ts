@@ -1,5 +1,4 @@
-import { beforeEach, describe, expect } from "bun:test";
-import { it } from "node:test";
+import { beforeEach, describe, expect, it } from "bun:test";
 import { type ExecutionContext, InternalServerErrorException } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import { BuiltinKeyExtractor } from "../../../../src/custom/key-extractors";
