@@ -1,7 +1,6 @@
 {
     "name": "e2e",
     "scripts": {
-        "build": "nest build",
         "test:e2e": "bun test tests --preload ../scripts/test/preload.ts"
     },
     "dependencies": {
