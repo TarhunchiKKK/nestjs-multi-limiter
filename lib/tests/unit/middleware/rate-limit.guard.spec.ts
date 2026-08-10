@@ -67,7 +67,10 @@ describe("RateLimitGuard", () => {
         });
     });
 
-    describe("providers", () => {
+    describe.each([
+        ["route-level", true],
+        ["class-level", false]
+    ])("providers (%s metadata)", (_, useRouteLevelMetadata) => {
         it("should use default providers", async () => {
             reflectorMock.get.mockReturnValueOnce(undefined).mockReturnValueOnce(undefined).mockReturnValueOnce(undefined).mockReturnValueOnce(undefined);
 
@@ -84,7 +87,13 @@ describe("RateLimitGuard", () => {
         });
 
         it("should override default providers", async () => {
-            reflectorMock.get.mockReturnValueOnce(undefined).mockReturnValueOnce({
+            reflectorMock.get.mockReturnValueOnce(undefined);
+
+            if (useRouteLevelMetadata) {
+                reflectorMock.get.mockReturnValueOnce(undefined).mockReturnValueOnce(undefined);
+            }
+
+            reflectorMock.get.mockReturnValueOnce({
                 keyExtractor: CustomKeyExtractor,
                 errorFactory: CustomErrorFactory,
                 factory: CustomOptionsFactory
@@ -104,9 +113,18 @@ describe("RateLimitGuard", () => {
         });
     });
 
-    describe("custom providers", async () => {
+    describe.each([
+        ["route-level", true],
+        ["class-level", false]
+    ])("custom providers (%s metadata)", (_, useRouteLevelMetadata) => {
         it("should throw custom error", async () => {
-            reflectorMock.get.mockReturnValueOnce(undefined).mockReturnValueOnce({
+            reflectorMock.get.mockReturnValueOnce(undefined);
+
+            if (useRouteLevelMetadata) {
+                reflectorMock.get.mockReturnValueOnce(undefined).mockReturnValueOnce(undefined);
+            }
+
+            reflectorMock.get.mockReturnValueOnce({
                 errorFactory: CustomErrorFactory
             } satisfies RateLimitOptions);
 
@@ -120,7 +138,13 @@ describe("RateLimitGuard", () => {
         });
 
         it("should not override static options", async () => {
-            reflectorMock.get.mockReturnValueOnce(false).mockReturnValueOnce({
+            reflectorMock.get.mockReturnValueOnce(false);
+
+            if (useRouteLevelMetadata) {
+                reflectorMock.get.mockReturnValueOnce(undefined).mockReturnValueOnce(undefined);
+            }
+
+            reflectorMock.get.mockReturnValueOnce({
                 keyExtractor: CustomKeyExtractor,
                 factory: CustomOptionsFactory
             } satisfies RateLimitOptions);
