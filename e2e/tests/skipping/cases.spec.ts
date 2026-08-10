@@ -3,8 +3,7 @@ import { HttpStatus, type INestApplication } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import { RateLimiterModule } from "nestjs-multi-limiter";
 import request from "supertest";
-import { USER_LIMIT } from "../dynamic-configuration/providers";
-import { ControllerLevelController, RouteLevelController } from "./controllers";
+import { ControllerLevelController, RouteLevelController, RouteLevelExecuteController } from "./controllers";
 
 const LIMIT = 3;
 
@@ -26,7 +25,7 @@ describe("Skipping", () => {
                     }
                 })
             ],
-            controllers: [ControllerLevelController, RouteLevelController]
+            controllers: [ControllerLevelController, RouteLevelController, RouteLevelExecuteController]
         }).compile();
 
         app = moduleFixture.createNestApplication();
@@ -39,7 +38,7 @@ describe("Skipping", () => {
     });
 
     it("should skip rate limiting (controller level)", async () => {
-        for (let i = 0; i < USER_LIMIT; i++) {
+        for (let i = 0; i < LIMIT; i++) {
             await request(app.getHttpServer()).get("/controller/test").expect(HttpStatus.OK);
         }
 
@@ -47,10 +46,18 @@ describe("Skipping", () => {
     });
 
     it("should skip rate limiting (route level)", async () => {
-        for (let i = 0; i < USER_LIMIT; i++) {
+        for (let i = 0; i < LIMIT; i++) {
             await request(app.getHttpServer()).get("/route/test").expect(HttpStatus.OK);
         }
 
         await request(app.getHttpServer()).get("/route/test").expect(HttpStatus.OK);
+    });
+
+    it("should execute rate limiting", async () => {
+        for (let i = 0; i < LIMIT; i++) {
+            await request(app.getHttpServer()).get("/execute/test").expect(HttpStatus.OK);
+        }
+
+        await request(app.getHttpServer()).get("/execute/test").expect(HttpStatus.TOO_MANY_REQUESTS);
     });
 });
