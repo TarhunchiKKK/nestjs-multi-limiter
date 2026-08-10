@@ -1,7 +1,7 @@
 import { type CanActivate, type ExecutionContext, Inject, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { normalizeOptions } from "../config/helpers";
-import type { RateLimitGuardOptions, RateLimitNormalizedOptions, StrategyOptions } from "../config/options";
+import type { RateLimitGuardOptions, RateLimitNormalizedOptions, RateLimitOptions, StrategyOptions } from "../config/options";
 import type { ErrorFactoryOptions, IErrorFactory } from "../custom/error-factories";
 import type { IKeyExtractor } from "../custom/key-extractors";
 import { RateLimit, SkipRateLimit } from "../decorators";
@@ -29,46 +29,60 @@ export class RateLimitGuard implements CanActivate {
     ) {}
 
     public async canActivate(context: ExecutionContext) {
-        const skip = this.checkSkip(context);
-
-        if (skip) {
+        const metadataOptions = this.getMetadataOptions(context);
+        if (metadataOptions === true) {
             return true;
         }
 
-        const options = await this.getOptions(context);
 
-        const key = await options.keyExtractor.extract(context);
+        const finalGuardOptions = await this.getFinalGuardOptions(context, metadataOptions);
 
-        const requestAllowed = await this.checkRate(key, options);
+        const key = await finalGuardOptions.keyExtractor.extract(context);
+
+        const requestAllowed = await this.checkRate(key, finalGuardOptions);
 
         if (!requestAllowed) {
             const errorOptions: ErrorFactoryOptions = {
                 key: key,
-                scope: options.scope,
-                strategy: options.strategy,
-                strategyOptions: options.strategyOptions[options.strategy]
+                scope: finalGuardOptions.scope,
+                strategy: finalGuardOptions.strategy,
+                strategyOptions: finalGuardOptions.strategyOptions[finalGuardOptions.strategy]
             };
 
-            throw options.errorFactory.getError(context, errorOptions);
+            throw finalGuardOptions.errorFactory.getError(context, errorOptions);
         }
 
         return true;
     }
 
-    private checkSkip(context: ExecutionContext) {
-        const shouldSkip = this.reflector.getAllAndOverride(SkipRateLimit, [context.getHandler(), context.getClass()]);
+    private getMetadataOptions(context: ExecutionContext): RateLimitOptions | true | undefined {
+        const handler = context.getHandler();
+        const targetClass = context.getClass();
 
-        if (shouldSkip) {
+        const handlerSkip = this.reflector.get(SkipRateLimit, handler);
+        if (handlerSkip) {
             return true;
         }
 
-        return false;
+        const handlerOptions = this.reflector.get(RateLimit, handler)
+        if (handlerOptions) {
+            return handlerOptions
+        }
+
+        const classSkip = this.reflector.get(SkipRateLimit, targetClass);
+        if (classSkip) {
+            return true;
+        }
+
+        const classOptions = this.reflector.get(RateLimit, targetClass)
+        return classOptions
     }
 
-    private async getOptions(context: ExecutionContext): Promise<RunOptions> {
-        const options = this.reflector.getAllAndOverride(RateLimit, [context.getHandler(), context.getClass()]);
+ 
 
-        if (!options) {
+    private async getFinalGuardOptions(context: ExecutionContext, metadatOptions?: RateLimitOptions): Promise<RunOptions> {
+
+        if (!metadatOptions) {
             return {
                 ...this.options,
                 keyExtractor: await this.discoveryService.getKeyExtractor(this.options.keyExtractor),
@@ -76,11 +90,11 @@ export class RateLimitGuard implements CanActivate {
             };
         }
 
-        const keyExtractorToken = options.keyExtractor ?? this.options.keyExtractor;
-        const errorFactoryToken = options.errorFactory ?? this.options.errorFactory;
-        const optionsFactoryToken = options.factory ?? this.options.factory;
+        const keyExtractorToken = metadatOptions.keyExtractor ?? this.options.keyExtractor;
+        const errorFactoryToken = metadatOptions.errorFactory ?? this.options.errorFactory;
+        const optionsFactoryToken = metadatOptions.factory ?? this.options.factory;
 
-        let finalDecoratorOptions: RateLimitNormalizedOptions = options;
+        let finalDecoratorOptions: RateLimitNormalizedOptions = metadatOptions;
         if (optionsFactoryToken) {
             const optionsFactoryInstance = await this.discoveryService.getOptionsFactory(optionsFactoryToken);
 
@@ -88,7 +102,7 @@ export class RateLimitGuard implements CanActivate {
 
             finalDecoratorOptions = {
                 ...normalizeOptions(dynamicOptions),
-                ...options
+                ...metadatOptions
             };
         }
 
