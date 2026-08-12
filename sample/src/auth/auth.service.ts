@@ -53,6 +53,20 @@ export class AuthService {
         return { user, token };
     }
 
+    public async findOneById(id: string) {
+        const user = await this.usersRepository.findOne({
+            where: {
+                id: id
+            }
+        });
+
+        if (!user) {
+            throw new NotFoundException("User not found");
+        }
+
+        return user;
+    }
+
     public async update(userId: string, dto: UpdateUserDto) {
         const user = await this.usersRepository.findOne({
             where: {

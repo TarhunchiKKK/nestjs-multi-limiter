@@ -1,6 +1,6 @@
-import type { Subscription } from "rxjs";
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Chat } from "../../chats/entities/chat.entity";
+import type { Subscription } from "../types/subscription.type";
 
 @Entity()
 export class User {

@@ -6,6 +6,9 @@ import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { User } from "./entities/user.entity";
 import { AuthGuard } from "./middleware/auth.guard";
+import { BruteForceKeyExtractor } from "./rate-limit/brute-force.key-extractor";
+import { JwtKeyExtractor } from "./rate-limit/jwt.key-extractor";
+import { TrySignUpLaterOptionsFactory } from "./rate-limit/try-sign-up-later.error-factory";
 
 @Global()
 @Module({
@@ -24,7 +27,7 @@ import { AuthGuard } from "./middleware/auth.guard";
         TypeOrmModule.forFeature([User])
     ],
     controllers: [AuthController],
-    providers: [AuthService, AuthGuard],
+    providers: [AuthService, AuthGuard, JwtKeyExtractor, BruteForceKeyExtractor, TrySignUpLaterOptionsFactory],
     exports: [AuthGuard]
 })
 export class AuthModule {}

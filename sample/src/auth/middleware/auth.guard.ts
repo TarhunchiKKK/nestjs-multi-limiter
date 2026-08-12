@@ -19,6 +19,7 @@ export class AuthGuard implements CanActivate {
 
         const payload = this.jwtService.verify(token);
 
+        // biome-ignore lint/complexity/useLiteralKeys: This field appears in runtime.
         request["user"] = payload;
 
         return true;
