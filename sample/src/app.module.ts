@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { RateLimiterModule } from "nestjs-multi-limiter";
 import { AiModule } from "./ai/ai.module";
+import { AppController } from "./app.controller";
 import { AuthModule } from "./auth/auth.module";
 import { User } from "./auth/entities/user.entity";
 import { JwtKeyExtractor } from "./auth/rate-limit/jwt.key-extractor";
@@ -53,6 +54,7 @@ import { IpKeyExtractor } from "./shared/ip.key-extractor";
         AuthModule,
         RedisModule
     ],
+    controllers: [AppController],
     providers: [IpKeyExtractor, AppErrorFactory]
 })
 export class AppModule {}
