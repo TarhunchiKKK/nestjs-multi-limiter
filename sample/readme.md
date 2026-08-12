@@ -1,0 +1,20 @@
+# Example Application(AI-Hub Gateway)
+
+This is a production-grade, realistic demonstration application showcasing the core capabilities of the `nestjs-multi-limiter` library. 
+
+The application simulates an **AI-Hub Gateway** — a multi-tenant API serving chat, message CRUDs, and heavy AI endpoints (text/image generation powered by `@faker-js/faker`). It demonstrates how to apply different traffic-shaping strategies based on endpoint cost, security requirements, and user subscription tiers.
+
+---
+
+## 🚀 Features Implementation
+
+1. Custom `JwtKeyExtractor` and `AppErrorFactory` providers are used as default.
+2. Methods of `AiController` use custom `TextGenerationOptionsFactory` and `ImageGenerationOptionsFactory` options factories to get runtime options depends on user subscription type.
+3. `signUp` method of `AuthController` use custom `TrySignUpLaterErrorFactory` error factory.
+4. `signIn` method of `AuthController` use custom `BruteForceKeyExtractor` key extractor.
+5. `update` method of `AuthController` use `@SkipRateLimit` decorator.
+6. Methods of `ChatsController` and `MessagesController` controllers overrides default algorithm towards `sliding-window-counter`.
+7. `RedisService` provider is used as redis adapter.
+
+---
+💡 *Explore the source code to see how easy it is to switch algorithms, design adapters, and structure dynamic multi-tenant backends with `nestjs-multi-limiter`!*
