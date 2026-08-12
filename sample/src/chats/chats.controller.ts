@@ -1,21 +1,23 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
-import { MOCK_USER_ID } from "../constants";
+import { Authorization } from "../auth/decorators/authorization.decorator";
+import { Authorized } from "../auth/decorators/authorized.decorator";
 import type { ChatsService } from "./chats.service";
 import type { CreateChatDto } from "./dto/create-chat.dto";
 import type { UpdateChatDto } from "./dto/update-chat.dto";
 
 @Controller("chats")
+@Authorization()
 export class ChatsController {
     public constructor(private readonly chatsService: ChatsService) {}
 
     @Post()
-    public async create(@Body() createChatDto: CreateChatDto) {
-        return await this.chatsService.create(MOCK_USER_ID, createChatDto);
+    public async create(@Authorized() userId: string, @Body() createChatDto: CreateChatDto) {
+        return await this.chatsService.create(userId, createChatDto);
     }
 
     @Get()
-    public async findAll() {
-        return await this.chatsService.findAll(MOCK_USER_ID);
+    public async findAll(@Authorized() userId: string) {
+        return await this.chatsService.findAll(userId);
     }
 
     @Patch(":chatId")

@@ -8,6 +8,7 @@ import { Message } from "./messages/entities/message.entity";
 import { MessagesModule } from "./messages/messages.module";
 import { User } from "./users/entities/user.entity";
 import { UsersModule } from "./users/users.module";
+import { AuthModule } from './auth/auth.module';
 
 @Module({
     imports: [
@@ -29,7 +30,8 @@ import { UsersModule } from "./users/users.module";
         UsersModule,
         MessagesModule,
         ChatsModule,
-        AiModule
+        AiModule,
+        AuthModule
     ]
 })
 export class AppModule {}
