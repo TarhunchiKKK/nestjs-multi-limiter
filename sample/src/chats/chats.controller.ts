@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, ValidationPipe } from "@nestjs/common";
 import { Authorization } from "../auth/decorators/authorization.decorator";
 import { Authorized } from "../auth/decorators/authorized.decorator";
 import type { ChatsService } from "./chats.service";
@@ -11,8 +11,8 @@ export class ChatsController {
     public constructor(private readonly chatsService: ChatsService) {}
 
     @Post()
-    public async create(@Authorized() userId: string, @Body() createChatDto: CreateChatDto) {
-        return await this.chatsService.create(userId, createChatDto);
+    public async create(@Authorized() userId: string, @Body(ValidationPipe) dto: CreateChatDto) {
+        return await this.chatsService.create(userId, dto);
     }
 
     @Get()
@@ -21,8 +21,8 @@ export class ChatsController {
     }
 
     @Patch(":chatId")
-    public async update(@Param("chatId") id: string, @Body() updateChatDto: UpdateChatDto) {
-        return await this.chatsService.update(id, updateChatDto);
+    public async update(@Param("chatId") id: string, @Body(ValidationPipe) dto: UpdateChatDto) {
+        return await this.chatsService.update(id, dto);
     }
 
     @Delete(":chatId")

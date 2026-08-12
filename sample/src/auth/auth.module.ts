@@ -1,9 +1,10 @@
 import { Global, Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
-import { UsersModule } from "../users/users.module";
+import { TypeOrmModule } from "@nestjs/typeorm";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
+import { User } from "./entities/user.entity";
 import { AuthGuard } from "./middleware/auth.guard";
 
 @Global()
@@ -20,7 +21,7 @@ import { AuthGuard } from "./middleware/auth.guard";
                 }
             })
         }),
-        UsersModule
+        TypeOrmModule.forFeature([User])
     ],
     controllers: [AuthController],
     providers: [AuthService, AuthGuard],
