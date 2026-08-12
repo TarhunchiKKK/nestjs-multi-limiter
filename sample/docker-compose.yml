@@ -1,17 +1,4 @@
 services:
-  app:
-    container_name: app-sample
-    build:
-      args:
-        - APP_PORT=${APP_PORT}
-      env_file:
-        - .env
-      depends_on:
-        - postgres
-        - redis
-      networks:
-        - sample-app-network
-
   postgres:
     container_name: postgres-sample
     image: postgres:15.2
@@ -24,8 +11,6 @@ services:
       - ${DB_PORT}:5432
     volumes:
       - postgres-sample-data:/var/lib/postgresql/data
-    networks:
-      - sample-app-network
   
   redis:
     container_name: redis-sample
@@ -35,12 +20,7 @@ services:
       - ${REDIS_PORT:6379
     volumes:
       - redis-sample-data:/data
-    networks:
-      - sample-app-network
 
 volumes:
   postgres-sample-data:
   redis-sample-data:
-
-networks:
-  sample-app-network:
