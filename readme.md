@@ -177,13 +177,18 @@ Your custom options will be merged with this:
     scope: "default-scope",
     storage: {
         type: "in-memory",
-        gcTime: 15 * 60 * 1000,
+        gcTime: 15 * MS_IN_MINUTE,
     },
     strategy: "fixed-window",
     strategyOptions: {
         fixedWindow: {
             limit: 100,
             ttl: MS_IN_MINUTE
+        },
+        tokenBucket: {
+            capacity: 20,
+            refillRate: 5 / MS_IN_MINUTE,
+            ttl: 3 * MS_IN_MINUTE
         },
         slidingWindowCounter: {
             limit: 100,
@@ -193,11 +198,6 @@ Your custom options will be merged with this:
             limit: 50,
             windowMs: MS_IN_MINUTE
         },
-        tokenBucket: {
-            capacity: 20,
-            refillRate: 5 / MS_IN_MINUTE,
-            ttl: 3 * MS_IN_MINUTE
-        },
         leakyBucket: {
             capacity: 10,
             leakRate: 2 / MS_IN_MINUTE,
@@ -206,7 +206,7 @@ Your custom options will be merged with this:
     },
     defaultProviders: {
         keyExtractor: BuiltinKeyExtractor,  // IP-address is used as key
-        errorFactory: BuiltinErrorFactory,  // throws HttpException (from @nestjs/common)
+        errorFactory: BuiltinErrorFactory,  // returns HttpException (from `@nestjs/common`)
         optionsFactory: undefined           // no dynamic options by default
     }
 }
