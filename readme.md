@@ -55,6 +55,8 @@
 - **Custom Error Factories**: Customize you rate limit exhausted error.
 - **Dynamic Configuration**: Provide dynamic rate limiting options.
 
+👉 [See Example App](https://github.com/TarhunchiKKK/nestjs-multi-limiter/tree/main/sample)
+
 ## Algorithms Reference
 
 ### Comprehensive Guides

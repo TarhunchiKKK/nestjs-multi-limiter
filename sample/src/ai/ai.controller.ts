@@ -7,7 +7,7 @@ import type { GenerateTextDto } from "./dto/generate-text.dto";
 import { ImageGenerationOptionsFactory } from "./rate-limit/image-generation.options.factory";
 import { TextGenerationOptionsFactory } from "./rate-limit/text-generation.options-factory";
 
-// 📌 This controller uses custom options factory
+// 📌 This controller use custom options factory
 @Controller("ai")
 @Authorization()
 @UseGuards(RateLimitGuard)

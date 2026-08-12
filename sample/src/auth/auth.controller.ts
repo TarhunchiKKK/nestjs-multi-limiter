@@ -13,14 +13,14 @@ import { SIGN_IN_RATE_LIMIT_OPTIONS, SIGN_UP_RATE_LIMIT_OPTIONS } from "./rate-l
 export class AuthController {
     public constructor(private readonly authService: AuthService) {}
 
-    // 📌 This endpoint uses custom error factory
+    // 📌 This endpoint use custom error factory
     @Post("sign-up")
     @RateLimit(SIGN_UP_RATE_LIMIT_OPTIONS)
     public async signUp(@Body() dto: SignUpDto) {
         return await this.authService.signUp(dto);
     }
 
-    // 📌 This endpoint uses rate limiter as protection from brute force attack
+    // 📌 This endpoint use rate limiter as protection from brute force attack
     @Post("sign-in")
     @RateLimit(SIGN_IN_RATE_LIMIT_OPTIONS)
     public async signIn(@Body() dto: SignInDto) {
