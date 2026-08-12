@@ -19,7 +19,8 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write 
+      contents: write
+      id-token: write
 
     steps:
       - name: Checkout Code
@@ -35,17 +36,15 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Setup NPM Authentication
-        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
       - name: Run Release-It
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [ "${{ github.event.inputs.release_type }}" = "auto" ]; then
             bun run release --ci
           else
             bun run release ${{ github.event.inputs.release_type }} --ci
           fi
+
+
+
