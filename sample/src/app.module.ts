@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { AiModule } from "./ai/ai.module";
 import { ChatsModule } from "./chats/chats.module";
 import { Chat } from "./chats/entities/chat.entity";
 import { Message } from "./messages/entities/message.entity";
@@ -27,7 +28,8 @@ import { UsersModule } from "./users/users.module";
         }),
         UsersModule,
         MessagesModule,
-        ChatsModule
+        ChatsModule,
+        AiModule
     ]
 })
 export class AppModule {}

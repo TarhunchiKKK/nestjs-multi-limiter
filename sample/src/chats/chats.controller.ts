@@ -10,7 +10,7 @@ export class ChatsController {
 
     @Post()
     public async create(@Body() createChatDto: CreateChatDto) {
-        return await this.chatsService.create(createChatDto, MOCK_USER_ID);
+        return await this.chatsService.create(MOCK_USER_ID, createChatDto);
     }
 
     @Get()

@@ -6,6 +6,4 @@ export class CreateMessageDto {
     public image?: string;
 
     public sender: MessageSender;
-
-    public chatId: string;
 }

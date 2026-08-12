@@ -8,13 +8,13 @@ import { Message } from "./entities/message.entity";
 export class MessagesService {
     public constructor(@InjectRepository(Message) private readonly messagesRepository: Repository<Message>) {}
 
-    public async create(dto: CreateMessageDto) {
+    public async create(chatId: string, dto: CreateMessageDto) {
         return await this.messagesRepository.save({
             text: dto.text,
             image: dto.image,
             sender: dto.sender,
             chat: {
-                id: dto.chatId
+                id: chatId
             }
         });
     }

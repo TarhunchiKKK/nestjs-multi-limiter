@@ -7,7 +7,7 @@ import type { IKeyExtractor } from "../custom/key-extractors";
 import { RateLimit, SkipRateLimit } from "../decorators";
 import { GUARD_OPTIONS_TOKEN } from "../di";
 import { ProvidersResolver } from "../services/providers.resolver";
-import { getKey, Key, type Scope } from "../shared/model";
+import { getKey, type Key, type Scope } from "../shared/model";
 
 type RunOptions = StrategyOptions & {
     scope: Scope;

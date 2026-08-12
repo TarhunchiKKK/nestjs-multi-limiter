@@ -9,7 +9,7 @@ import { Chat } from "./entities/chat.entity";
 export class ChatsService {
     public constructor(@InjectRepository(Chat) private readonly chatsRepository: Repository<Chat>) {}
 
-    public async create(dto: CreateChatDto, userId: string) {
+    public async create(userId: string, dto: CreateChatDto) {
         const chatExists = await this.chatsRepository.exists({
             where: {
                 user: {
