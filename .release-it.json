@@ -12,7 +12,8 @@
     },
     "npm": {
         "publish": true,
-        "publishPath": "lib"
+        "publishPath": "lib",
+        "publishArgs": ["--provenance"]
     },
     "plugins": {
         "@release-it/conventional-changelog": {
