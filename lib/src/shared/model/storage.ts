@@ -17,6 +17,7 @@ export type InMemoryStorage<Value> = Map<Key, Value>;
  * @publicApi
  */
 export type IRedisAdapter = {
+    // FIX: Replace `RedisValue` with custom type
     eval(...args: [script: string | Buffer, numkeys: number | string, ...args: RedisValue[]]): ReturnType<Redis["eval"]>;
 };
 

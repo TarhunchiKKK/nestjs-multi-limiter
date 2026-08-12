@@ -8,6 +8,7 @@ import { ChatsModule } from "./chats/chats.module";
 import { Chat } from "./chats/entities/chat.entity";
 import { Message } from "./messages/entities/message.entity";
 import { MessagesModule } from "./messages/messages.module";
+import { RedisModule } from "./redis/redis.module";
 
 @Module({
     imports: [
@@ -29,7 +30,8 @@ import { MessagesModule } from "./messages/messages.module";
         MessagesModule,
         ChatsModule,
         AiModule,
-        AuthModule
+        AuthModule,
+        RedisModule
     ]
 })
 export class AppModule {}
