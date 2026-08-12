@@ -1,5 +1,6 @@
 import type { Subscription } from "rxjs";
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Message } from "../../messages/entities/message.entity";
 
 @Entity()
 export class User {
@@ -18,6 +19,9 @@ export class User {
     @CreateDateColumn()
     public createdAt: Date;
 
-    @UpdateDateColumn()
-    public updatedAt: Date;
+    @OneToMany(
+        () => Message,
+        (message) => message.user
+    )
+    public messages: Message[];
 }
