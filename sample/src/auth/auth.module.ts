@@ -28,6 +28,6 @@ import { TrySignUpLaterOptionsFactory } from "./rate-limit/try-sign-up-later.err
     ],
     controllers: [AuthController],
     providers: [AuthService, AuthGuard, JwtKeyExtractor, BruteForceKeyExtractor, TrySignUpLaterOptionsFactory],
-    exports: [AuthGuard]
+    exports: [AuthService, AuthGuard]
 })
 export class AuthModule {}
