@@ -24,6 +24,7 @@ type RunOptions = StrategyOptions & {
 export class RateLimitGuard implements CanActivate {
     public constructor(
         @Inject(GUARD_OPTIONS_TOKEN) private readonly options: RateLimitGuardOptions,
+        // FIX: Rename this provider
         @Inject(ProvidersResolver) private readonly discoveryService: ProvidersResolver,
         @Inject(Reflector) private readonly reflector: Reflector
     ) {}
