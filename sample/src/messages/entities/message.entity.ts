@@ -1,5 +1,6 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { User } from "../../users/entities/user.entity";
+import { Chat } from "../../chats/entities/chat.entity";
+import type { MessageSender } from "../types/message-sender.type";
 
 @Entity()
 export class Message {
@@ -12,12 +13,15 @@ export class Message {
     @Column({ nullable: true, default: null })
     public image?: string;
 
+    @Column()
+    public sender: MessageSender;
+
     @CreateDateColumn()
     public createdAt: Date;
 
     @ManyToOne(
-        () => User,
-        (user) => user.messages
+        () => Chat,
+        (chat) => chat.messages
     )
-    public user: User;
+    public chat: Chat;
 }

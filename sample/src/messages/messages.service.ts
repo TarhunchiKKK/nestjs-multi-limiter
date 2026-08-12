@@ -12,13 +12,33 @@ export class MessagesService {
         return await this.messagesRepository.save({
             text: dto.text,
             image: dto.image,
-            user: {
-                id: dto.userId
+            sender: dto.sender,
+            chat: {
+                id: dto.chatId
             }
         });
     }
 
-    public async findAll() {
-        return await this.messagesRepository.find();
+    public async findAll(chatId: string) {
+        return await this.messagesRepository.find({
+            where: {
+                chat: {
+                    id: chatId
+                }
+            },
+            relations: {
+                chat: true
+            },
+            select: {
+                id: true,
+                text: true,
+                image: true,
+                sender: true,
+                createdAt: true
+            },
+            order: {
+                createdAt: "DESC"
+            }
+        });
     }
 }
