@@ -1,0 +1,42 @@
+# Module Configuration
+
+There is only one required field in configuration - `storage`.
+
+```typescript
+RateLimiterModule.forRoot({
+    scope: "my-scope",
+
+    // storage configuration (Map or Redis)
+    storage: {
+        type: "in-memory",
+        gcTime: 15 * 60 * 1000, // time to clear `old` data from memory
+    },
+
+    // strategy configuration
+    strategy: "token-bucket",
+    strategyOptions: {
+        fixedWindow: {
+            // strategy-specific options
+        },
+        tokenBucket: {
+            // strategy-specific options
+        },
+        slidingWindowCounter: {
+            // strategy-specific options
+        },
+        slidingWindowLog: {
+            // strategy-specific options
+        },
+        leakyBucket: {
+            // strategy-specific options
+        },
+    },
+
+    // default providers
+    defaultProviders: {
+        keyExtractor: undefined,
+        errorFactory: undefined,
+        optionsFactory: undefined,
+    },
+});
+```

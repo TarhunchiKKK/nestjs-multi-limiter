@@ -1,0 +1,11 @@
+# Async Configuration
+
+```typescript
+RateLimiterModule.forRootAsync({
+    imports: [/* ... */],
+    inject: [/* ... */],
+    useFactory: (/* ... */) => ({
+        // This options are same to `forRoot` method excluding `custom` property
+    }),
+});
+```
