@@ -3,6 +3,6 @@
     "position": 4,
     "link": {
         "type": "generated-index",
-        "description": "5 minutes to learn how to integrate rate limiting module with Redis."
+        "description": "Learn how to integrate rate limiting module with Redis."
     }
 }
