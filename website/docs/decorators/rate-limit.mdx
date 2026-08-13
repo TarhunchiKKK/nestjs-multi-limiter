@@ -1,6 +1,18 @@
 # RateLimit
 
-By default guard uses options provided in `RateLimiterModule` configuration. You can override this options in decorator:
+:::info[Note]
+`@RateLimit` decorator don't automatically apply rate limiting for method/controller. 
+
+`@RateLimit` decorator should be used **in pair with `RateLimitGuard`**.
+:::
+
+### Usage
+
+By default guard uses options provided in `RateLimiterModule` configuration. You can override this options using `@RateLimit` decorator.
+
+`@RateLimit` decorator options are much similar to `RateLimiterModule` options. This decorator can override all `RateLimiterModule` options, **except storage options**.
+
+### Options example
 
 ```typescript
 import {
@@ -22,3 +34,4 @@ import {
     windowMs: 1_000
 })
 ```
+

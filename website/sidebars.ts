@@ -52,7 +52,7 @@ export default {
                 description: "Here is some theory about rate limiting and this library."
             },
             collapsed: false,
-            items: ["resources/comprehensive-guides", "resources/use-cases", "resources/example-app"]
+            items: ["resources/algorithms", "resources/example-app"]
         }
     ]
 } satisfies SidebarsConfig;

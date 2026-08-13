@@ -1,5 +1,7 @@
 # Module Configuration
 
+## Example
+
 There is only one required field in configuration - `storage`.
 
 ```typescript
@@ -9,34 +11,75 @@ RateLimiterModule.forRoot({
     // storage configuration (Map or Redis)
     storage: {
         type: "in-memory",
-        gcTime: 15 * 60 * 1000, // time to clear `old` data from memory
+        gcTime: 15 * 60 * 1000 // time to clear `old` data from memory
     },
 
     // strategy configuration
     strategy: "token-bucket",
     strategyOptions: {
-        fixedWindow: {
-            // strategy-specific options
-        },
-        tokenBucket: {
-            // strategy-specific options
-        },
-        slidingWindowCounter: {
-            // strategy-specific options
-        },
-        slidingWindowLog: {
-            // strategy-specific options
-        },
-        leakyBucket: {
-            // strategy-specific options
-        },
+        fixedWindow: {/* */},
+        tokenBucket: {/* */},
+        slidingWindowCounter: {/* */},
+        slidingWindowLog: {/* */},
+        leakyBucket: {/* */}
     },
 
     // default providers
     defaultProviders: {
-        keyExtractor: undefined,
-        errorFactory: undefined,
-        optionsFactory: undefined,
-    },
+        keyExtractor: MyCustomKeyExtractor,
+        errorFactory: MyCustomErrorFactory,
+        optionsFactory: MyCustomOptionsFactory
+    }
 });
 ```
+
+## Properties Description
+
+|Property|Type|Description|
+|:-|:-|:-|
+|`scope`|`string`|Defines scope for data record key|
+|`storage`|`object`|Defines storage options|
+|`strategy`|`Strategies`|Defines default rate limiting algorithm|
+|`strategyOptions`|`object`|Defines default options for rate limiting algorithms|
+|`defaultProviders`|`object`|Defines providers that will be used by default|
+
+### Storage
+
+Properties of this object defines storage options.
+
+|Property|Storage Type|Description|
+|:-|:-|:-|
+|`type`||Defines storage type|
+|`gcTime`|`in-memory`|Defines the dead data records deleting interval|
+|`adapter`|`redis`|Provider object/provider that will be used to `Redis` access|`
+
+### Strategy Options
+
+Properties of this object sets default options for all rate limiting algorithms.
+
+|Algorithm|Property|Description|
+|:-|:-|:-|
+|`fixed-window`|`limit`|Defines requests count in window|
+||`ttl`|Defines window length in milliseconds|
+|`token-bucket`|`capacity`|Defines the volume of bucket|
+||`refillRate`|Defines how much tokens refills in 1 millisecond|
+||`ttl`|Defines data records ttl|
+|`sliding-window-counter`|`limit`|Defines requests count in window|
+||`windowMs`|Defines window length in milliseconds|
+|`sliding-window-log`|`limit`|Defines requests count in window|
+||`windowMs`|Defines window length in milliseconds|
+|`leaky-bucket`|`capacity`|Defines the volume of bucket|
+||`leakRate`|Defines how much tokens leaks in 1 millisecond|
+||`ttl`|Defines data records ttl|
+
+### Default Providers
+
+Properties of this object defines providers that will be used by default.
+
+|Provider|Description|
+|:-|:-|
+|`keyExtractor`|Defines key extractor provider that will be used by default|
+|`errorFactory`|Defines error factory provider that will be used by default|
+|`optionsFactory`|Defines options factory provider that will be used by default|
+
+

@@ -15,3 +15,8 @@ export class MyController {
     @SkipRateLimit()
     public method2() {}
 }
+```
+
+:::info[Remember]
+If both `@RateLimit` and `@SkipRateLimit` decorators are applied to same method/controller, `@SkipRateLimit` decorator has a **higher priority** than `@RateLimit` decorator. 
+:::

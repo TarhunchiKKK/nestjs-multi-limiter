@@ -1,5 +1,7 @@
 # Default Configuration
 
+Here is default `RateLimiterModule` configuration.
+
 Your custom options will be merged with this:
 
 ```typescript
@@ -7,7 +9,7 @@ Your custom options will be merged with this:
     scope: "default-scope",
     storage: {
         type: "in-memory",
-        gcTime: 15 * MS_IN_MINUTE,
+        gcTime: 15 * MS_IN_MINUTE
     },
     strategy: "fixed-window",
     strategyOptions: {
