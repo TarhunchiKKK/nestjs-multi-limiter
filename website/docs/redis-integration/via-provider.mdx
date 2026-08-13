@@ -1,6 +1,6 @@
 # Via Provider
 
-1. Setting up your provider:
+### Setting up your provider
 
 ```typescript
 import Redis, { type RedisValue } from "ioredis";
@@ -29,7 +29,7 @@ export class RedisService implements IRedisAdapter {
 }
 ```
 
-2. Register your module:
+### Register your module
 
 ```typescript
 @Module({
@@ -39,7 +39,7 @@ export class RedisService implements IRedisAdapter {
 export class RedisModule {}
 ```
 
-3. Inject your Redis provider:
+### Inject your Redis provider
 
 ```typescript
 RateLimiterModule.forRootAsync({

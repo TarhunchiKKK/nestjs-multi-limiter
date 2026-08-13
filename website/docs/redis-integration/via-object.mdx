@@ -1,6 +1,6 @@
 # Via Object
 
-1. Setup your adapter object:
+### Setup your adapter object
 
 ```typescript
 import Redis, { type RedisValue } from "ioredis";
@@ -16,7 +16,7 @@ export const MyRedisAdapter: IRedisAdapter = {
 } 
 ```
 
-2. Inject your Redis provider:
+### Inject your Redis provider
 
 ```typescript
 RateLimiterModule.forRoot({

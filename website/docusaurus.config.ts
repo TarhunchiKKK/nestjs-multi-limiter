@@ -26,8 +26,7 @@ export default {
             "classic",
             {
                 docs: {
-                    sidebarPath: "./sidebars.ts",
-                    editUrl: "https://github.com/TarhunchiKKK/nestjs-multi-limiter"
+                    sidebarPath: "./sidebars.ts"
                 },
                 theme: {
                     customCss: "./src/css/custom.css"
@@ -67,6 +66,13 @@ export default {
         },
         footer: {
             style: "dark",
+            logo: {
+                src: "img/logo.svg",
+                alt: "Logo",
+                href: "https://nestjs.com/",
+                width: 50,
+                height: 50
+            },
             links: [
                 {
                     title: "Docs",

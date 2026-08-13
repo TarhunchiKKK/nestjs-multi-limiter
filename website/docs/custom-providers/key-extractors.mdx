@@ -1,11 +1,11 @@
 # Key Extractors
 
-> ⚠️ **Important** 
->
-> When implementing your custom key extractors, take care of the uniqueness and determinacy of the key. 
-> If not, it can lead to unpredictable behavior.
+:::warning[Important]
+When implementing your custom key extractors, take care of the **uniqueness** and **determinacy** of the key. 
+If not, it can lead to unpredictable behavior.
+:::
 
-1. Define your custom key extractor:
+### Define your custom key extractor
 
 ```typescript
 import { type ExecutionContext } from "@nestjs/common";
@@ -29,7 +29,7 @@ export class MyCustomKeyExtractor implements IKeyExtractor {
 }
 ```
 
-2. List your key extractor as your module provider:
+### List your key extractor as your module provider
 
 ```typescript
 MyModule.forRoot({
@@ -38,7 +38,7 @@ MyModule.forRoot({
 });
 ```
 
-3. Specify your custom key extractor in decorator:
+### Specify your custom key extractor in decorator
 
 ```typescript
 @RateLimit({

@@ -1,10 +1,10 @@
 # Error Factories
 
-> 📌 **Remember**
->
-> Error factories should not throw an error, they should only create it.
+:::info[Remember]
+Error factories should **not throw** an error, they should **only create** it.
+:::
 
-1. Define your custom error factory:
+### Define your custom error factory
 
 ```typescript
 import { type ExecutionContext, HttpException } from "@nestjs/common";
@@ -32,7 +32,7 @@ export class MyCustomErrorFactory implements IErrorFactory {
 }
 ```
 
-2. List your error factory as your module provider:
+### List your error factory as your module provider
 
 ```typescript
 MyModule.forRoot({
@@ -41,7 +41,7 @@ MyModule.forRoot({
 });
 ```
 
-3. Specify your custom error factory in decorator:
+### Specify your custom error factory in decorator
 
 ```typescript
 @RateLimit({

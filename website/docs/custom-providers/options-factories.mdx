@@ -1,10 +1,10 @@
-# Options 
+# Options Factories
 
-> 📌 **Note**
->
-> If `RateLimit` decorator has static options (like `scope`) this static options will override corresponding properties returned by `factory`.
+:::info[Note]
+If `RateLimit` decorator has static options (like `scope`) this static options will override corresponding properties returned by `factory`.
+:::
 
-1. Define your custom options factory:
+### Define your custom options factory
 
 ```typescript
 import { type ExecutionContext } from "@nestjs/common";
@@ -22,7 +22,7 @@ export class MyCustomOptionsFactory implements IOptionsFactory {
 }
 ```
 
-2. List your options factory as your module provider:
+### List your options factory as your module provider
 
 ```typescript
 RateLimiterModule.forRoot({
@@ -31,7 +31,7 @@ RateLimiterModule.forRoot({
 });
 ```
 
-3. Specify your custom options factory in decorator:
+### Specify your custom options factory in decorator
 
 ```typescript
 @RateLimit({
