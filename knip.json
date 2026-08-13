@@ -1,6 +1,6 @@
 {
     "$schema": "https://unpkg.com/knip@5/schema.json",
-    "ignore": ["./lib/tests/**/*.ts"],
+    "ignore": ["./lib/tests/**/*.ts", "./website/**/*.{js,mjs,ts,tsx}"],
     "rules": {
         "files": "error",
         "types": "error",
