@@ -4,6 +4,7 @@ export default {
     docs: [
         "overview",
         "quick-start",
+        "important-defaults",
         {
             type: "category",
             label: "Configuration",
