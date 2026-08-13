@@ -24,16 +24,14 @@
 
 👉 [NPM Package](https://www.npmjs.com/package/nestjs-multi-limiter)
 
-👉 [GitHub Repository](https://github.com/TarhunchiKKK/nestjs-multi-limiter)
-
 👉 [Example App](https://github.com/TarhunchiKKK/nestjs-multi-limiter/tree/main/sample)
 
-
-## Features
+### Features
 
 - **NestJS Native**: Dependency injection and async configuration.
-- **Different limiting strategies**: _Fixed Window_, _Token Bucket_, _Sliding Window Counter_, _Sliding Window Log_ and _Leaky Bucket_.
+- **Different Limiting Strategies**: _Fixed Window_, _Token Bucket_, _Sliding Window Counter_, _Sliding Window Log_ and _Leaky Bucket_.
 - **Different Storages**: In-memory (Map) and <a href="https://redis.io/?ref=soroushjp.com">Redis</a> (With <a href="https://www.lua.org/">Lua</a> scripts).
+- **Race-Condition Safe**: Powered Redis storage by execution <a href="https://www.lua.org/">Lua</a> scripts, preventing race conditions in multi-instant delpoyments
 - **Library Independency**: <a href="https://redis.io/?ref=soroushjp.com">Redis</a> integration does not depend on a specific library.   
 - **Custom Key Extractors**: Provide your custom key extraction logic.
 - **Custom Error Factories**: Customize you rate limit exhausted error.
