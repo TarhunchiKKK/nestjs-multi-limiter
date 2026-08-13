@@ -72,8 +72,24 @@ export default {
                     title: "Docs",
                     items: [
                         {
-                            label: "Tutorial",
-                            to: "/docs/overview"
+                            label: "Quick Start",
+                            to: "/docs/quick-start"
+                        },
+                        {
+                            label: "Configuration",
+                            to: "/docs/configuration"
+                        },
+                        {
+                            label: "Decorators",
+                            to: "/docs/decorators"
+                        },
+                        {
+                            label: "Redis Integration",
+                            to: "/docs/redis-integration"
+                        },
+                        {
+                            label: "Custom Providers",
+                            to: "/docs/custom-providers"
                         }
                     ]
                 },
@@ -100,6 +116,14 @@ export default {
                         {
                             label: "GitHub",
                             href: "https://github.com/TarhunchiKKK/nestjs-multi-limiter"
+                        },
+                        {
+                            label: "Resources",
+                            to: "/docs/resources"
+                        },
+                        {
+                            label: "Example Application",
+                            href: "https://github.com/TarhunchiKKK/nestjs-multi-limiter/tree/main/sample"
                         }
                     ]
                 }
