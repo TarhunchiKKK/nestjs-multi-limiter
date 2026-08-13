@@ -36,8 +36,6 @@ export default {
         ]
     ],
     themeConfig: {
-        // DOCS: Replace with your project's social card
-        image: "img/docusaurus-social-card.jpg",
         colorMode: {
             respectPrefersColorScheme: true
         },
@@ -67,13 +65,6 @@ export default {
         },
         footer: {
             style: "dark",
-            logo: {
-                src: "img/logo.svg",
-                alt: "Logo",
-                href: "https://nestjs.com/",
-                width: 50,
-                height: 50
-            },
             links: [
                 {
                     title: "Docs",
@@ -84,19 +75,19 @@ export default {
                         },
                         {
                             label: "Configuration",
-                            to: "/docs/configuration"
+                            to: "/docs/category/configuration"
                         },
                         {
                             label: "Decorators",
-                            to: "/docs/decorators"
+                            to: "/docs/category/decorators"
                         },
                         {
                             label: "Redis Integration",
-                            to: "/docs/redis-integration"
+                            to: "/docs/category/redis-integration"
                         },
                         {
                             label: "Custom Providers",
-                            to: "/docs/custom-providers"
+                            to: "/docs/category/custom-providers"
                         }
                     ]
                 },
@@ -126,7 +117,7 @@ export default {
                         },
                         {
                             label: "Resources",
-                            to: "/docs/resources"
+                            to: "/docs/category/resources-"
                         },
                         {
                             label: "Example Application",
@@ -138,7 +129,7 @@ export default {
             copyright: `Copyright © ${new Date().getFullYear()} NestJS Multi Limiter, Inc. Built with Docusaurus.`
         },
         prism: {
-            theme: prismThemes.github,
+            theme: prismThemes.dracula,
             darkTheme: prismThemes.dracula
         }
     } satisfies Preset.ThemeConfig

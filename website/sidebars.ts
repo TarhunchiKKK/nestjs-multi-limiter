@@ -12,7 +12,6 @@ export default {
                 type: "generated-index",
                 description: "Learn how to configure module."
             },
-            collapsed: false,
             items: ["configuration/module-configuration", "configuration/default-configuration", "configuration/async-configuration"]
         },
         {
@@ -22,13 +21,11 @@ export default {
                 type: "generated-index",
                 description: "Learn about library decorators."
             },
-            collapsed: false,
             items: ["decorators/rate-limit", "decorators/skip-rate-limit"]
         },
         {
             type: "category",
             label: "Redis Integration",
-            collapsed: false,
             link: {
                 type: "generated-index",
                 description: "Learn how to integrate rate limiting module with Redis."
@@ -42,7 +39,6 @@ export default {
                 type: "generated-index",
                 description: "Learn how to implement custom rate limiting logic."
             },
-            collapsed: false,
             items: ["custom-providers/overview", "custom-providers/key-extractors", "custom-providers/error-factories", "custom-providers/options-factories"]
         },
         {

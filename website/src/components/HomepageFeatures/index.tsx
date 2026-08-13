@@ -1,5 +1,6 @@
 import Heading from "@theme/Heading";
 import clsx from "clsx";
+import { AudioLinesIcon, FoldHorizontalIcon, SlidersHorizontalIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import styles from "./styles.module.css";
 
@@ -11,23 +12,19 @@ type FeatureItem = {
 
 const FeatureList: FeatureItem[] = [
     {
-        title: "Easy to Use",
-        Svg: require("@site/static/img/undraw_docusaurus_mountain.svg").default,
-        description: <>Docusaurus was designed from the ground up to be easily installed and used to get your website up and running quickly.</>
+        title: "5 Core Algorithms",
+        Svg: SlidersHorizontalIcon,
+        description: <>Fixed Window, Token Bucket, Sliding Window Counter, Sliding Window Log, Leaky Bucket</>
     },
     {
-        title: "Focus on What Matters",
-        Svg: require("@site/static/img/undraw_docusaurus_tree.svg").default,
-        description: (
-            <>
-                Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go ahead and move your docs into the <code>docs</code> directory.
-            </>
-        )
+        title: "Dynamically Configurable",
+        Svg: AudioLinesIcon,
+        description: <>Options factories system allows you to dynamically configure limits at runtime (on the fly pre request)</>
     },
     {
-        title: "Powered by React",
-        Svg: require("@site/static/img/undraw_docusaurus_react.svg").default,
-        description: <>Extend or customize your website layout by reusing React. Docusaurus can be extended while reusing the same header and footer.</>
+        title: "Race-Condition Safe",
+        Svg: FoldHorizontalIcon,
+        description: <>Redis storage executes Lua-scripts, preventing race conditions in multi-instance deployments</>
     }
 ];
 
@@ -35,10 +32,12 @@ function Feature({ title, Svg, description }: FeatureItem) {
     return (
         <div className={clsx("col col--4")}>
             <div className="text--center">
-                <Svg className={styles.featureSvg} role="img" />
+                <Svg className={styles.featureSvg} color="#359962" role="img" />
             </div>
+
             <div className="text--center padding-horiz--md">
                 <Heading as="h3">{title}</Heading>
+
                 <p>{description}</p>
             </div>
         </div>
