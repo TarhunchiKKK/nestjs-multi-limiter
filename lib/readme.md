@@ -30,7 +30,7 @@
 - **Custom Key Extractors**: Provide your custom key extraction logic.
 - **Custom Error Factories**: Customize you rate limit exhausted error.
 
-👉 [See Documentation](https://github.com/TarhunchiKKK/nestjs-multi-limiter)
+👉 [See Documentation](https://tarhunchikkk.github.io/nestjs-multi-limiter/)
 
 👉 [See Example App](https://github.com/TarhunchiKKK/nestjs-multi-limiter/tree/main/sample)
 
@@ -82,7 +82,7 @@ export class AppController {
 }
 ```
 
-👉 [See Documentation](https://github.com/TarhunchiKKK/nestjs-multi-limiter)
+👉 [See Documentation](https://tarhunchikkk.github.io/nestjs-multi-limiter/)
 
 ## License
 

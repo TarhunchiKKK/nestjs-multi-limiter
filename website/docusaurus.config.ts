@@ -9,7 +9,7 @@ export default {
     future: {
         v4: true
     },
-    url: "https://TarhunchiKKK.github.io",
+    url: "https://tarhunchikkk.github.io",
     baseUrl: "/nestjs-multi-limiter/",
     organizationName: "TarhunchiKKK",
     projectName: "nestjs-multi-limiter",
