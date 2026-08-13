@@ -1,0 +1,7 @@
+# Comprehensive Guides
+
+This library implements 5 core rate limiting strategies. To understand their trade-offs, behaviors, and memory footprints, check out these excellent resources:
+
+- **[ByteByteGo (Alex Xu): Design a Rate Limiter](https://bytebytego.com/courses/system-design-interview/design-a-rate-limiter)** — The gold standard from the author of _System Design Interview_. It features clear mental models, visual diagrams, and pros/cons for **Token Bucket**, **Leaky Bucket**, **Fixed Window**, **Sliding Window Log**, and **Sliding Window Counter**.
+- **[Arcjet Blog: Rate Limiting Algorithms Compared](https://blog.arcjet.com/rate-limiting-algorithms-token-bucket-vs-sliding-window-vs-fixed-window/)** — An exceptional production-oriented breakdown. It provides a perfect mental model: **Token Bucket** tracks capacity, **Sliding Windows** track recent history, and **Fixed Windows** represent discrete accounting.
+- **[Medium: Rate Limiting Algorithms Explained](https://medium.com/@erwindev/rate-limiting-algorithms-compared-token-bucket-leaky-bucket-and-sliding-window-log-acd9c44bc86f)** — A great code-centric walk-through that tracks request state and explains why **Sliding Window Log** is highly accurate but memory-intensive.
