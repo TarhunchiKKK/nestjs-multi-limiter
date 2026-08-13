@@ -1,0 +1,29 @@
+# Via Object
+
+1. Setup your adapter object:
+
+```typescript
+import Redis, { type RedisValue } from "ioredis";
+import type { IRedisAdapter } from "nestjs-multi-limiter";
+
+// 📌 TRICK: This client already can be used as adapter
+export const RedisClient = new Redis(/* ... */);
+
+export const MyRedisAdapter: IRedisAdapter = {
+    eval: async (script, numKeys, ...args) => {
+        return await RedisClient.eval(script, numKeys, ...args);
+    }
+} 
+```
+
+2. Inject your Redis provider:
+
+```typescript
+RateLimiterModule.forRoot({
+    storage: {
+        type: "redis",
+        adapter: MyRedisAdapter, // or use `RedisClient` directly
+    },
+    // ...
+});
+```

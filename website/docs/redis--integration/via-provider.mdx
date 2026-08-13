@@ -1,0 +1,56 @@
+# Via Provider
+
+1. Setting up your provider:
+
+```typescript
+import Redis, { type RedisValue } from "ioredis";
+import type { IRedisAdapter } from "nestjs-multi-limiter";
+
+@Injectable()
+export class RedisService implements IRedisAdapter {
+    private readonly client: Redis;
+
+    public constructor(private readonly configService: ConfigService) {
+        this.client = new Redis(/* ... */);
+    }
+
+    public async eval(
+        script: string | Buffer<ArrayBufferLike>,
+        numKeys: string | number,
+        ...args: RedisValue[]
+    ) {
+        return await this.client.eval(script, numKeys, ...args);
+    }
+
+    // 📌 TRICK: Redis client can be used as adapter
+    public getClient() {
+        return this.client;
+    }
+}
+```
+
+2. Register your module:
+
+```typescript
+@Module({
+    providers: [RedisService],
+    exports: [RedisService],
+})
+export class RedisModule {}
+```
+
+3. Inject your Redis provider:
+
+```typescript
+RateLimiterModule.forRootAsync({
+    imports: [RedisModule],
+    inject: [RedisService],
+    useFactory: (redisService: RedisService) => ({
+        storage: {
+            type: "redis",
+            adapter: redisService, // or use `redisService.getClient()`
+        },
+        // ...
+    }),
+});
+```
