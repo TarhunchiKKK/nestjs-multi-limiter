@@ -1,0 +1,12 @@
+# Overview
+
+> ⚠️ **Important**
+>
+> Your custom providers (key extractors, error factories and options factories) will be called on every request.
+> **Do not perform any expensive computations here.** It can significantly hurt performance.
+
+> 📌 **Remember**
+>
+> If you specify you custom providers (key extractors, error factories and options factories) as default providers in `RateLimiterModule` configuration it will become not required to specify them in `RateLimit` decorator.
+>
+> For using your custom providers as default you should provide exactly your providers injection tokens in `RateLimiterModule` configuration.

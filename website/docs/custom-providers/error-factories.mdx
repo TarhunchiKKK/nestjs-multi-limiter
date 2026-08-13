@@ -1,0 +1,51 @@
+# Error Factories
+
+> 📌 **Remember**
+>
+> Error factories should not throw an error, they should only create it.
+
+1. Define your custom error factory:
+
+```typescript
+import { type ExecutionContext, HttpException } from "@nestjs/common";
+import {
+    ErrorFactory,
+    type ErrorFactoryOptions,
+    type IErrorFactory,
+} from "nestjs-multi-limiter";
+
+export class RateLimitError extends HttpException {
+    public constructor(message: string) {
+        super(message, 429);
+    }
+}
+
+@ErrorFactory()
+export class MyCustomErrorFactory implements IErrorFactory {
+    public constructor(/* You can use any providers */) {}
+
+    public getError(context: ExecutionContext, options: ErrorFactoryOptions) {
+        return new RateLimitError(
+            `Rate limit exhausted on ${context.getType()} transporter for scope "${options.scope}" and key "${options.key}".`,
+        );
+    }
+}
+```
+
+2. List your error factory as your module provider:
+
+```typescript
+MyModule.forRoot({
+    // ...
+    providers: [MyCustomErrorFactory],
+});
+```
+
+3. Specify your custom error factory in decorator:
+
+```typescript
+@RateLimit({
+    // ...
+    errorFactory: MyCustomErrorFactory
+})
+```
