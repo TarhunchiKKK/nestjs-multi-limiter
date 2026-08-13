@@ -1,8 +1,0 @@
-{
-    "label": "Custom Providers",
-    "position": 5,
-    "link": {
-        "type": "generated-index",
-        "description": "Learn how to implement custom rate limiting logic."
-    }
-}

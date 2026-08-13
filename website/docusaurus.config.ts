@@ -2,7 +2,7 @@ import type * as Preset from "@docusaurus/preset-classic";
 import type { Config } from "@docusaurus/types";
 import { themes as prismThemes } from "prism-react-renderer";
 
-const config: Config = {
+export default {
     title: "NestJS Multi Limiter",
     tagline: "Rate limiting module for NestJS framework (Node.js)",
     favicon: "img/favicon.ico",
@@ -43,8 +43,8 @@ const config: Config = {
         },
         navbar: {
             logo: {
-                alt: "Logo",
-                src: "img/logo.svg"
+                src: "img/logo.svg",
+                alt: "Logo"
             },
             items: [
                 {
@@ -73,7 +73,7 @@ const config: Config = {
                     items: [
                         {
                             label: "Tutorial",
-                            to: "/docs/intro"
+                            to: "/docs/overview"
                         }
                     ]
                 },
@@ -111,6 +111,4 @@ const config: Config = {
             darkTheme: prismThemes.dracula
         }
     } satisfies Preset.ThemeConfig
-};
-
-export default config;
+} satisfies Config;
