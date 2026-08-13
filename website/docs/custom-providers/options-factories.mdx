@@ -4,38 +4,69 @@
 If `RateLimit` decorator has static options (like `scope`) this static options will override corresponding properties returned by `factory`.
 :::
 
+Let's develop custom options factory that will return options depends on user subscription type.
+
 ### Define your custom options factory
 
-```typescript
+Our custom options factory should apply `@OptionsFactory` decorator and implement `IOptionsFactory` interface.
+
+```typescript title="my-custom.options-factory.ts"
 import { type ExecutionContext } from "@nestjs/common";
 import { type IOptionsFactory, OptionsFactory } from "nestjs-multi-limiter";
+import { type Request } from "express";
 
 @OptionsFactory()
 export class MyCustomOptionsFactory implements IOptionsFactory {
-    public constructor(private readonly configService: ConfigService) {}
+    public constructor(@Inject(AuthService) private readonly usersService: UsersService) {}
 
-    public getOptions(context: ExecutionContext) {
-        const scope = this.configService.get("RATE_LIMITER_SCOPE") ?? "custom-scope";
+    public async getOptions(context: ExecutionContext): Promise<RateLimitOptions> {
+        const request: Request = context.switchToHttp().getRequest();
 
-        return { scope };
+        const userId: string = request["user"]?.id;
+
+        const user = await this.usersService.findOneById(userId);
+
+        switch (user.subscription) {
+            case "free": {
+                return {
+                    strategy: "token-bucket",
+                    capacity: 20
+                };
+            }
+            case "pro": {
+                return {
+                    strategy: "token-bucket",
+                    capacity: 100
+                };
+            }
+            case "enterprise": {
+                return {
+                    strategy: "token-bucket",
+                    capacity: 1_000
+                };
+            }
+        }
     }
 }
 ```
 
+Now this provider is ready for using as options factory.
+
 ### List your options factory as your module provider
 
-```typescript
-RateLimiterModule.forRoot({
-    // ...
+Our custom provider should be visible in `AppModule` context.
+
+```typescript title="my.module.ts"
+@Module({
     providers: [MyCustomOptionsFactory]
-});
+})
+export class MyModule {}
 ```
 
 ### Specify your custom options factory in decorator
 
-```typescript
-@RateLimit({
-    // ...
-    factory: MyCustomOptionsFactory
-})
+Now we can use this provider in `@RateLimit` decorator or set it as default options factory.
+
+```typescript 
+@RateLimit({ factory: MyCustomOptionsFactory })
 ```

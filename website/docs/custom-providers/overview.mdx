@@ -5,6 +5,55 @@ Your custom providers (key extractors, error factories and options factories) wi
 **Do not perform any expensive computations here.** It can significantly hurt performance.
 :::
 
+Custom providers allows you to override rate limiting steps behavior:
+
+* `Key Extractors` - Allows you to override key extraction mechanism and provide custom key
+* `Error Factory` - Allows you to override rate limiting error and perform custom error handling logic
+* `Options Factory` - Allows you to dynamically configure limits at runtime 
+
+## Usage
+
+You can use default providers in `@RateLimit` decorator:
+
+```typescript
+import {
+    MyCustomKeyExtractor,
+    MyCustomErrorFactory,
+    MyCustomOptionsFactory
+} from "./providers"
+
+@RateLimit({
+    keyExtractor: MyCustomKeyExtractor,
+    errorFactory: MyCustomErrorFactory,
+    factory: MyCustomOptionsFactory
+})
+```
+
+This custom providers will be called on every request to this method/controller.
+
+## Default providers
+
+Your custom providers can be used as default providers.
+
+To use your custom providers as default provide them in `RateLimiterModule` configuration:
+
+```typescript
+import {
+    MyCustomKeyExtractor,
+    MyCustomErrorFactory,
+    MyCustomOptionsFactory
+} from "./providers"
+
+RateLimiterModule.forRoot({
+    defaultProviders: {
+        keyExtractor: MyCustomKeyExtractor,
+        errorFactory: MyCustomErrorFactory,
+        optionsFactory: MyCustomOptionsFactory
+    }
+});
+```
+Now your providers will be used as default on every request.
+
 :::info[Remember]
 If you specify you custom providers (key extractors, error factories and options factories) as default providers in `RateLimiterModule` configuration it will become not required to specify them in `RateLimit` decorator.
 

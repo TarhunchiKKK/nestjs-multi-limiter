@@ -5,20 +5,25 @@ When implementing your custom key extractors, take care of the **uniqueness** an
 If not, it can lead to unpredictable behavior.
 :::
 
-### Define your custom key extractor
+Let's develop custom key extractor which extracts JWT-token from request, decodes it and return user id. 
 
-```typescript
+### Define custom key extractor
+
+Our custom key extractor should apply `@KeyExtractor` decorator and implement `IKeyExtractor` interface.
+
+```typescript title="my-custom.key-extractor.ts"
 import { type ExecutionContext } from "@nestjs/common";
 import { type IKeyExtractor, KeyExtractor } from "nestjs-multi-limiter";
+import { type Request } from "express";
 
 @KeyExtractor()
 export class MyCustomKeyExtractor implements IKeyExtractor {
     public constructor(private readonly jwtService: JwtService) {}
 
     public extract(context: ExecutionContext) {
-        const request = context.switchToHttp().getRequest();
+        const request: Request = context.switchToHttp().getRequest();
 
-        const authorization = request.headers["Authorization"];
+        const authorization = request.headers.authorization;
 
         const [, token] = authorization.split(" ")[1];
 
@@ -29,20 +34,23 @@ export class MyCustomKeyExtractor implements IKeyExtractor {
 }
 ```
 
-### List your key extractor as your module provider
+Now this provider is ready for using as key extractor.
 
-```typescript
-MyModule.forRoot({
-    // ...
+### List key extractor as your module provider
+
+Our custom provider should be visible in `AppModule` context.
+
+```typescript title="my.module.ts"
+@Module({
     providers: [MyCustomKeyExtractor]
-});
+})
+export class MyModule {}
 ```
 
-### Specify your custom key extractor in decorator
+### Specify key extractor in decorator
+
+Now we can use this provider in `@RateLimit` decorator or set it as default key extractor.
 
 ```typescript
-@RateLimit({
-    // ...
-    keyExtractor: MyCustomKeyExtractor
-})
+@RateLimit({ keyExtractor: MyCustomKeyExtractor })
 ```
