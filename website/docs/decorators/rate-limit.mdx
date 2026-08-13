@@ -1,0 +1,37 @@
+# RateLimit
+
+:::info[Note]
+`@RateLimit` decorator don't automatically apply rate limiting for method/controller. 
+
+`@RateLimit` decorator should be used **in pair with `RateLimitGuard`**.
+:::
+
+### Usage
+
+By default guard uses options provided in `RateLimiterModule` configuration. You can override this options using `@RateLimit` decorator.
+
+`@RateLimit` decorator options are much similar to `RateLimiterModule` options. This decorator can override all `RateLimiterModule` options, **except storage options**.
+
+### Options example
+
+```typescript
+import {
+    MyCustomKeyExtractor,
+    MyCustomErrorFactory,
+    MyCustomOptionsFactory
+} from "./providers"
+
+@RateLimit({
+    scope: "my-custom-scope",
+
+    keyExtractor: MyCustomKeyExtractor,
+    errorFactory: MyCustomErrorFactory,
+    factory: MyCustomOptionsFactory,
+
+    // strategy-specific options
+    strategy: "sliding-window-counter",
+    limit: 100,
+    windowMs: 1_000
+})
+```
+

@@ -1,0 +1,64 @@
+# Error Factories
+
+:::info[Remember]
+Error factories should **not throw** an error, they should **only create** it.
+:::
+
+Let's develop custom error factory that throws custom error and send log to Elastic or another logs storage.
+
+### Define custom exception 
+
+Out custom rate limiting exception class will be something like this:
+
+```typescript title="rate-limit.exception.ts"
+import { HttpException } from "@nestjs/common";
+
+export class RateLimitException extends HttpException {
+    public constructor(message: string) {
+        super(message, 429);
+    }
+}
+```
+
+### Define custom error factory
+
+Our custom error factory should apply `@ErrorFactory` decorator and implement `IErrorFactory` interface.
+
+```typescript title="my-custom.error-factory.ts"
+import { type ExecutionContext } from "@nestjs/common";
+import { ErrorFactory, type ErrorFactoryOptions, type IErrorFactory } from "nestjs-multi-limiter";
+
+@ErrorFactory()
+export class MyCustomErrorFactory implements IErrorFactory {
+    public constructor(private readonly logsSender: LogsSender) {}
+
+    public async getError(context: ExecutionContext, options: ErrorFactoryOptions) {
+        await this.logsSender.send(`Rate limiting failed for key: ${options.key}.`);
+        
+        return new RateLimitException(
+            `Rate limit exhausted on ${context.getType()} transporter for scope "${options.scope}" and key "${options.key}".`,
+        );
+    }
+}
+```
+
+Now this provider is ready for using as error factory.
+
+### List error factory as your module provider
+
+Our custom provider should be visible in `AppModule` context.
+
+```typescript title="my.module.ts"
+@Module({
+    providers: [MyCustomErrorFactory]
+})
+export class MyModule {}
+```
+
+### Specify your custom error factory in decorator
+
+Now we can use this provider in `@RateLimit` decorator or set it as default error factory.
+
+```typescript
+@RateLimit({ errorFactory: MyCustomErrorFactory })
+```

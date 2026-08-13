@@ -1,0 +1,30 @@
+# Async Configuration
+
+Here is example with `RateLimiterModule` async configuration.
+
+```typescript
+RateLimiterModule.forRootAsync({
+    imports: [ConfigModule, RedisModule],
+    inject: [ConfigService, RedisService],
+    useFactory: (configService: ConfigService, redisService: RedisService) => ({
+        scope: this.configService.getOrThrow<string>("RATE_LIMIT_SCOPE"),
+        storage: {
+            type: "redis",
+            gcTime: redisService
+        },
+        strategy: this.configService.getOrThrow<Strategies>("RATE_LIMIT_STRATEGY"),
+        strategyOptions: {
+            fixedWindow: {/* */},
+            tokenBucket: {/* */},
+            slidingWindowCounter: {/* */},
+            slidingWindowLog: {/* */},
+            leakyBucket: {/* */}
+        },
+        defaultProviders: {
+            keyExtractor: MyCustomKeyExtractor,
+            errorFactory: MyCustomErrorFactory,
+            optionsFactory: MyCustomOptionsFactory
+        }
+    }),
+});
+```

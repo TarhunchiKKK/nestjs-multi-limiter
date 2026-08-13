@@ -1,3 +1,5 @@
+# Overview ✨
+
 <p align="center">
     <a href="http://nestjs.com/" target="blank">
         <img src="https://docs.nestjs.com/assets/logo-small-gradient.svg" width="200" alt="Nest Logo" />
@@ -20,7 +22,11 @@
     </a>
 </p>
 
-## Features
+👉 [NPM Package](https://www.npmjs.com/package/nestjs-multi-limiter)
+
+👉 [Example App](https://github.com/TarhunchiKKK/nestjs-multi-limiter/tree/main/sample)
+
+### Features
 
 - **NestJS Native**: Dependency injection and async configuration.
 - **Different Limiting Strategies**: _Fixed Window_, _Token Bucket_, _Sliding Window Counter_, _Sliding Window Log_ and _Leaky Bucket_.
@@ -29,61 +35,3 @@
 - **Library Independency**: <a href="https://redis.io/?ref=soroushjp.com">Redis</a> integration does not depend on a specific library.   
 - **Custom Key Extractors**: Provide your custom key extraction logic.
 - **Custom Error Factories**: Customize you rate limit exhausted error.
-
-👉 [See Documentation](https://tarhunchikkk.github.io/nestjs-multi-limiter/)
-
-👉 [See Example App](https://github.com/TarhunchiKKK/nestjs-multi-limiter/tree/main/sample)
-
-## Installation
-
-```bash
-npm install nestjs-multi-limiter
-```
-
-## Quick Start
-
-```typescript
-// app.module.ts
-import { Module } from "@nestjs/common";
-import { RateLimiterModule } from "nestjs-multi-limiter";
-import { AppController } from "./app.controller.ts";
-
-@Module({
-    imports: [
-        RateLimiterModule.forRoot({
-            storage: {
-                type: "in-memory",
-            },
-            scope: "my-scope",
-            strategy: "token-bucket",
-            strategyOptions: {
-                // different strategies options (Optional)
-            },
-        }),
-    ],
-    controllers: [AppController],
-})
-export class AppModule {}
-```
-
-```typescript
-// app.controller.ts
-import { Controller, Get, UseGuards } from "@nestjs/common";
-import { RateLimit, RateLimitGuard } from "nestjs-multi-limiter";
-
-@Controller()
-@UseGuards(RateLimitGuard)
-export class AppController {
-    @Get("/hello")
-    @RateLimit({ /* override default options */ })
-    public hello() {
-        return "Hello";
-    }
-}
-```
-
-👉 [See Documentation](https://tarhunchikkk.github.io/nestjs-multi-limiter/)
-
-## License
-
-MIT

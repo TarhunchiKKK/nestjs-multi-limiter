@@ -1,0 +1,57 @@
+# Quick Start 🚀
+
+## Installation
+
+```bash title="bash"
+npm install nestjs-multi-limiter
+```
+
+## Setup steps
+
+### Setup module
+
+Add `RateLimiterModule` to your `AppModule` imports:
+
+```typescript title="app.module.ts"
+import { Module } from "@nestjs/common";
+import { RateLimiterModule } from "nestjs-multi-limiter";
+import { AppController } from "./app.controller.ts";
+
+@Module({
+    imports: [
+        RateLimiterModule.forRoot({
+            storage: {
+                type: "in-memory",
+            },
+            scope: "my-scope",
+            strategy: "token-bucket",
+            strategyOptions: {
+                // different strategies options (Optional)
+            },
+        }),
+    ],
+    controllers: [AppController],
+})
+export class AppModule {}
+```
+
+### Use guard in controller
+
+Use `RateLimitGuard` in your controller. 
+
+You also can add `@RateLimit` decorator to override default options.
+
+```typescript title="app.controller.ts"
+import { Controller, Get, UseGuards } from "@nestjs/common";
+import { RateLimit, RateLimitGuard } from "nestjs-multi-limiter";
+
+@Controller()
+@UseGuards(RateLimitGuard)
+export class AppController {
+    @Get("/hello")
+    @RateLimit({ /* override default options */ })
+    public hello() {
+        return "Hello";
+    }
+}
+```

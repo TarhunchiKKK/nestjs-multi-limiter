@@ -1,0 +1,100 @@
+# Via Provider
+
+Let's create providers that will use `ioredis` and will be used as `Redis` adapter.
+
+### Setting up your provider
+
+```typescript title="redis.service.ts"
+import Redis, { type RedisValue } from "ioredis";
+import type { IRedisAdapter } from "nestjs-multi-limiter";
+
+@Injectable()
+export class RedisService implements IRedisAdapter {
+    private readonly client: Redis;
+
+    public constructor(private readonly configService: ConfigService) {
+        this.client = new Redis(/* ... */);
+    }
+
+    public async eval(script: string | Buffer<ArrayBufferLike>, numKeys: string | number,...args: RedisValue[]) {
+        return await this.client.eval(script, numKeys, ...args);
+    }
+
+    // 📌 TRICK: Redis client can be used as adapter
+    public getClient() {
+        return this.client;
+    }
+}
+```
+
+### Register your module
+
+```typescript title="redis.module.ts"
+@Module({
+    providers: [RedisService],
+    exports: [RedisService]
+})
+export class RedisModule {}
+```
+
+### Inject your Redis provider
+
+```typescript
+RateLimiterModule.forRootAsync({
+    imports: [RedisModule],
+    inject: [RedisService],
+    useFactory: (redisService: RedisService) => ({
+        storage: {
+            type: "redis",
+            adapter: redisService // or use `redisService.getClient()`
+        }
+    })
+});
+```
+
+### Another package provider
+
+Let's develop adapter that will use `redis` package.
+
+```typescript title="node-redis.adapter.ts"
+import { Injectable, Module, type OnModuleDestroy, type OnModuleInit } from "@nestjs/common";
+import type { IRedisAdapter } from "nestjs-multi-limiter";
+import { createClient } from "redis";
+
+@Injectable()
+export class NodeRedisAdapter implements IRedisAdapter, OnModuleInit, OnModuleDestroy {
+    private client: ReturnType<typeof createClient>;
+
+    public constructor() {
+        this.client = createClient({
+            url: "redis://localhost:6379"
+        });
+
+        this.client.on("error", (err) => console.error("Redis Client Error", err));
+    }
+
+    public async onModuleInit() {
+        await this.client.connect();
+    }
+
+    public async onModuleDestroy() {
+        await this.client.quit();
+    }
+
+    public async eval(...args: [script: string | Buffer, numKeys: number | string, ...args: RedisValue[]]) {
+        const [script, numKeys, ...rest] = args;
+
+        const keysCount = typeof numKeys === "string" ? parseInt(numKeys, 10) : numKeys;
+
+        const keys = rest.slice(0, keysCount).map(String);
+        const argv = rest.slice(keysCount).map(String);
+
+        return await this.client.eval(script.toString(), {
+            keys: keys,
+            arguments: argv
+        });
+    }
+}
+```
+
+Now this provider can be used as `Redis` adapter.

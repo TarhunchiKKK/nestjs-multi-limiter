@@ -1,0 +1,49 @@
+# Important Defaults
+
+## How keys work
+
+In this docs you often will see **key**. Keys used to store rate limiting data record in memory or in `Redis`.
+
+Key structure:
+
+```typescript
+`rate-limiter:${strategy}:${key}:${scope}`
+```
+
+Example key:
+
+```typescript
+"rate-limiter:sliding-window-log:john-doe:login"
+```
+
+Let's look at all parts of the key.
+
+### Prefix
+
+Prefix is the first part of key. Prefix is set to `rate-limiter` and cannot be overridden. 
+
+This is done in order to avoid `Redis` keys conflicts.
+
+### Strategy
+
+Second part of the key represents rate limiting algorithm that was used for this key.
+
+Available values:
+
+* `fixed-window`
+* `token-bucket`
+* `sliding-window-counter`
+* `sliding-window-log`
+* `leaky-bucket`
+
+### Key
+
+Third part of the key is a value returned by key extractor. By default library uses IP-address as key. 
+
+You can use custom key extractor to perform custom key generation logic.
+
+### Scope
+
+Last part of the key is rate limiting scope. Defaults to `default`. 
+
+Scopes are useful when you want to use different limits for different user actions.

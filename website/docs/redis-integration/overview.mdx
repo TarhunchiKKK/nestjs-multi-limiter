@@ -1,0 +1,9 @@
+# Overview
+
+For using Redis storage you need to provide object or provider that implements `IRedisAdapter` type. This object/provider will be used for `Redis` access.
+
+:::info[Trick]
+`Redis` instance from `ioredis` package already implements `IRedisAdapter` type.
+
+You can use it as adapter.
+:::
