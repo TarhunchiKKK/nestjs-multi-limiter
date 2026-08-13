@@ -25,6 +25,7 @@ export default {
         [
             "classic",
             {
+                blog: false,
                 docs: {
                     sidebarPath: "./sidebars.ts"
                 },
@@ -48,7 +49,7 @@ export default {
             items: [
                 {
                     type: "docSidebar",
-                    sidebarId: "tutorialSidebar",
+                    sidebarId: "docs",
                     position: "left",
                     label: "Documentation"
                 },

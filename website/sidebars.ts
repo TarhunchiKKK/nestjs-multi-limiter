@@ -1,7 +1,7 @@
 import type { SidebarsConfig } from "@docusaurus/plugin-content-docs";
 
 export default {
-    tutorialSidebar: [
+    docs: [
         "overview",
         "quick-start",
         {
@@ -46,7 +46,7 @@ export default {
         },
         {
             type: "category",
-            label: "Resources",
+            label: "Resources 📔",
             link: {
                 type: "generated-index",
                 description: "Here is some theory about rate limiting and this library."
