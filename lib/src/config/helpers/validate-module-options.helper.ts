@@ -1,7 +1,28 @@
 import type { Strategies } from "../../shared/model";
 import type { RateLimiterModuleFullOptions } from "../options";
 
-export function validateModuleOptions(options: RateLimiterModuleFullOptions): asserts options is RateLimiterModuleFullOptions {}
+export class RateLimiterModuleConfigurationError extends Error {
+    public constructor(errors: string[]) {
+        const message = `\n[RateLimiterModule] Configuration Validation Failed:\n${errors.map((err) => `  - ${err}`).join("\n")}`;
+
+        super(message);
+    }
+}
+
+export function validateModuleOptions(options: RateLimiterModuleFullOptions): asserts options is RateLimiterModuleFullOptions {
+    const errors: string[] = [];
+    const validators = [validateScope, validateStorage, validateStrategy, validateStrategyOptions];
+
+    for (const validator of validators) {
+        const validatorErrors = validator(options);
+
+        errors.concat(validatorErrors);
+    }
+
+    if (errors.length !== 0) {
+        throw new RateLimiterModuleConfigurationError(errors);
+    }
+}
 
 function validateScope(options: RateLimiterModuleFullOptions): string[] {
     if (!options.scope) {
