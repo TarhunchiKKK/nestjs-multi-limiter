@@ -1,6 +1,7 @@
 import { type DynamicModule, type FactoryProvider, Module } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
 import { mergeDefaultOptions } from "./config/defaults";
+import { validateModuleOptions } from "./config/helpers";
 import type { RateLimiterModuleAsyncOptions, RateLimiterModuleFullOptions, RateLimiterModuleOptions, RateLimitGuardOptions } from "./config/options";
 import { BuiltinErrorFactory } from "./custom/error-factories";
 import { BuiltinKeyExtractor } from "./custom/key-extractors";
@@ -56,6 +57,8 @@ export class RateLimiterModule {
     public static forRoot(options: RateLimiterModuleOptions): DynamicModule {
         const fullOptions = mergeDefaultOptions(options);
 
+        validateModuleOptions(fullOptions);
+
         return {
             module: RateLimiterModule,
             providers: [
@@ -80,7 +83,12 @@ export class RateLimiterModule {
             // biome-ignore lint/suspicious/noExplicitAny: `any` type is necessary for factory customization
             useFactory: async (...args: any[]) => {
                 const calculatedOptions = await options.useFactory(...args);
-                return mergeDefaultOptions(calculatedOptions);
+
+                const fullOptions = mergeDefaultOptions(calculatedOptions);
+
+                validateModuleOptions(fullOptions);
+
+                return fullOptions;
             }
         };
 

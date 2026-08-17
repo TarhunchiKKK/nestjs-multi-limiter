@@ -71,6 +71,7 @@ export class RateLimitGuard implements CanActivate {
         return classOptions;
     }
 
+    // REFACTOR: Fix typo
     private async getFinalGuardOptions(context: ExecutionContext, metadatOptions?: RateLimitOptions): Promise<RunOptions> {
         if (!metadatOptions) {
             const factory = this.options.factory ? await this.discoveryService.getOptionsFactory(this.options.factory) : undefined;
