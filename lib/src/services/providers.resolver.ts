@@ -27,7 +27,7 @@ export class ProvidersResolver implements OnModuleInit {
         const executor = this.executorsMap.get(strategy);
 
         if (!executor) {
-            throw new Error(`No executor found for strategy: "${strategy}""`);
+            throw new Error(`[RateLimiterModule] No executor found for strategy: "${strategy}""`);
         }
 
         return executor as IExecutor<AllStrategiesOptions[Strategy]>;
@@ -37,7 +37,7 @@ export class ProvidersResolver implements OnModuleInit {
         const wrapper = this.keyExtractorsMap.get(token);
 
         if (!wrapper) {
-            throw new Error(`No key extractor found for token: ${String(token)}`);
+            throw new Error(`[RateLimiterModule] No key extractor found for token: ${String(token)}`);
         }
 
         return await this.resolveCustomProvider(token, wrapper);
@@ -47,7 +47,7 @@ export class ProvidersResolver implements OnModuleInit {
         const wrapper = this.errorFactoriesMap.get(token);
 
         if (!wrapper) {
-            throw new Error(`No error factory found for token: ${String(token)}`);
+            throw new Error(`[RateLimiterModule] No error factory found for token: ${String(token)}`);
         }
 
         return await this.resolveCustomProvider(token, wrapper);
@@ -57,7 +57,7 @@ export class ProvidersResolver implements OnModuleInit {
         const wrapper = this.optionsFactoriesMap.get(token);
 
         if (!wrapper) {
-            throw new Error(`No options factory found for token: ${String(token)}`);
+            throw new Error(`[RateLimiterModule] No options factory found for token: ${String(token)}`);
         }
 
         return await this.resolveCustomProvider(token, wrapper);

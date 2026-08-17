@@ -1,6 +1,6 @@
 import { Inject, Injectable, type OnModuleDestroy } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import Redis, { type RedisValue } from "ioredis";
+import Redis from "ioredis";
 import type { IRedisAdapter } from "nestjs-multi-limiter";
 
 @Injectable()
@@ -14,7 +14,7 @@ export class RedisService implements IRedisAdapter, OnModuleDestroy {
         });
     }
 
-    public async eval(script: string | Buffer<ArrayBufferLike>, numKeys: string | number, ...args: RedisValue[]) {
+    public async eval(script: string | Buffer<ArrayBufferLike>, numKeys: number, ...args: string[]) {
         return await this.client.eval(script, numKeys, ...args);
     }
 

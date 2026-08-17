@@ -5,7 +5,7 @@ Let's create providers that will use `ioredis` and will be used as `Redis` adapt
 ### Setting up your provider
 
 ```typescript title="redis.service.ts"
-import Redis, { type RedisValue } from "ioredis";
+import Redis from "ioredis";
 import type { IRedisAdapter } from "nestjs-multi-limiter";
 
 @Injectable()
@@ -16,7 +16,7 @@ export class RedisService implements IRedisAdapter {
         this.client = new Redis(/* ... */);
     }
 
-    public async eval(script: string | Buffer<ArrayBufferLike>, numKeys: string | number,...args: RedisValue[]) {
+    public async eval(script: string | Buffer<ArrayBufferLike>, numKeys: number, ...args: string[]) {
         return await this.client.eval(script, numKeys, ...args);
     }
 
@@ -81,7 +81,7 @@ export class NodeRedisAdapter implements IRedisAdapter, OnModuleInit, OnModuleDe
         await this.client.quit();
     }
 
-    public async eval(...args: [script: string | Buffer, numKeys: number | string, ...args: RedisValue[]]) {
+    public async eval(...args: [script: string | Buffer, numKeys: number, ...args: string[]]) {
         const [script, numKeys, ...rest] = args;
 
         const keysCount = typeof numKeys === "string" ? parseInt(numKeys, 10) : numKeys;
