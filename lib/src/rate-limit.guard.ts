@@ -1,13 +1,13 @@
 import { type CanActivate, type ExecutionContext, Inject, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { normalizeOptions } from "../config/helpers";
-import type { RateLimitGuardOptions, RateLimitNormalizedOptions, RateLimitOptions, StrategyOptions } from "../config/options";
-import type { ErrorFactoryOptions, IErrorFactory } from "../custom/error-factories";
-import type { IKeyExtractor } from "../custom/key-extractors";
-import { RateLimit, SkipRateLimit } from "../decorators";
-import { GUARD_OPTIONS_TOKEN } from "../di";
-import { ProvidersResolver } from "../services/providers.resolver";
-import { getKey, type Key, type Scope } from "../shared/model";
+import { normalizeOptions } from "./config/helpers";
+import type { RateLimitGuardOptions, RateLimitNormalizedOptions, RateLimitOptions, StrategyOptions } from "./config/options";
+import type { ErrorFactoryOptions, IErrorFactory } from "./custom/error-factories";
+import type { IKeyExtractor } from "./custom/key-extractors";
+import { RateLimit, SkipRateLimit } from "./decorators";
+import { GUARD_OPTIONS_TOKEN } from "./di";
+import { ProvidersResolver } from "./services/providers.resolver";
+import { getKey, type Key, type Scope } from "./shared/model";
 
 type RunOptions = StrategyOptions & {
     scope: Scope;
@@ -24,8 +24,7 @@ type RunOptions = StrategyOptions & {
 export class RateLimitGuard implements CanActivate {
     public constructor(
         @Inject(GUARD_OPTIONS_TOKEN) private readonly options: RateLimitGuardOptions,
-        // FIX: Rename this provider
-        @Inject(ProvidersResolver) private readonly discoveryService: ProvidersResolver,
+        @Inject(ProvidersResolver) private readonly providersResolver: ProvidersResolver,
         @Inject(Reflector) private readonly reflector: Reflector
     ) {}
 
@@ -71,39 +70,38 @@ export class RateLimitGuard implements CanActivate {
         return classOptions;
     }
 
-    // REFACTOR: Fix typo
-    private async getFinalGuardOptions(context: ExecutionContext, metadatOptions?: RateLimitOptions): Promise<RunOptions> {
-        if (!metadatOptions) {
-            const factory = this.options.factory ? await this.discoveryService.getOptionsFactory(this.options.factory) : undefined;
+    private async getFinalGuardOptions(context: ExecutionContext, metadataOptions?: RateLimitOptions): Promise<RunOptions> {
+        if (!metadataOptions) {
+            const factory = this.options.factory ? await this.providersResolver.getOptionsFactory(this.options.factory) : undefined;
 
             return {
                 ...this.options,
                 ...(factory ? await factory.getOptions(context) : undefined),
-                keyExtractor: await this.discoveryService.getKeyExtractor(this.options.keyExtractor),
-                errorFactory: await this.discoveryService.getErrorFactory(this.options.errorFactory)
+                keyExtractor: await this.providersResolver.getKeyExtractor(this.options.keyExtractor),
+                errorFactory: await this.providersResolver.getErrorFactory(this.options.errorFactory)
             };
         }
 
-        const keyExtractorToken = metadatOptions.keyExtractor ?? this.options.keyExtractor;
-        const errorFactoryToken = metadatOptions.errorFactory ?? this.options.errorFactory;
-        const optionsFactoryToken = metadatOptions.factory ?? this.options.factory;
+        const keyExtractorToken = metadataOptions.keyExtractor ?? this.options.keyExtractor;
+        const errorFactoryToken = metadataOptions.errorFactory ?? this.options.errorFactory;
+        const optionsFactoryToken = metadataOptions.factory ?? this.options.factory;
 
-        let finalDecoratorOptions: RateLimitNormalizedOptions = metadatOptions;
+        let finalDecoratorOptions: RateLimitNormalizedOptions = metadataOptions;
         if (optionsFactoryToken) {
-            const optionsFactoryInstance = await this.discoveryService.getOptionsFactory(optionsFactoryToken);
+            const optionsFactoryInstance = await this.providersResolver.getOptionsFactory(optionsFactoryToken);
 
             const dynamicOptions = await optionsFactoryInstance.getOptions(context);
 
             finalDecoratorOptions = {
                 ...normalizeOptions(dynamicOptions),
-                ...metadatOptions
+                ...metadataOptions
             };
         }
 
         return {
             scope: finalDecoratorOptions.scope ?? this.options.scope,
-            keyExtractor: await this.discoveryService.getKeyExtractor(keyExtractorToken),
-            errorFactory: await this.discoveryService.getErrorFactory(errorFactoryToken),
+            keyExtractor: await this.providersResolver.getKeyExtractor(keyExtractorToken),
+            errorFactory: await this.providersResolver.getErrorFactory(errorFactoryToken),
             strategy: finalDecoratorOptions.strategy ?? this.options.strategy,
             strategyOptions: !finalDecoratorOptions.strategy
                 ? this.options.strategyOptions
@@ -120,7 +118,7 @@ export class RateLimitGuard implements CanActivate {
     private async checkRate(key: unknown, options: RunOptions) {
         const finalKey = getKey(key, options.strategy, options.scope);
 
-        const executor = this.discoveryService.getExecutor(options.strategy);
+        const executor = this.providersResolver.getExecutor(options.strategy);
 
         return await executor.check(finalKey, options.strategyOptions[options.strategy]);
     }

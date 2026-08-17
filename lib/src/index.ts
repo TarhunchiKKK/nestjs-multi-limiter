@@ -3,6 +3,6 @@ export { ErrorFactory, type ErrorFactoryOptions, type IErrorFactory } from "./cu
 export { type IKeyExtractor, KeyExtractor } from "./custom/key-extractors";
 export { type IOptionsFactory, OptionsFactory } from "./custom/options-factories";
 export { RateLimit, SkipRateLimit } from "./decorators";
-export { RateLimitGuard } from "./middleware";
+export { RateLimitGuard } from "./rate-limit.guard";
 export { RateLimiterModule } from "./rate-limiter.module";
 export type { IRedisAdapter, Key, Scope, StorageTypes, Strategies } from "./shared/model";

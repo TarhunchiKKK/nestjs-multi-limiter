@@ -18,7 +18,7 @@ import {
     TokenBucketInMemoryExecutor,
     TokenBucketRedisExecutor
 } from "./executors";
-import { RateLimitGuard } from "./middleware";
+import { RateLimitGuard } from "./rate-limit.guard";
 import { InMemoryGarbageCollector } from "./services/in-memory.garbage-collector";
 import { ProvidersResolver } from "./services/providers.resolver";
 import type { Storage } from "./shared/model";
