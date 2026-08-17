@@ -15,6 +15,28 @@ function validateScope(options: RateLimiterModuleFullOptions): string[] {
     return [];
 }
 
+function validateStorage(options: RateLimiterModuleFullOptions): string[] {
+    switch (options.storage.type) {
+        case "in-memory": {
+            if (typeof options.storage.gcTime !== "number" || options.storage.gcTime < 0) {
+                return [`Invalid garbage collection type. Expected positive number, but receive ${options.storage.gcTime}`];
+            }
+
+            return [];
+        }
+        case "redis": {
+            if (!options.storage.adapter) {
+                return [`Redis adapter is not provided.`];
+            }
+
+            return [];
+        }
+        default: {
+            return [`Unknown storage type. Receive ${options.storage}`];
+        }
+    }
+}
+
 function validateStrategy(options: RateLimiterModuleFullOptions): string[] {
     const availableStrategies: Strategies[] = ["fixed-window", "token-bucket", "sliding-window-counter", "sliding-window-log", "leaky-bucket"];
 
