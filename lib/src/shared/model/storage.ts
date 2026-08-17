@@ -1,4 +1,3 @@
-import Redis from "ioredis";
 import type { Key } from "./keys";
 
 /**
@@ -20,5 +19,3 @@ export type IRedisAdapter = {
 };
 
 export type Storage = InMemoryStorage<unknown> | IRedisAdapter;
-
-export const adapter: IRedisAdapter = new Redis();
