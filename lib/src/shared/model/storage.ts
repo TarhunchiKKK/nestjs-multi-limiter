@@ -1,5 +1,4 @@
-import type Redis from "ioredis";
-import type { RedisValue } from "ioredis";
+import Redis from "ioredis";
 import type { Key } from "./keys";
 
 /**
@@ -17,8 +16,9 @@ export type InMemoryStorage<Value> = Map<Key, Value>;
  * @publicApi
  */
 export type IRedisAdapter = {
-    // FIX: Replace `RedisValue` with custom type
-    eval(...args: [script: string | Buffer, numkeys: number | string, ...args: RedisValue[]]): ReturnType<Redis["eval"]>;
+    eval(...args: [script: string | Buffer, numKeys: number | string, ...args: (string | number | Buffer<ArrayBufferLike>)[]]): Promise<unknown>;
 };
 
 export type Storage = InMemoryStorage<unknown> | IRedisAdapter;
+
+export const adapter: IRedisAdapter = new Redis();

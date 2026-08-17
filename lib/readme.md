@@ -25,7 +25,7 @@
 - **NestJS Native**: Dependency injection and async configuration.
 - **Different Limiting Strategies**: _Fixed Window_, _Token Bucket_, _Sliding Window Counter_, _Sliding Window Log_ and _Leaky Bucket_.
 - **Different Storages**: In-memory (Map) and <a href="https://redis.io/?ref=soroushjp.com">Redis</a> (With <a href="https://www.lua.org/">Lua</a> scripts).
-- **Race-Condition Safe**: Powered Redis storage by execution <a href="https://www.lua.org/">Lua</a> scripts, preventing race conditions in multi-instant delpoyments
+- **Race-Condition Safe**: Powered Redis storage by execution <a href="https://www.lua.org/">Lua</a> scripts, preventing race conditions in multi-instant deployments.
 - **Library Independency**: <a href="https://redis.io/?ref=soroushjp.com">Redis</a> integration does not depend on a specific library.   
 - **Custom Key Extractors**: Provide your custom key extraction logic.
 - **Custom Error Factories**: Customize you rate limit exhausted error.

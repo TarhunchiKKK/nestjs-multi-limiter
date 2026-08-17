@@ -1,5 +1,4 @@
 import { Injectable, Module, type OnModuleDestroy, type OnModuleInit } from "@nestjs/common";
-import type { RedisValue } from "ioredis";
 import { createClient } from "redis";
 import type { IRedisAdapter } from "../../../src";
 import { createRedisClient } from "../helpers/redis.helpers";
@@ -10,7 +9,7 @@ export const IoRedisClient = createRedisClient();
 export class IoRedisAdapter implements IRedisAdapter {
     private client = createRedisClient();
 
-    public async eval(script: string | Buffer<ArrayBufferLike>, numKeys: string | number, ...args: RedisValue[]) {
+    public async eval(script: string | Buffer<ArrayBufferLike>, numKeys: number, ...args: string[]) {
         return await this.client.eval(script, numKeys, ...args);
     }
 }
@@ -35,7 +34,7 @@ export class NodeRedisAdapter implements IRedisAdapter, OnModuleInit, OnModuleDe
         await this.client.quit();
     }
 
-    public async eval(...args: [script: string | Buffer, numKeys: number | string, ...args: RedisValue[]]) {
+    public async eval(...args: [script: string | Buffer, numKeys: number, ...args: string[]]) {
         const [script, numKeys, ...rest] = args;
 
         const keysCount = typeof numKeys === "string" ? parseInt(numKeys, 10) : numKeys;
