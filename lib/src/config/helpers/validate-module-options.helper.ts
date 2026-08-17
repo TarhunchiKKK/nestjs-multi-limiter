@@ -16,7 +16,7 @@ export function validateModuleOptions(options: RateLimiterModuleFullOptions): as
     for (const validator of validators) {
         const validatorErrors = validator(options);
 
-        errors.concat(validatorErrors);
+        errors.push(...validatorErrors);
     }
 
     if (errors.length !== 0) {
