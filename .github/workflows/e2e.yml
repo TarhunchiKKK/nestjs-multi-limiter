@@ -1,4 +1,4 @@
-name: Integration & E2e Testing
+name: E2e Testing
 
 on:
   pull_request:
