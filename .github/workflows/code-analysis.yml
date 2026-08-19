@@ -27,7 +27,7 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: javascript-typescript
-          queries: +security-extended, +security-and-quality
+          queries: security-extended, security-and-quality
 
       - name: Build Library
         run: bun run build:lib
