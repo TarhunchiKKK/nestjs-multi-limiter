@@ -1,6 +1,6 @@
 {
     "name": "nestjs-multi-limiter",
-    "version": "1.0.3",
+    "version": "1.1.0",
     "description": "Rate Limiter module for NestJS framework",
     "keywords": ["nestjs", "rate limit", "throttle", "nodejs"],
     "license": "MIT",
@@ -10,7 +10,7 @@
         "email": "kostabarilo12@gmail.com",
         "url": "https://github.com/TarhunchiKKK"
     },
-    "homepage": "https://github.com/TarhunchiKKK/nestjs-multi-limiter.git#readme",
+    "homepage": "https://tarhunchikkk.github.io/nestjs-multi-limiter/",
     "repository": {
         "type": "git",
         "url": "https://github.com/TarhunchiKKK/nestjs-multi-limiter.git"

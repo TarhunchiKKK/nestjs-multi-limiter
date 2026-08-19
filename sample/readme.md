@@ -1,4 +1,4 @@
-# Example Application(AI-Hub Gateway)
+# Example Application (AI-Hub Gateway)
 
 This is a production-grade, realistic demonstration application showcasing the core capabilities of the `nestjs-multi-limiter` library. 
 
