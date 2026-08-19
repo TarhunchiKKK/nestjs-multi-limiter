@@ -1,3 +1,4 @@
+import { IncorrectLuaScriptResultError } from "../errors";
 import type { Key } from "./keys";
 
 /**
@@ -19,3 +20,14 @@ export type IRedisAdapter = {
 };
 
 export type Storage = InMemoryStorage<unknown> | IRedisAdapter;
+
+export function castLuaScriptResult(value: unknown) {
+    switch (value) {
+        case 1:
+            return true;
+        case 0:
+            return false;
+        default:
+            throw new IncorrectLuaScriptResultError(value);
+    }
+}

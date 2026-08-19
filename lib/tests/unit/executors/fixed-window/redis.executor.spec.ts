@@ -47,7 +47,7 @@ describe("FixedWindowRedisExecutor", () => {
             ttl: MS_IN_DAY
         };
 
-        redisMock.eval.mockResolvedValue(options.limit + 1);
+        redisMock.eval.mockResolvedValue(0);
 
         const result = await executor.check(key, options);
 

@@ -2,7 +2,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { InjectStorage } from "../../../di";
 import { generateSalt } from "../../../shared/lib";
-import type { IRedisAdapter, Key } from "../../../shared/model";
+import { castLuaScriptResult, type IRedisAdapter, type Key } from "../../../shared/model";
 import { Executor, type IExecutor } from "../../lib";
 import type { SlidingWindowLogOptions } from "./types";
 
@@ -22,6 +22,6 @@ export class SlidingWindowLogRedisExecutor implements IExecutor<SlidingWindowLog
 
         const result = await this.redis.eval(this.luaScript, keysCount, key, startTime.toString(), options.windowMs.toString(), options.limit.toString(), salt);
 
-        return result === 1;
+        return castLuaScriptResult(result);
     }
 }

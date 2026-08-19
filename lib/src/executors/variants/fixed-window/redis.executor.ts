@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { InjectStorage } from "../../../di";
-import type { IRedisAdapter, Key } from "../../../shared/model";
+import { castLuaScriptResult, type IRedisAdapter, type Key } from "../../../shared/model";
 import { Executor, type IExecutor } from "../../lib";
 import type { FixedWindowOptions } from "./types";
 
@@ -19,6 +19,6 @@ export class FixedWindowRedisExecutor implements IExecutor<FixedWindowOptions> {
 
         const result = (await this.redis.eval(this.luaScript, keysCount, key, options.limit.toString(), options.ttl.toString())) as number;
 
-        return result === 1;
+        return castLuaScriptResult(result);
     }
 }
