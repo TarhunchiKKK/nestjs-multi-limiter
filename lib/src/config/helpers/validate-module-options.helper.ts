@@ -1,13 +1,6 @@
+import { RateLimiterModuleConfigurationError } from "../../shared/errors";
 import type { Strategies } from "../../shared/model";
 import type { RateLimiterModuleFullOptions } from "../options";
-
-export class RateLimiterModuleConfigurationError extends Error {
-    public constructor(errors: string[]) {
-        const message = `\n[RateLimiterModule] Configuration Validation Failed:\n${errors.map((err) => `  - ${err}`).join("\n")}`;
-
-        super(message);
-    }
-}
 
 export function validateModuleOptions(options: RateLimiterModuleFullOptions): asserts options is RateLimiterModuleFullOptions {
     const errors: string[] = [];

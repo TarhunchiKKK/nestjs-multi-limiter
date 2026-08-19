@@ -1,3 +1,4 @@
+import { IncorrectLuaScriptResultError } from "../errors";
 import type { Key } from "./keys";
 
 /**
@@ -15,7 +16,18 @@ export type InMemoryStorage<Value> = Map<Key, Value>;
  * @publicApi
  */
 export type IRedisAdapter = {
-    eval(...args: [script: string | Buffer, numKeys: number | string, ...args: (string | number | Buffer<ArrayBufferLike>)[]]): Promise<unknown>;
+    eval(script: string | Buffer, numKeys: number, ...args: (number | string | Buffer)[]): Promise<unknown>;
 };
 
 export type Storage = InMemoryStorage<unknown> | IRedisAdapter;
+
+export function castLuaScriptResult(value: unknown) {
+    switch (value) {
+        case 1:
+            return true;
+        case 0:
+            return false;
+        default:
+            throw new IncorrectLuaScriptResultError(value);
+    }
+}

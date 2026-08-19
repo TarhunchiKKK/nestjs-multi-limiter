@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { InjectStorage } from "../../../di";
-import type { IRedisAdapter, Key } from "../../../shared/model";
+import { castLuaScriptResult, type IRedisAdapter, type Key } from "../../../shared/model";
 import { Executor, type IExecutor } from "../../lib";
 import type { SlidingWindowCounterOptions } from "./types";
 
@@ -20,6 +20,6 @@ export class SlidingWindowCounterRedisExecutor implements IExecutor<SlidingWindo
 
         const result = await this.redis.eval(this.luaScript, keysCount, key, startTime.toString(), options.windowMs.toString(), options.limit.toString());
 
-        return result === 1;
+        return castLuaScriptResult(result);
     }
 }

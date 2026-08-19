@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { InjectStorage } from "../../../di";
-import type { IRedisAdapter, Key } from "../../../shared/model";
+import { castLuaScriptResult, type IRedisAdapter, type Key } from "../../../shared/model";
 import { Executor, type IExecutor } from "../../lib";
 import type { TokenBucketOptions } from "./types";
 
@@ -28,6 +28,6 @@ export class TokenBucketRedisExecutor implements IExecutor<TokenBucketOptions> {
             options.ttl.toString()
         );
 
-        return result === 1;
+        return castLuaScriptResult(result);
     }
 }

@@ -1,7 +1,8 @@
 import { describe, expect, it } from "bun:test";
 import { RATE_LIMITER_MODULE_DEFAULT_OPTIONS } from "../../../src/config/defaults/default-options.constants";
-import { RateLimiterModuleConfigurationError, validateModuleOptions } from "../../../src/config/helpers";
+import { validateModuleOptions } from "../../../src/config/helpers";
 import type { RateLimiterModuleFullOptions } from "../../../src/config/options";
+import { RateLimiterModuleConfigurationError } from "../../../src/shared/errors";
 
 function createValidOptions(): RateLimiterModuleFullOptions {
     return {
