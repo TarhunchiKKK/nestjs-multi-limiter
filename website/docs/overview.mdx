@@ -38,9 +38,10 @@
 ### Features
 
 - **NestJS Native**: Dependency injection and async configuration.
-- **Different Limiting Strategies**: _Fixed Window_, _Token Bucket_, _Sliding Window Counter_, _Sliding Window Log_ and _Leaky Bucket_.
-- **Different Storages**: In-memory (Map) and <a href="https://redis.io/?ref=soroushjp.com">Redis</a> (With <a href="https://www.lua.org/">Lua</a> scripts).
-- **Race-Condition Safe**: Powered Redis storage by execution <a href="https://www.lua.org/">Lua</a> scripts, preventing race conditions in multi-instant delpoyments
-- **Library Independency**: <a href="https://redis.io/?ref=soroushjp.com">Redis</a> integration does not depend on a specific library.   
-- **Custom Key Extractors**: Provide your custom key extraction logic.
-- **Custom Error Factories**: Customize you rate limit exhausted error.
+- **5 Core Algorithms**: _Fixed Window_, _Token Bucket_, _Sliding Window Counter_, _Sliding Window Log_ and _Leaky Bucket_.
+- **Different Storages**: In-memory (`Map`) and <a href="https://redis.io/?ref=soroushjp.com">Redis</a> (With <a href="https://www.lua.org/">Lua</a> scripts) storages.
+- **Runtime Configuration:** The system of options factories allows dynamically configure limits at runtime per request context (e.g., based on JWT user roles or pricing tiers).
+- **Driver-Agnostic Storage:** <a href="https://redis.io/?ref=soroushjp.com">Redis</a> integration is completely decoupled from specific npm packages (like `ioredis` or `node-redis`).   
+- **Race-Condition Safe**: Powered Redis storage by execution <a href="https://www.lua.org/">Lua</a> scripts, preventing race conditions in multi-instant deployments.
+- **Protocol Agnosticism:** Ability to implement custom key extractors and error factories allows you to integrate the library with any protocol.
+- **Zero Memory Leaks:** An automatic background garbage collection provider for the In-Memory storage (`Map`), fully tied to <a href="http://nestjs.com/">NestJS</a> lifecycle hooks.
