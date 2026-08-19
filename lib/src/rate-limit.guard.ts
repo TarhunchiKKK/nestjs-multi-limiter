@@ -58,7 +58,16 @@ export class RateLimitGuard implements CanActivate {
 
         const handlerOptions = this.reflector.get(RateLimit, handler);
         if (handlerOptions) {
-            return handlerOptions;
+            const classOptions = this.reflector.get(RateLimit, targetClass);
+
+            if (!classOptions) {
+                return handlerOptions;
+            }
+
+            return {
+                ...classOptions,
+                ...handlerOptions
+            };
         }
 
         const classSkip = this.reflector.get(SkipRateLimit, targetClass);
