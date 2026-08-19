@@ -7,3 +7,7 @@ For using Redis storage you need to provide object or provider that implements `
 
 You can use it as adapter.
 :::
+
+:::warning[Important]
+Built‑in strategies expect to receive 0 or 1 as the return value of the Lua script. **Be careful with influencing the return value**.
+:::
