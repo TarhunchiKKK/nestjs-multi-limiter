@@ -15,7 +15,7 @@ export type InMemoryStorage<Value> = Map<Key, Value>;
  * @publicApi
  */
 export type IRedisAdapter = {
-    eval(script: string | Buffer, numKeys: number, ...args: unknown[]): Promise<unknown>;
+    eval(script: string | Buffer, numKeys: number, ...args: (number | string | Buffer)[]): Promise<unknown>;
 };
 
 export type Storage = InMemoryStorage<unknown> | IRedisAdapter;
