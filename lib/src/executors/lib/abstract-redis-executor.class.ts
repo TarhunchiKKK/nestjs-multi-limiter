@@ -27,5 +27,5 @@ export abstract class AbstractRedisExecutor<Options> implements IExecutor<Option
         }
     }
 
-    public abstract performScript(key: Key, options: Options): boolean | Promise<boolean>;
+    protected abstract performScript(key: Key, options: Options): boolean | Promise<boolean>;
 }

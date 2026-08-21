@@ -1,20 +1,28 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { InjectStorage } from "../../../di";
+import { Inject } from "@nestjs/common";
+import type { RateLimiterModuleFullOptions } from "../../../config/options";
+import { InjectStorage, MODULE_OPTIONS_TOKEN } from "../../../di";
 import { castLuaScriptResult, type IRedisAdapter, type Key } from "../../../shared/model";
-import { Executor, type IExecutor } from "../../lib";
+import { AbstractRedisExecutor, Executor } from "../../lib";
 import type { TokenBucketOptions } from "./types";
 
 @Executor({ strategy: "token-bucket", storage: "redis" })
-export class TokenBucketRedisExecutor implements IExecutor<TokenBucketOptions> {
+export class TokenBucketRedisExecutor extends AbstractRedisExecutor<TokenBucketOptions> {
     private readonly luaScript: string;
 
-    public constructor(@InjectStorage() private readonly redis: IRedisAdapter) {
+    public constructor(
+        @InjectStorage() private readonly redis: IRedisAdapter,
+        @Inject(MODULE_OPTIONS_TOKEN) readonly moduleOptions: RateLimiterModuleFullOptions
+    ) {
+        super(moduleOptions);
+
         const luaScriptPath = path.join(__dirname, "../../../../lua/token-bucket.lua");
+
         this.luaScript = fs.readFileSync(luaScriptPath, "utf-8");
     }
 
-    public async check(key: Key, options: TokenBucketOptions) {
+    protected async performScript(key: Key, options: TokenBucketOptions) {
         const keysCount = 1;
         const startTime = Date.now();
 
