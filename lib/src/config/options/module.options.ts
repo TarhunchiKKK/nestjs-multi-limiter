@@ -61,11 +61,11 @@ export interface IRateLimiterModuleOptionsFactory {
 export type RateLimiterModuleAsyncOptions = Pick<ModuleMetadata, "imports"> & {
     inject?: any[];
 
-    useFactory?: (...args: any[]) => RateLimiterModuleOptions | Promise<RateLimiterModuleOptions>;
-
     useClass?: Type<IRateLimiterModuleOptionsFactory>;
 
     useExisting?: Type<IRateLimiterModuleOptionsFactory>;
+
+    useFactory?: (...args: any[]) => RateLimiterModuleOptions | Promise<RateLimiterModuleOptions>;
 };
 
 export type RateLimiterModuleFullOptions = {
