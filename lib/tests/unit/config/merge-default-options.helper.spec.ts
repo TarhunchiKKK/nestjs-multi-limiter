@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import type { RateLimiterModuleOptions } from "../../../src";
 import { mergeDefaultOptions } from "../../../src/config/defaults";
-import { RATE_LIMITER_MODULE_DEFAULT_OPTIONS } from "../../../src/config/defaults/default-options.constants";
+import { DEFAULT_MODULE_OPTIONS } from "../../../src/config/defaults/default-options.constants";
 import { DEFAULT_SCOPE } from "../../../src/shared/model";
 
 describe("mergeDefaultOptions", () => {
@@ -72,7 +72,7 @@ describe("mergeDefaultOptions", () => {
 
             const result = mergeDefaultOptions(input);
 
-            expect(result.strategy).toBe(RATE_LIMITER_MODULE_DEFAULT_OPTIONS.strategy);
+            expect(result.strategy).toBe(DEFAULT_MODULE_OPTIONS.strategy);
         });
 
         it("custom", () => {
@@ -117,13 +117,13 @@ describe("mergeDefaultOptions", () => {
 
             // expectations for partial options object
             expect(result.strategyOptions.tokenBucket.ttl).toBe(input.strategyOptions.tokenBucket.ttl);
-            expect(result.strategyOptions.tokenBucket.refillRate).toBe(RATE_LIMITER_MODULE_DEFAULT_OPTIONS.strategyOptions.tokenBucket.refillRate);
-            expect(result.strategyOptions.tokenBucket.capacity).toBe(RATE_LIMITER_MODULE_DEFAULT_OPTIONS.strategyOptions.tokenBucket.capacity);
+            expect(result.strategyOptions.tokenBucket.refillRate).toBe(DEFAULT_MODULE_OPTIONS.strategyOptions.tokenBucket.refillRate);
+            expect(result.strategyOptions.tokenBucket.capacity).toBe(DEFAULT_MODULE_OPTIONS.strategyOptions.tokenBucket.capacity);
 
             // expectations for empty options objects
-            expect(result.strategyOptions.slidingWindowCounter).toEqual(RATE_LIMITER_MODULE_DEFAULT_OPTIONS.strategyOptions.slidingWindowCounter);
-            expect(result.strategyOptions.slidingWindowLog).toEqual(RATE_LIMITER_MODULE_DEFAULT_OPTIONS.strategyOptions.slidingWindowLog);
-            expect(result.strategyOptions.leakyBucket).toEqual(RATE_LIMITER_MODULE_DEFAULT_OPTIONS.strategyOptions.leakyBucket);
+            expect(result.strategyOptions.slidingWindowCounter).toEqual(DEFAULT_MODULE_OPTIONS.strategyOptions.slidingWindowCounter);
+            expect(result.strategyOptions.slidingWindowLog).toEqual(DEFAULT_MODULE_OPTIONS.strategyOptions.slidingWindowLog);
+            expect(result.strategyOptions.leakyBucket).toEqual(DEFAULT_MODULE_OPTIONS.strategyOptions.leakyBucket);
         });
     });
 

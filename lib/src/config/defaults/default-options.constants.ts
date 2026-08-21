@@ -15,7 +15,7 @@ export const DEFAULT_STORAGE_OPTIONS = {
     } satisfies Partial<StorageOptions>
 };
 
-export const RATE_LIMITER_MODULE_DEFAULT_OPTIONS = {
+export const DEFAULT_MODULE_OPTIONS = {
     scope: DEFAULT_SCOPE,
     storage: DEFAULT_STORAGE_OPTIONS.IN_MEMORY,
     strategy: "fixed-window",

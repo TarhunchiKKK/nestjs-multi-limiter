@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, jest } from "bun:test";
 import { Test } from "@nestjs/testing";
 import type Redis from "ioredis";
-import { DEFAULT_STORAGE_OPTIONS, RATE_LIMITER_MODULE_DEFAULT_OPTIONS } from "../../../src/config/defaults/default-options.constants";
+import { DEFAULT_MODULE_OPTIONS, DEFAULT_STORAGE_OPTIONS } from "../../../src/config/defaults/default-options.constants";
 import { MODULE_OPTIONS_TOKEN, STORAGE_TOKEN } from "../../../src/di";
 import { type TokenBucketOptions, TokenBucketRedisExecutor } from "../../../src/executors";
 import { createRedisClient, MS_IN_SECOND } from "../../shared";
@@ -24,7 +24,7 @@ describe("TokenBucketRedisExecutor", () => {
                 {
                     provide: MODULE_OPTIONS_TOKEN,
                     useValue: {
-                        ...RATE_LIMITER_MODULE_DEFAULT_OPTIONS,
+                        ...DEFAULT_MODULE_OPTIONS,
                         storage: DEFAULT_STORAGE_OPTIONS.REDIS
                     }
                 }

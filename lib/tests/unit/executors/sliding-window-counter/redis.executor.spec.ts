@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { Test } from "@nestjs/testing";
-import { DEFAULT_STORAGE_OPTIONS, RATE_LIMITER_MODULE_DEFAULT_OPTIONS } from "../../../../src/config/defaults/default-options.constants";
+import { DEFAULT_MODULE_OPTIONS, DEFAULT_STORAGE_OPTIONS } from "../../../../src/config/defaults/default-options.constants";
 import { MODULE_OPTIONS_TOKEN, STORAGE_TOKEN } from "../../../../src/di";
 import { type SlidingWindowCounterOptions, SlidingWindowCounterRedisExecutor } from "../../../../src/executors";
 import { clearMock, createRedisMock, MS_IN_MINUTE } from "../../../shared";
@@ -20,7 +20,7 @@ describe("SlidingWindowCounterRedisExecutor", () => {
                 {
                     provide: MODULE_OPTIONS_TOKEN,
                     useValue: {
-                        ...RATE_LIMITER_MODULE_DEFAULT_OPTIONS,
+                        ...DEFAULT_MODULE_OPTIONS,
                         storage: DEFAULT_STORAGE_OPTIONS.REDIS
                     }
                 }
