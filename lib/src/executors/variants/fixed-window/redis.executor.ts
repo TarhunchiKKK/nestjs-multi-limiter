@@ -13,7 +13,7 @@ export class FixedWindowRedisExecutor extends AbstractRedisExecutor<FixedWindowO
 
     public constructor(
         @InjectStorage() private readonly redis: IRedisAdapter,
-        @Inject(MODULE_OPTIONS_TOKEN) readonly moduleOptions: RateLimiterModuleFullOptions
+        @Inject(MODULE_OPTIONS_TOKEN) protected readonly moduleOptions: RateLimiterModuleFullOptions
     ) {
         super(moduleOptions);
 

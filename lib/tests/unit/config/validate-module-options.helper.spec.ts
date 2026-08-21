@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import { RATE_LIMITER_MODULE_DEFAULT_OPTIONS } from "../../../src/config/defaults/default-options.constants";
 import { validateModuleOptions } from "../../../src/config/helpers";
-import type { RateLimiterModuleFullOptions } from "../../../src/config/options";
+import type { RateLimiterModuleFullOptions, StorageOptions } from "../../../src/config/options";
 import { RateLimiterModuleConfigurationError } from "../../../src/shared/errors";
 
 function createValidOptions(): RateLimiterModuleFullOptions {
@@ -75,8 +75,9 @@ describe("validateModuleOptions", () => {
 
             options.storage = {
                 type: "redis",
-                adapter: undefined as never
-            };
+                adapter: undefined as never,
+                failingStrategy: "fail-first"
+            } as unknown as Required<StorageOptions>;
 
             expect(() => validateModuleOptions(options)).toThrow(RateLimiterModuleConfigurationError);
         });
