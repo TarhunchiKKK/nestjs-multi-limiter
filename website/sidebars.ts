@@ -30,7 +30,7 @@ export default {
                 type: "generated-index",
                 description: "Learn how to integrate rate limiting module with Redis."
             },
-            items: ["redis-integration/overview", "redis-integration/via-object", "redis-integration/via-provider"]
+            items: ["redis-integration/overview", "redis-integration/via-object", "redis-integration/via-provider", "redis-integration/failure-handling"]
         },
         {
             type: "category",

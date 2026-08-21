@@ -2,16 +2,22 @@ import { BuiltinErrorFactory } from "../../custom/error-factories";
 import { BuiltinKeyExtractor } from "../../custom/key-extractors";
 import { MS_IN_MINUTE } from "../../shared/lib";
 import { DEFAULT_SCOPE } from "../../shared/model";
-import type { RateLimiterModuleFullOptions } from "../options";
+import type { RateLimiterModuleFullOptions, StorageOptions } from "../options";
 
-export const DEFAULT_IN_MEMORY_GC_TIME = 15 * MS_IN_MINUTE;
-
-export const RATE_LIMITER_MODULE_DEFAULT_OPTIONS = {
-    scope: DEFAULT_SCOPE,
-    storage: {
+export const DEFAULT_STORAGE_OPTIONS = {
+    IN_MEMORY: {
         type: "in-memory",
-        gcTime: DEFAULT_IN_MEMORY_GC_TIME
-    },
+        gcTime: 15 * MS_IN_MINUTE
+    } satisfies StorageOptions,
+    REDIS: {
+        type: "redis",
+        failingStrategy: "fail-open"
+    } satisfies Partial<StorageOptions>
+};
+
+export const DEFAULT_MODULE_OPTIONS = {
+    scope: DEFAULT_SCOPE,
+    storage: DEFAULT_STORAGE_OPTIONS.IN_MEMORY,
     strategy: "fixed-window",
     strategyOptions: {
         fixedWindow: {

@@ -1,27 +1,33 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { InjectStorage } from "../../../di";
+import { Inject } from "@nestjs/common";
+import type { RateLimiterModuleFullOptions } from "../../../config/options";
+import { InjectStorage, MODULE_OPTIONS_TOKEN } from "../../../di";
 import { generateSalt } from "../../../shared/lib";
-import { castLuaScriptResult, type IRedisAdapter, type Key } from "../../../shared/model";
-import { Executor, type IExecutor } from "../../lib";
+import type { IRedisAdapter, Key } from "../../../shared/model";
+import { AbstractRedisExecutor, Executor } from "../../lib";
 import type { SlidingWindowLogOptions } from "./types";
 
 @Executor({ strategy: "sliding-window-log", storage: "redis" })
-export class SlidingWindowLogRedisExecutor implements IExecutor<SlidingWindowLogOptions> {
+export class SlidingWindowLogRedisExecutor extends AbstractRedisExecutor<SlidingWindowLogOptions> {
     private readonly luaScript: string;
 
-    public constructor(@InjectStorage() private readonly redis: IRedisAdapter) {
+    public constructor(
+        @InjectStorage() private readonly redis: IRedisAdapter,
+        @Inject(MODULE_OPTIONS_TOKEN) readonly moduleOptions: RateLimiterModuleFullOptions
+    ) {
+        super(moduleOptions);
+
         const luaScriptPath = path.join(__dirname, "../../../../lua/sliding-window-log.lua");
+
         this.luaScript = fs.readFileSync(luaScriptPath, "utf-8");
     }
 
-    public async check(key: Key, options: SlidingWindowLogOptions) {
+    protected async performScript(key: Key, options: SlidingWindowLogOptions) {
         const startTime = Date.now();
         const salt = generateSalt();
         const keysCount = 1;
 
-        const result = await this.redis.eval(this.luaScript, keysCount, key, startTime.toString(), options.windowMs.toString(), options.limit.toString(), salt);
-
-        return castLuaScriptResult(result);
+        return await this.redis.eval(this.luaScript, keysCount, key, startTime.toString(), options.windowMs.toString(), options.limit.toString(), salt);
     }
 }

@@ -1,21 +1,21 @@
 import { describe, expect, it } from "bun:test";
-import { RATE_LIMITER_MODULE_DEFAULT_OPTIONS } from "../../../src/config/defaults/default-options.constants";
+import { DEFAULT_MODULE_OPTIONS } from "../../../src/config/defaults/default-options.constants";
 import { validateModuleOptions } from "../../../src/config/helpers";
-import type { RateLimiterModuleFullOptions } from "../../../src/config/options";
+import type { RateLimiterModuleFullOptions, StorageOptions } from "../../../src/config/options";
 import { RateLimiterModuleConfigurationError } from "../../../src/shared/errors";
 
 function createValidOptions(): RateLimiterModuleFullOptions {
     return {
-        ...RATE_LIMITER_MODULE_DEFAULT_OPTIONS,
-        storage: { ...RATE_LIMITER_MODULE_DEFAULT_OPTIONS.storage },
+        ...DEFAULT_MODULE_OPTIONS,
+        storage: { ...DEFAULT_MODULE_OPTIONS.storage },
         strategyOptions: {
-            fixedWindow: { ...RATE_LIMITER_MODULE_DEFAULT_OPTIONS.strategyOptions.fixedWindow },
-            tokenBucket: { ...RATE_LIMITER_MODULE_DEFAULT_OPTIONS.strategyOptions.tokenBucket },
-            slidingWindowCounter: { ...RATE_LIMITER_MODULE_DEFAULT_OPTIONS.strategyOptions.slidingWindowCounter },
-            slidingWindowLog: { ...RATE_LIMITER_MODULE_DEFAULT_OPTIONS.strategyOptions.slidingWindowLog },
-            leakyBucket: { ...RATE_LIMITER_MODULE_DEFAULT_OPTIONS.strategyOptions.leakyBucket }
+            fixedWindow: { ...DEFAULT_MODULE_OPTIONS.strategyOptions.fixedWindow },
+            tokenBucket: { ...DEFAULT_MODULE_OPTIONS.strategyOptions.tokenBucket },
+            slidingWindowCounter: { ...DEFAULT_MODULE_OPTIONS.strategyOptions.slidingWindowCounter },
+            slidingWindowLog: { ...DEFAULT_MODULE_OPTIONS.strategyOptions.slidingWindowLog },
+            leakyBucket: { ...DEFAULT_MODULE_OPTIONS.strategyOptions.leakyBucket }
         },
-        defaultProviders: { ...RATE_LIMITER_MODULE_DEFAULT_OPTIONS.defaultProviders }
+        defaultProviders: { ...DEFAULT_MODULE_OPTIONS.defaultProviders }
     };
 }
 
@@ -32,7 +32,8 @@ describe("validateModuleOptions", () => {
                 type: "redis",
                 adapter: {
                     eval: () => Promise.resolve(1)
-                }
+                },
+                failingStrategy: "fail-open"
             };
 
             expect(() => validateModuleOptions(options)).not.toThrow();
@@ -74,8 +75,9 @@ describe("validateModuleOptions", () => {
 
             options.storage = {
                 type: "redis",
-                adapter: undefined as never
-            };
+                adapter: undefined as never,
+                failingStrategy: "fail-first"
+            } as unknown as Required<StorageOptions>;
 
             expect(() => validateModuleOptions(options)).toThrow(RateLimiterModuleConfigurationError);
         });

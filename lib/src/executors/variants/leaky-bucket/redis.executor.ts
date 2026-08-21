@@ -1,25 +1,33 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { InjectStorage } from "../../../di";
-import { castLuaScriptResult, type IRedisAdapter, type Key } from "../../../shared/model";
-import { Executor, type IExecutor } from "../../lib";
+import { Inject } from "@nestjs/common";
+import type { RateLimiterModuleFullOptions } from "../../../config/options";
+import { InjectStorage, MODULE_OPTIONS_TOKEN } from "../../../di";
+import type { IRedisAdapter, Key } from "../../../shared/model";
+import { AbstractRedisExecutor, Executor } from "../../lib";
 import type { LeakyBucketOptions } from "./types";
 
 @Executor({ strategy: "leaky-bucket", storage: "redis" })
-export class LeakyBucketRedisExecutor implements IExecutor<LeakyBucketOptions> {
+export class LeakyBucketRedisExecutor extends AbstractRedisExecutor<LeakyBucketOptions> {
     private readonly luaScript: string;
 
-    public constructor(@InjectStorage() private readonly redis: IRedisAdapter) {
+    public constructor(
+        @InjectStorage() private readonly redis: IRedisAdapter,
+        @Inject(MODULE_OPTIONS_TOKEN) protected readonly moduleOptions: RateLimiterModuleFullOptions
+    ) {
+        super(moduleOptions);
+
         const luaScriptPath = path.join(__dirname, "../../../../lua/leaky-bucket.lua");
+
         this.luaScript = fs.readFileSync(luaScriptPath, "utf-8");
     }
 
-    public async check(key: Key, options: LeakyBucketOptions) {
+    protected async performScript(key: Key, options: LeakyBucketOptions) {
         const keysCount = 1;
 
         const startTime = Date.now();
 
-        const result = await this.redis.eval(
+        return await this.redis.eval(
             this.luaScript,
             keysCount,
             key,
@@ -28,7 +36,5 @@ export class LeakyBucketRedisExecutor implements IExecutor<LeakyBucketOptions> {
             options.leakRate.toString(),
             options.ttl.toString()
         );
-
-        return castLuaScriptResult(result);
     }
 }

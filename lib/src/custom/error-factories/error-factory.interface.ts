@@ -23,6 +23,7 @@ export type ErrorFactoryOptions = {
      */
     strategy: Strategies;
 
+    // QUESTION: Maybe put all strategies options into this field.
     /**
      * Configuration for selected rate limiting algorithm.
      */

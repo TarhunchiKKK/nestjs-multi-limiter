@@ -1,6 +1,6 @@
 import type { AllStrategiesOptions } from "../../executors";
 import type { ExtractMember } from "../../shared/lib";
-import type { IRedisAdapter, StorageTypes, Strategies } from "../../shared/model";
+import type { IRedisAdapter, RedisFailingStrategies, StorageTypes, Strategies } from "../../shared/model";
 
 /**
  * Options for rate limiting data storage.
@@ -27,6 +27,11 @@ export type StorageOptions =
            * Custom adapter for Redis access.
            */
           adapter: IRedisAdapter;
+
+          /**
+           * Redis failing strategy.
+           */
+          failingStrategy?: RedisFailingStrategies;
       };
 
 export type StrategyOptions = {

@@ -1,0 +1,46 @@
+# Failure Handling
+
+Let's walk through how this library handles `Redis` failure.
+
+## Failing Strategies
+
+This library supports 3 strategies for `Redis` failure:
+
+1. `fail-open` (default) - When `Redis` error occurs library allows all requests.  
+2. `fail-close` - When `Redis` error occurs library rejects all requests. 
+3. `fail-fast` - When `Redis` error occurs library throws error immediately.
+
+## Configuration 
+
+Here is an example of failing strategy configuration:
+
+```typescript title="app.module.ts"
+RateLimiterModule.forRoot({
+    storage: {
+        type: "redis",
+        adapter: MyRedisAdapter,
+        failingStrategy: "fail-fast" // or use another failing strategy
+    }
+})
+```
+
+## Subscribe on errors
+
+To subscribe on `Redis` errors via rate limiting (for example, for logging) you can implement optional `onError` property of `IRedisAdapter` type:
+
+```typescript title="redis.service.ts"
+import type { IRedisAdapter } from "nestjs-multi-limiter";
+
+@Injectable()
+export class RedisService implements IRedisAdapter {
+    public constructor(private readonly loggerService: LoggerService) { /**/ }
+
+    // ...
+    
+    public async onError(error: unknown) {
+        this.loggerService.warn(`Redis disconnected with error: ${error}`)
+    }
+}
+```
+
+Now when error occurs via rate limiting this method will be called with original error.
