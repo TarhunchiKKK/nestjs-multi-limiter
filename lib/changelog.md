@@ -1,6 +1,18 @@
 # Changelog
 
-## 1.1.0 (Aug, 2026)
+## 1.2.0 (Aug 21, 2026)
+
+### Added
+
+- `Redis` failure handling
+- `RateLimiterModule` async configuration via `useClass` syntax
+- `RateLimiterModule` async configuration via `useExisting` syntax
+
+### Fixed
+
+- Typing for `IErrorFactory` interface
+
+## 1.1.0 (Aug 19, 2026)
 
 ### Added
 
