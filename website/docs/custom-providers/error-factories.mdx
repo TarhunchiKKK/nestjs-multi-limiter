@@ -44,6 +44,11 @@ export class MyCustomErrorFactory implements IErrorFactory {
 
 Now this provider is ready for using as error factory.
 
+:::info[Trick]
+By default error factory should return value that is compatible with `Error`, but you can provide custom generic type to `IErrorFactory` interface to override return value type.
+:::
+
+
 ### List error factory as your module provider
 
 Our custom provider should be visible in `AppModule` context.
