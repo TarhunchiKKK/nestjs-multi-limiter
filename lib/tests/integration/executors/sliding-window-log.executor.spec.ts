@@ -1,7 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, jest } from "bun:test";
 import { Test } from "@nestjs/testing";
 import type Redis from "ioredis";
-import { STORAGE_TOKEN } from "../../../src/di";
+import { DEFAULT_STORAGE_OPTIONS, RATE_LIMITER_MODULE_DEFAULT_OPTIONS } from "../../../src/config/defaults/default-options.constants";
+import { MODULE_OPTIONS_TOKEN, STORAGE_TOKEN } from "../../../src/di";
 import { type SlidingWindowLogOptions, SlidingWindowLogRedisExecutor } from "../../../src/executors";
 import { createRedisClient, MS_IN_SECOND } from "../../shared";
 
@@ -19,6 +20,13 @@ describe("SlidingWindowLogRedisExecutor", () => {
                 {
                     provide: STORAGE_TOKEN,
                     useValue: redis
+                },
+                {
+                    provide: MODULE_OPTIONS_TOKEN,
+                    useValue: {
+                        ...RATE_LIMITER_MODULE_DEFAULT_OPTIONS,
+                        storage: DEFAULT_STORAGE_OPTIONS.REDIS
+                    }
                 }
             ]
         }).compile();
