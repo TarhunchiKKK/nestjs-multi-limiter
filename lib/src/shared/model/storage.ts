@@ -10,7 +10,7 @@ export type StorageTypes = "in-memory" | "redis";
 
 export type InMemoryStorage<Value> = Map<Key, Value>;
 
-export type RedisFailingStrategies = "fail-open" | "fail-close";
+export type RedisFailingStrategies = "fail-open" | "fail-close" | "fail-fast";
 
 /**
  * Interface for custom Redis adapters.

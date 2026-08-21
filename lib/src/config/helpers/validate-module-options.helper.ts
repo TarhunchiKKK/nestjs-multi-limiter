@@ -1,5 +1,5 @@
 import { RateLimiterModuleConfigurationError } from "../../shared/errors";
-import type { Strategies } from "../../shared/model";
+import type { RedisFailingStrategies, Strategies } from "../../shared/model";
 import type { RateLimiterModuleFullOptions } from "../options";
 
 export function validateModuleOptions(options: RateLimiterModuleFullOptions): asserts options is RateLimiterModuleFullOptions {
@@ -39,11 +39,20 @@ function validateStorage(options: RateLimiterModuleFullOptions): string[] {
             return [];
         }
         case "redis": {
+            const availableFailingStrategies: RedisFailingStrategies[] = ["fail-open", "fail-close", "fail-fast"];
+            const errors: string[] = [];
+
             if (!options.storage.adapter) {
-                return [`Redis adapter is not provided.`];
+                errors.push("Redis adapter is not provided.");
             }
 
-            return [];
+            if (!availableFailingStrategies.includes(options.storage.failingStrategy)) {
+                errors.push(
+                    `Unknown Redis failing strategy. Expected ${"fail-open" satisfies RedisFailingStrategies}, ${"fail-close" satisfies RedisFailingStrategies} or ${"fail-fast" satisfies RedisFailingStrategies}, but receive ${options.storage.failingStrategy}`
+                );
+            }
+
+            return errors;
         }
         default: {
             return [`Unknown storage type. Receive ${options.storage}`];
