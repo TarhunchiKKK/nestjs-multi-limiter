@@ -1,8 +1,10 @@
 # Async Configuration
 
-Here is example with `RateLimiterModule` async configuration.
+Here are examples of `RateLimiterModule` async configuration.
 
-```typescript
+## Factory configuration
+
+```typescript title="app.module.ts"
 RateLimiterModule.forRootAsync({
     imports: [ConfigModule, RedisModule],
     inject: [ConfigService, RedisService],
@@ -25,6 +27,75 @@ RateLimiterModule.forRootAsync({
             errorFactory: MyCustomErrorFactory,
             optionsFactory: MyCustomOptionsFactory
         }
-    }),
-});
+    })
+})
+```
+
+## Class configuration
+
+Setup provider for configuration:
+
+```typescript title="rate-limiter-config.service.ts"
+import { Injectable } from "@nestjs/common";
+import type { IRateLimiterModuleOptionsFactory, RateLimiterModuleOptions } from "nestjs-multi-limiter";
+
+@Injectable()
+export class RateLimiterConfigService implements IRateLimiterModuleOptionsFactory {
+    public createRateLimiterModuleOptions(): RateLimiterModuleOptions | Promise<RateLimiterModuleOptions> {
+        return {
+            storage: {
+                type: "in-memory"
+                // other fields...
+            }
+        }
+    }
+}
+```
+
+Use this provider to configure `RateLimiterModule`:
+
+```typescript title="app.module.ts"
+RateLimiterModule.forRootAsync({
+    useClass: RateLimiterConfigService
+})
+```
+
+## Configuration with existing provider
+
+Setup provider for configuration:
+
+```typescript title="rate-limiter-config.service.ts"
+import { Injectable } from "@nestjs/common";
+import type { IRateLimiterModuleOptionsFactory, RateLimiterModuleOptions } from "nestjs-multi-limiter";
+
+@Injectable()
+export class RateLimiterConfigService implements IRateLimiterModuleOptionsFactory {
+    public createRateLimiterModuleOptions(): RateLimiterModuleOptions | Promise<RateLimiterModuleOptions> {
+        return {
+            storage: {
+                type: "in-memory"
+                // other fields...
+            }
+        }
+    }
+}
+```
+
+Setup module with configuration provider:
+
+```typescript title="app-config.module.ts"
+@Module({
+    providers: [RateLimiterConfigService],
+    exports: [RateLimiterConfigService]
+})
+export class AppConfigModule {}
+```
+
+Use existing provider to configure `RateLimiterModule`:
+
+```typescript title="app.module.ts"
+RateLimiterModule.forRootAsync({
+    imports: [AppConfigModule],
+    useExisting: RateLimiterConfigService
+})
 ```

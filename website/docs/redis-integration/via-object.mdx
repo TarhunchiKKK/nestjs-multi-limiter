@@ -24,11 +24,11 @@ export const MyRedisAdapter: IRedisAdapter = {
 
 Now we can use our object as `Redis` adapter.
 
-```typescript
+```typescript title="app.module.ts"
 RateLimiterModule.forRoot({
     storage: {
         type: "redis",
         adapter: MyRedisAdapter // or use `RedisClient` directly
     }
-});
+})
 ```

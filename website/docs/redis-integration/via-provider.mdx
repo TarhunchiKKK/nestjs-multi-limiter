@@ -39,7 +39,7 @@ export class RedisModule {}
 
 ### Inject your Redis provider
 
-```typescript
+```typescript title="app.module.ts"
 RateLimiterModule.forRootAsync({
     imports: [RedisModule],
     inject: [RedisService],

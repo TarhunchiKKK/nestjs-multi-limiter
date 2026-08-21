@@ -20,25 +20,28 @@ import {
 } from "../../../src/executors";
 import { InMemoryGarbageCollector } from "../../../src/services/in-memory.garbage-collector";
 import { ProvidersResolver } from "../../../src/services/providers.resolver";
+import { RATE_LIMITER_MODULE_SYNC_REDIS_OPTIONS, RateLimiterConfigModule, RateLimiterConfigService } from "../../shared";
 
-const syncOptions: RateLimiterModuleOptions = {
-    storage: {
-        type: "redis",
-        adapter: {
-            eval: () => Promise.resolve(1)
-        }
-    }
+const syncOptions: RateLimiterModuleOptions = RATE_LIMITER_MODULE_SYNC_REDIS_OPTIONS;
+
+const asyncFactoryOptions: RateLimiterModuleAsyncOptions = {
+    useFactory: () => RATE_LIMITER_MODULE_SYNC_REDIS_OPTIONS
 };
 
-const asyncOptions: RateLimiterModuleAsyncOptions = {
-    imports: [],
-    inject: [],
-    useFactory: () => syncOptions
+const asyncClassOptions: RateLimiterModuleAsyncOptions = {
+    useClass: RateLimiterConfigService
+};
+
+const asyncExistingOptions: RateLimiterModuleAsyncOptions = {
+    imports: [RateLimiterConfigModule],
+    useExisting: RateLimiterConfigService
 };
 
 describe.each([
     ["sync", "forRoot", syncOptions],
-    ["async", "forRootAsync", asyncOptions]
+    ["async (useFactory)", "forRootAsync", asyncFactoryOptions],
+    ["async (useClass)", "forRootAsync", asyncClassOptions],
+    ["async (useExisting)", "forRootAsync", asyncExistingOptions]
 ])("Dependency injection (%s configuration)", (_, method, options) => {
     let module: TestingModule;
 

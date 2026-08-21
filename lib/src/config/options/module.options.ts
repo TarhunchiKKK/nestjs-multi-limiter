@@ -1,5 +1,5 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: `any` type is necessary for real type providing */
-import type { InjectionToken, ModuleMetadata } from "@nestjs/common";
+import type { InjectionToken, ModuleMetadata, Type } from "@nestjs/common";
 import type { IErrorFactory } from "../../custom/error-factories";
 import type { IKeyExtractor } from "../../custom/key-extractors";
 import type { IOptionsFactory } from "../../custom/options-factories";
@@ -49,24 +49,23 @@ export type RateLimiterModuleOptions = {
     };
 };
 
+export interface IRateLimiterModuleOptionsFactory {
+    createRateLimiterModuleOptions(): RateLimiterModuleOptions | Promise<RateLimiterModuleOptions>;
+}
+
 /**
  * Async options for `RateLimiterModule` configuration.
  *
  * @publicApi
  */
 export type RateLimiterModuleAsyncOptions = Pick<ModuleMetadata, "imports"> & {
-    /**
-     * Dependencies to inject.
-     */
     inject?: any[];
 
-    /**
-     * Function that creates dynamic module options.
-     *
-     * @param args Injected dependencies.
-     * @returns Dynamic options.
-     */
-    useFactory: (...args: any[]) => RateLimiterModuleOptions | Promise<RateLimiterModuleOptions>;
+    useClass?: Type<IRateLimiterModuleOptionsFactory>;
+
+    useExisting?: Type<IRateLimiterModuleOptionsFactory>;
+
+    useFactory?: (...args: any[]) => RateLimiterModuleOptions | Promise<RateLimiterModuleOptions>;
 };
 
 export type RateLimiterModuleFullOptions = {
