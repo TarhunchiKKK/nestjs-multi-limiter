@@ -34,7 +34,7 @@ export type ErrorFactoryOptions = {
  *
  * @publicApi
  */
-export interface IErrorFactory {
+export interface IErrorFactory<TError = Error> {
     /**
      * @warning This method should not throw error. It should only create it.
      *
@@ -42,5 +42,5 @@ export interface IErrorFactory {
      * @param options Error creation options.
      * @returns Created error.
      */
-    getError: (context: ExecutionContext, options: ErrorFactoryOptions) => Error | Promise<Error>;
+    getError: (context: ExecutionContext, options: ErrorFactoryOptions) => TError | Promise<TError>;
 }
