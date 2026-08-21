@@ -19,6 +19,8 @@ export type RedisFailingStrategies = "fail-open" | "fail-close" | "fail-fast";
  */
 export type IRedisAdapter = {
     eval(script: string | Buffer, numKeys: number, ...args: (number | string | Buffer)[]): Promise<unknown>;
+
+    onError?(error: unknown): void | Promise<void>;
 };
 
 export type Storage = InMemoryStorage<unknown> | IRedisAdapter;

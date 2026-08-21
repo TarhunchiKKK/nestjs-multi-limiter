@@ -16,6 +16,8 @@ export abstract class AbstractRedisExecutor<Options> implements IExecutor<Option
                 throw error;
             }
 
+            await this.moduleOptions.storage.adapter.onError?.(error);
+
             switch (this.moduleOptions.storage.failingStrategy) {
                 case "fail-open":
                     return true;
