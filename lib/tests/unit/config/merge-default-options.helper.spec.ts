@@ -51,15 +51,14 @@ describe("mergeDefaultOptions", () => {
                     type: "redis",
                     adapter: {
                         eval: () => Promise.resolve(1)
-                    }
+                    },
+                    failingStrategy: "fail-open"
                 }
             } satisfies RateLimiterModuleOptions;
 
             const result = mergeDefaultOptions(input);
 
-            expect(result.storage).toBe(input.storage);
-            // biome-ignore lint/complexity/useLiteralKeys: This property is not visible for TypeScript
-            expect(result.storage["adapter"]).toEqual(input.storage.adapter);
+            expect(result.storage).toEqual(input.storage);
         });
     });
 

@@ -1,10 +1,9 @@
+import { UnknownRateLimitStorageError } from "../../shared/errors";
 import type { RateLimiterModuleFullOptions, RateLimiterModuleOptions, StorageOptions } from "../options";
-import { DEFAULT_IN_MEMORY_GC_TIME, RATE_LIMITER_MODULE_DEFAULT_OPTIONS } from "./default-options.constants";
+import { DEFAULT_STORAGE_OPTIONS, RATE_LIMITER_MODULE_DEFAULT_OPTIONS } from "./default-options.constants";
 
 export function mergeDefaultOptions(options: RateLimiterModuleOptions) {
-    const storageOptions: Required<StorageOptions> =
-        options.storage.type === "redis" ? options.storage : { type: "in-memory", gcTime: options.storage.gcTime ?? DEFAULT_IN_MEMORY_GC_TIME };
-
+    const storageOptions = mergeStorageOptions(options);
     return {
         scope: options.scope ?? RATE_LIMITER_MODULE_DEFAULT_OPTIONS.scope,
 
@@ -40,4 +39,25 @@ export function mergeDefaultOptions(options: RateLimiterModuleOptions) {
             optionsFactory: options.defaultProviders?.optionsFactory ?? RATE_LIMITER_MODULE_DEFAULT_OPTIONS.defaultProviders.optionsFactory
         }
     } satisfies RateLimiterModuleFullOptions;
+}
+
+function mergeStorageOptions(options: RateLimiterModuleOptions): Required<StorageOptions> {
+    switch (options.storage.type) {
+        case "in-memory": {
+            return {
+                type: "in-memory",
+                gcTime: options.storage.gcTime ?? DEFAULT_STORAGE_OPTIONS.IN_MEMORY.gcTime
+            };
+        }
+        case "redis": {
+            return {
+                type: "redis",
+                adapter: options.storage.adapter,
+                failingStrategy: options.storage.failingStrategy ?? DEFAULT_STORAGE_OPTIONS.REDIS.failingStrategy
+            };
+        }
+        default: {
+            throw new UnknownRateLimitStorageError((options.storage as { type: unknown }).type);
+        }
+    }
 }
