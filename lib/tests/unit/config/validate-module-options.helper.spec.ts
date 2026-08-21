@@ -32,7 +32,8 @@ describe("validateModuleOptions", () => {
                 type: "redis",
                 adapter: {
                     eval: () => Promise.resolve(1)
-                }
+                },
+                failingStrategy: "fail-open"
             };
 
             expect(() => validateModuleOptions(options)).not.toThrow();
