@@ -131,7 +131,6 @@ export class RateLimiterModule {
 
     private static createAsyncOptionsProviders(options: RateLimiterModuleAsyncOptions): Provider[] {
         if (!(options.useFactory || options.useClass || options.useExisting)) {
-            // TODO: Test case for this case.
             throw new InvalidAsyncConfigurationError();
         }
 
