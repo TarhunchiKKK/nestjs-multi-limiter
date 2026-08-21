@@ -84,7 +84,7 @@ export class RateLimiterModule {
      * @returns Module.
      */
     public static forRootAsync(options: RateLimiterModuleAsyncOptions): DynamicModule {
-        const moduleOptionsProvider = RateLimiterModule.createAsyncOptionsProvider(options);
+        const moduleOptionsProviders = RateLimiterModule.createAsyncOptionsProviders(options);
 
         const storageProvider: FactoryProvider<Storage> = {
             provide: STORAGE_TOKEN,
@@ -107,7 +107,7 @@ export class RateLimiterModule {
         return {
             module: RateLimiterModule,
             imports: options.imports ?? [],
-            providers: [moduleOptionsProvider, storageProvider, guardOptionsProvider],
+            providers: [...moduleOptionsProviders, storageProvider, guardOptionsProvider],
             global: true
         };
     }
@@ -129,30 +129,32 @@ export class RateLimiterModule {
         };
     }
 
-    private static createAsyncOptionsProvider(options: RateLimiterModuleAsyncOptions): Provider<RateLimiterModuleFullOptions> {
+    private static createAsyncOptionsProviders(options: RateLimiterModuleAsyncOptions): Provider[] {
         if (!(options.useFactory || options.useClass || options.useExisting)) {
             throw new InvalidAsyncConfigurationError();
         }
 
         if (options.useFactory) {
-            return {
-                provide: MODULE_OPTIONS_TOKEN,
-                inject: options.inject ?? [],
-                // biome-ignore lint/suspicious/noExplicitAny: `any` type is necessary for factory customization
-                useFactory: async (...args: any[]) => {
-                    // biome-ignore lint/style/noNonNullAssertion: `useFactory` field will be defined
-                    const calculatedOptions = await options.useFactory!(...args);
+            return [
+                {
+                    provide: MODULE_OPTIONS_TOKEN,
+                    inject: options.inject ?? [],
+                    // biome-ignore lint/suspicious/noExplicitAny: `any` type is necessary for factory customization
+                    useFactory: async (...args: any[]) => {
+                        // biome-ignore lint/style/noNonNullAssertion: `useFactory` field will be defined
+                        const calculatedOptions = await options.useFactory!(...args);
 
-                    const fullOptions = mergeDefaultOptions(calculatedOptions);
+                        const fullOptions = mergeDefaultOptions(calculatedOptions);
 
-                    validateModuleOptions(fullOptions);
+                        validateModuleOptions(fullOptions);
 
-                    return fullOptions;
+                        return fullOptions;
+                    }
                 }
-            };
+            ];
         }
 
-        return {
+        const configProvider: Provider = {
             provide: MODULE_OPTIONS_TOKEN,
             // biome-ignore lint/style/noNonNullAssertion: One of this fields will be provided
             inject: [(options.useClass ?? options.useExisting)!],
@@ -166,5 +168,17 @@ export class RateLimiterModule {
                 return fullOptions;
             }
         };
+
+        if (options.useClass) {
+            return [
+                configProvider,
+                {
+                    provide: options.useClass,
+                    useClass: options.useClass
+                }
+            ];
+        }
+
+        return [configProvider];
     }
 }

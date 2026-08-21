@@ -6,4 +6,5 @@ export { createProvidersDiscoveryServiceMock } from "./mocks/providers-discovery
 export { createRedisMock } from "./mocks/redis.mock";
 export { createReflectorMock } from "./mocks/reflector.mock";
 export * from "./model/custom.providers";
+export * from "./model/rate-limiter-config.module";
 export * from "./model/redis.adapters";
