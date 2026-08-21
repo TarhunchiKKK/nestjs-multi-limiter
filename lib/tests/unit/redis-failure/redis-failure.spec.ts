@@ -15,7 +15,6 @@ const options: FixedWindowOptions = {
 const error = new Error("Redis disconnect");
 
 describe("Redis failure handling", () => {
-    let executor: FixedWindowRedisExecutor;
     const redisMock = createRedisMock();
 
     const createModule = async (redisAdapter: IRedisAdapter, failingStrategy: RedisFailingStrategies) => {
