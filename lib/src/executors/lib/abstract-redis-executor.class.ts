@@ -1,14 +1,16 @@
 import type { RateLimiterModuleFullOptions } from "../../config/options";
 import { UnknownRedisFailingStrategyError } from "../../shared/errors";
-import type { Key } from "../../shared/model";
+import { castLuaScriptResult, type Key } from "../../shared/model";
 import type { IExecutor } from "./executor.interface";
 
 export abstract class AbstractRedisExecutor<Options> implements IExecutor<Options> {
     public constructor(protected readonly moduleOptions: RateLimiterModuleFullOptions) {}
 
     public async check(key: Key, options: Options) {
+        let result: unknown = null;
+
         try {
-            return this.performScript(key, options);
+            result = await this.performScript(key, options);
         } catch (error: unknown) {
             if (this.moduleOptions.storage.type !== "redis") {
                 throw error;
@@ -25,7 +27,9 @@ export abstract class AbstractRedisExecutor<Options> implements IExecutor<Option
                     throw new UnknownRedisFailingStrategyError(this.moduleOptions.storage.failingStrategy);
             }
         }
+
+        return castLuaScriptResult(result);
     }
 
-    protected abstract performScript(key: Key, options: Options): boolean | Promise<boolean>;
+    protected abstract performScript(key: Key, options: Options): unknown | Promise<unknown>;
 }

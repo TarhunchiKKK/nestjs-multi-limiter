@@ -3,7 +3,7 @@ import * as path from "node:path";
 import { Inject } from "@nestjs/common";
 import type { RateLimiterModuleFullOptions } from "../../../config/options";
 import { InjectStorage, MODULE_OPTIONS_TOKEN } from "../../../di";
-import { castLuaScriptResult, type IRedisAdapter, type Key } from "../../../shared/model";
+import type { IRedisAdapter, Key } from "../../../shared/model";
 import { AbstractRedisExecutor, Executor } from "../../lib";
 import type { TokenBucketOptions } from "./types";
 
@@ -26,7 +26,7 @@ export class TokenBucketRedisExecutor extends AbstractRedisExecutor<TokenBucketO
         const keysCount = 1;
         const startTime = Date.now();
 
-        const result = await this.redis.eval(
+        return await this.redis.eval(
             this.luaScript,
             keysCount,
             key,
@@ -35,7 +35,5 @@ export class TokenBucketRedisExecutor extends AbstractRedisExecutor<TokenBucketO
             options.refillRate.toString(),
             options.ttl.toString()
         );
-
-        return castLuaScriptResult(result);
     }
 }

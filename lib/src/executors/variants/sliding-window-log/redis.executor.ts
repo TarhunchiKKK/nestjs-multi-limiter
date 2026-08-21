@@ -4,7 +4,7 @@ import { Inject } from "@nestjs/common";
 import type { RateLimiterModuleFullOptions } from "../../../config/options";
 import { InjectStorage, MODULE_OPTIONS_TOKEN } from "../../../di";
 import { generateSalt } from "../../../shared/lib";
-import { castLuaScriptResult, type IRedisAdapter, type Key } from "../../../shared/model";
+import type { IRedisAdapter, Key } from "../../../shared/model";
 import { AbstractRedisExecutor, Executor } from "../../lib";
 import type { SlidingWindowLogOptions } from "./types";
 
@@ -28,8 +28,6 @@ export class SlidingWindowLogRedisExecutor extends AbstractRedisExecutor<Sliding
         const salt = generateSalt();
         const keysCount = 1;
 
-        const result = await this.redis.eval(this.luaScript, keysCount, key, startTime.toString(), options.windowMs.toString(), options.limit.toString(), salt);
-
-        return castLuaScriptResult(result);
+        return await this.redis.eval(this.luaScript, keysCount, key, startTime.toString(), options.windowMs.toString(), options.limit.toString(), salt);
     }
 }

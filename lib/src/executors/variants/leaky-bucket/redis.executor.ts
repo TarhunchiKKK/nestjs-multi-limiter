@@ -3,7 +3,7 @@ import * as path from "node:path";
 import { Inject } from "@nestjs/common";
 import type { RateLimiterModuleFullOptions } from "../../../config/options";
 import { InjectStorage, MODULE_OPTIONS_TOKEN } from "../../../di";
-import { castLuaScriptResult, type IRedisAdapter, type Key } from "../../../shared/model";
+import type { IRedisAdapter, Key } from "../../../shared/model";
 import { AbstractRedisExecutor, Executor } from "../../lib";
 import type { LeakyBucketOptions } from "./types";
 
@@ -27,7 +27,7 @@ export class LeakyBucketRedisExecutor extends AbstractRedisExecutor<LeakyBucketO
 
         const startTime = Date.now();
 
-        const result = await this.redis.eval(
+        return await this.redis.eval(
             this.luaScript,
             keysCount,
             key,
@@ -36,7 +36,5 @@ export class LeakyBucketRedisExecutor extends AbstractRedisExecutor<LeakyBucketO
             options.leakRate.toString(),
             options.ttl.toString()
         );
-
-        return castLuaScriptResult(result);
     }
 }

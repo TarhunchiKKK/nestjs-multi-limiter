@@ -3,7 +3,7 @@ import * as path from "node:path";
 import { Inject } from "@nestjs/common";
 import type { RateLimiterModuleFullOptions } from "../../../config/options";
 import { InjectStorage, MODULE_OPTIONS_TOKEN } from "../../../di";
-import { castLuaScriptResult, type IRedisAdapter, type Key } from "../../../shared/model";
+import type { IRedisAdapter, Key } from "../../../shared/model";
 import { AbstractRedisExecutor, Executor } from "../../lib";
 import type { FixedWindowOptions } from "./types";
 
@@ -25,8 +25,6 @@ export class FixedWindowRedisExecutor extends AbstractRedisExecutor<FixedWindowO
     protected async performScript(key: Key, options: FixedWindowOptions) {
         const keysCount = 1;
 
-        const result = (await this.redis.eval(this.luaScript, keysCount, key, options.limit.toString(), options.ttl.toString())) as number;
-
-        return castLuaScriptResult(result);
+        return await this.redis.eval(this.luaScript, keysCount, key, options.limit.toString(), options.ttl.toString());
     }
 }
