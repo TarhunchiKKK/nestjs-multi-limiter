@@ -40,7 +40,7 @@ function HomepageHeader() {
 
 export default function Home(): ReactNode {
     return (
-        <Layout description="Description will go into a meta tag in <head />">
+        <Layout description="Rate limiter module for NestJS framework (Node.js)">
             <HomepageHeader />
 
             <main>

@@ -37,7 +37,6 @@ export default {
             respectPrefersColorScheme: true
         },
         image: "img/clock.jpg",
-        ogImage: "img/clock.jpg",
         navbar: {
             logo: {
                 src: "img/logo.svg",
