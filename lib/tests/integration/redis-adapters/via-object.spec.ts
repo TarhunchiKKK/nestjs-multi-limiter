@@ -1,7 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { Test, type TestingModule } from "@nestjs/testing";
 import { type IRedisAdapter, RateLimiterModule } from "../../../src";
-import { type FixedWindowOptions, FixedWindowRedisExecutor } from "../../../src/executors";
+import { FixedWindowRedisExecutor } from "../../../src/executors";
+import type { FixedWindowOptions } from "../../../src/shared/model";
 import { IoRedisClient, MS_IN_MINUTE } from "../../shared";
 
 const createSyncOptions = (adapter: IRedisAdapter) => ({

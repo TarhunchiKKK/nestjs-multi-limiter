@@ -3,7 +3,8 @@ import { Test } from "@nestjs/testing";
 import type Redis from "ioredis";
 import { DEFAULT_MODULE_OPTIONS, DEFAULT_STORAGE_OPTIONS } from "../../../src/config/default-options.constants";
 import { MODULE_OPTIONS_TOKEN, STORAGE_TOKEN } from "../../../src/di";
-import { type SlidingWindowCounterOptions, SlidingWindowCounterRedisExecutor } from "../../../src/executors";
+import { SlidingWindowCounterRedisExecutor } from "../../../src/executors";
+import type { SlidingWindowCounterOptions } from "../../../src/shared/model";
 import { createRedisClient, MS_IN_SECOND } from "../../shared";
 
 describe("SlidingWindowCounterRedisExecutor", () => {

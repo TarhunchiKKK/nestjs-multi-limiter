@@ -1,7 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { Test, type TestingModule } from "@nestjs/testing";
 import { RateLimiterModule } from "../../../src";
-import { type FixedWindowOptions, FixedWindowRedisExecutor } from "../../../src/executors";
+import { FixedWindowRedisExecutor } from "../../../src/executors";
+import type { FixedWindowOptions } from "../../../src/shared/model";
 import { IoRedisAdapter, MS_IN_MINUTE, RedisModule } from "../../shared";
 
 describe("Different Redis adapters (Provider)", () => {

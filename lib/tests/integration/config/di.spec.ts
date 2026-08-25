@@ -1,8 +1,7 @@
 import { beforeEach, describe, expect, it } from "bun:test";
 import { Test, type TestingModule } from "@nestjs/testing";
 import { RateLimiterModule, RateLimitGuard } from "../../../src";
-import { mergeDefaultOptions } from "../../../src/config/defaults";
-import type { RateLimiterModuleAsyncOptions, RateLimiterModuleFullOptions, RateLimiterModuleOptions, RateLimitGuardOptions } from "../../../src/config/options";
+import { mergeDefaultOptions, type RateLimiterModuleAsyncOptions, type RateLimiterModuleFullOptions, type RateLimiterModuleOptions } from "../../../src/config";
 import { BuiltinErrorFactory } from "../../../src/custom/error-factories";
 import { BuiltinKeyExtractor } from "../../../src/custom/key-extractors";
 import { GUARD_OPTIONS_TOKEN, MODULE_OPTIONS_TOKEN, STORAGE_TOKEN } from "../../../src/di";
@@ -18,6 +17,7 @@ import {
     TokenBucketInMemoryExecutor,
     TokenBucketRedisExecutor
 } from "../../../src/executors";
+import type { RateLimitGuardOptions } from "../../../src/rate-limit.guard";
 import { InMemoryGarbageCollector } from "../../../src/services/in-memory.garbage-collector";
 import { ProvidersResolver } from "../../../src/services/providers.resolver";
 import { RATE_LIMITER_MODULE_SYNC_REDIS_OPTIONS, RateLimiterConfigModule, RateLimiterConfigService } from "../../shared";
