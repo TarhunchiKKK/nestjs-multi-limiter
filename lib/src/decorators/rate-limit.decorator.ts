@@ -1,5 +1,59 @@
+import type { InjectionToken } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import type { RateLimitOptions } from "../config/options";
+import type { StrategyOptions } from "../config/options";
+import type { IErrorFactory } from "../custom/error-factories";
+import type { IKeyExtractor } from "../custom/key-extractors";
+import type { IOptionsFactory } from "../custom/options-factories";
+import type { StrategyOptionsUnion } from "../executors";
+import type { DeepPartial, PartialUnionMembers } from "../shared/lib";
+import type { BypassStrategies, Scope } from "../shared/model";
+
+/**
+ * Options for `RateLimit` decorator.
+ *
+ * @publicApi
+ */
+export type RateLimitOptions = {
+    /**
+     * Overrides default scope.
+     */
+    scope?: Scope;
+
+    /**
+     * Overrides default key extractor.
+     */
+    keyExtractor?: InjectionToken<IKeyExtractor>;
+
+    /**
+     * Overrides default error factory.
+     */
+    errorFactory?: InjectionToken<IErrorFactory>;
+
+    /**
+     * Overrides default options factory.
+     */
+    factory?: InjectionToken<IOptionsFactory>;
+
+    /**
+     * This allows to bypass rate limiting (skip or reject).
+     */
+    bypass?: BypassStrategies;
+} & PartialUnionMembers<StrategyOptionsUnion>;
+
+export type RateLimitNormalizedOptions = Pick<RateLimitOptions, "scope" | "keyExtractor" | "errorFactory" | "factory"> & DeepPartial<StrategyOptions>;
+
+export function normalizeOptions(options: RateLimitOptions): RateLimitNormalizedOptions {
+    const { scope, keyExtractor, errorFactory, factory, strategy, ...strategyOptions } = options;
+
+    return {
+        scope: scope,
+        keyExtractor,
+        errorFactory,
+        factory,
+        strategy,
+        strategyOptions: strategy ? { [strategy]: strategyOptions } : undefined
+    };
+}
 
 /**
  * Decorator that overrides default rate limiting options for handler/controller.

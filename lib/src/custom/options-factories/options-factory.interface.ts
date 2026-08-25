@@ -1,5 +1,5 @@
 import type { ExecutionContext } from "@nestjs/common";
-import type { RateLimitOptions } from "../../config/options";
+import type { RateLimitOptions } from "../../decorators";
 
 /**
  * Interface for custom dynamic options factories.

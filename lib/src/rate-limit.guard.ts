@@ -1,13 +1,17 @@
 import { type CanActivate, type ExecutionContext, Inject, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { normalizeOptions } from "./config/helpers";
-import type { RateLimitGuardOptions, RateLimitNormalizedOptions, RateLimitOptions, StrategyOptions } from "./config/options";
+import type { StrategyOptions } from "./config/options";
 import type { ErrorFactoryOptions, IErrorFactory } from "./custom/error-factories";
 import type { IKeyExtractor } from "./custom/key-extractors";
-import { RateLimit, SkipRateLimit } from "./decorators";
+import { RateLimit, type RateLimitNormalizedOptions, type RateLimitOptions, SkipRateLimit } from "./decorators";
+import { normalizeOptions } from "./decorators/rate-limit.decorator";
 import { GUARD_OPTIONS_TOKEN } from "./di";
 import { ProvidersResolver } from "./services/providers.resolver";
 import { getKey, type Key, type Scope } from "./shared/model";
+
+export type RateLimitGuardOptions = Required<Pick<RateLimitOptions, "scope" | "keyExtractor" | "errorFactory">> &
+    Pick<RateLimitOptions, "factory"> &
+    StrategyOptions;
 
 type RunOptions = StrategyOptions & {
     scope: Scope;
