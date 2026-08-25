@@ -1,4 +1,4 @@
-import type { RateLimiterModuleFullOptions } from "../../config/options";
+import type { RateLimiterModuleFullOptions } from "../../config";
 import { UnknownRedisFailingStrategyError } from "../../shared/errors";
 import { castLuaScriptResult, type Key } from "../../shared/model";
 import type { IExecutor } from "./executor.interface";

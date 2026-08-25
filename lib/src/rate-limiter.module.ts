@@ -1,14 +1,13 @@
 import { type DynamicModule, type FactoryProvider, Module, type Provider } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
-import { mergeDefaultOptions } from "./config/defaults";
-import { validateModuleOptions } from "./config/helpers";
-import type {
-    IRateLimiterModuleOptionsFactory,
-    RateLimiterModuleAsyncOptions,
-    RateLimiterModuleFullOptions,
-    RateLimiterModuleOptions,
-    RateLimitGuardOptions
-} from "./config/options";
+import {
+    type IRateLimiterModuleOptionsFactory,
+    mergeDefaultOptions,
+    type RateLimiterModuleAsyncOptions,
+    type RateLimiterModuleFullOptions,
+    type RateLimiterModuleOptions,
+    validateModuleOptions
+} from "./config";
 import { BuiltinErrorFactory } from "./custom/error-factories";
 import { BuiltinKeyExtractor } from "./custom/key-extractors";
 import { GUARD_OPTIONS_TOKEN, MODULE_OPTIONS_TOKEN, STORAGE_TOKEN } from "./di";
@@ -24,7 +23,7 @@ import {
     TokenBucketInMemoryExecutor,
     TokenBucketRedisExecutor
 } from "./executors";
-import { RateLimitGuard } from "./rate-limit.guard";
+import { RateLimitGuard, type RateLimitGuardOptions } from "./rate-limit.guard";
 import { InMemoryGarbageCollector } from "./services/in-memory.garbage-collector";
 import { ProvidersResolver } from "./services/providers.resolver";
 import { InvalidAsyncConfigurationError } from "./shared/errors";

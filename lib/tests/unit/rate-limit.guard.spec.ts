@@ -2,11 +2,12 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import type { ExecutionContext } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { Test } from "@nestjs/testing";
-import { RateLimiterModule, RateLimitGuard } from "../../src";
-import { DEFAULT_MODULE_OPTIONS } from "../../src/config/defaults/default-options.constants";
-import type { RateLimitGuardOptions, RateLimitOptions } from "../../src/config/options";
+import { DEFAULT_MODULE_OPTIONS } from "../../src/config/default-options.constants";
 import { BuiltinKeyExtractor } from "../../src/custom/key-extractors";
+import type { RateLimitNormalizedOptions, RateLimitOptions } from "../../src/decorators";
 import { GUARD_OPTIONS_TOKEN } from "../../src/di";
+import { RateLimitGuard, type RateLimitGuardOptions } from "../../src/rate-limit.guard";
+import { RateLimiterModule } from "../../src/rate-limiter.module";
 import { ProvidersResolver } from "../../src/services/providers.resolver";
 import {
     CustomError,
@@ -21,7 +22,7 @@ import {
 const context = {
     getHandler: () => ({}),
     getClass: () => ({})
-};
+} as unknown as ExecutionContext;
 
 describe("RateLimitGuard", () => {
     let guard: RateLimitGuard;
@@ -49,21 +50,51 @@ describe("RateLimitGuard", () => {
         clearMock(discoveryServiceMock);
     });
 
-    describe("skipping", () => {
-        it("should skip rate limiting (route level)", async () => {
-            reflectorMock.get.mockReturnValue(true);
+    describe("bypassing", () => {
+        describe("skip", () => {
+            it("should skip rate limiting (route level)", async () => {
+                reflectorMock.get.mockReturnValue({ bypass: "skip" });
 
-            const result = await guard.canActivate(context as unknown as ExecutionContext);
+                const result = await guard.canActivate(context);
 
-            expect(result).toBeTrue();
+                expect(result).toBeTrue();
+            });
+
+            it("should skip rate limiting (class level)", async () => {
+                reflectorMock.get.mockReturnValueOnce(undefined).mockReturnValueOnce({ bypass: "skip" });
+
+                const result = await guard.canActivate(context);
+
+                expect(result).toBeTrue();
+            });
         });
 
-        it("should skip rate limiting (class level)", async () => {
-            reflectorMock.get.mockReturnValueOnce(undefined).mockReturnValueOnce(undefined).mockReturnValueOnce(true);
+        describe("reject", () => {
+            beforeEach(() => {
+                discoveryServiceMock.getKeyExtractor.mockResolvedValue(new CustomKeyExtractor());
+                discoveryServiceMock.getErrorFactory.mockResolvedValue(new CustomErrorFactory());
+                discoveryServiceMock.getOptionsFactory.mockResolvedValue({ getOptions: () => ({ keyExtractor: BuiltinKeyExtractor }) });
+            });
 
-            const result = await guard.canActivate(context as unknown as ExecutionContext);
+            it("should reject rate limiting (route level)", async () => {
+                reflectorMock.get
+                    .mockReturnValueOnce({ bypass: "reject", errorFactory: CustomErrorFactory } satisfies RateLimitNormalizedOptions)
+                    .mockReturnValueOnce(undefined);
 
-            expect(result).toBeTrue();
+                const resultPromise = guard.canActivate(context);
+
+                expect(resultPromise).rejects.toThrow(CustomError);
+            });
+
+            it("should reject rate limiting (route level)", async () => {
+                reflectorMock.get
+                    .mockReturnValueOnce(undefined)
+                    .mockReturnValueOnce({ bypass: "reject", errorFactory: CustomErrorFactory } satisfies RateLimitNormalizedOptions);
+
+                const resultPromise = guard.canActivate(context);
+
+                expect(resultPromise).rejects.toThrow(CustomError);
+            });
         });
     });
 
@@ -79,7 +110,7 @@ describe("RateLimitGuard", () => {
             discoveryServiceMock.getErrorFactory.mockResolvedValue(new CustomErrorFactory());
             discoveryServiceMock.getOptionsFactory.mockResolvedValue(new CustomOptionsFactory());
 
-            const result = await guard.canActivate(context as unknown as ExecutionContext);
+            const result = await guard.canActivate(context);
 
             expect(result).toBeTrue();
             expect(discoveryServiceMock.getKeyExtractor).toHaveBeenCalledWith(guardOptions.keyExtractor);
@@ -87,10 +118,8 @@ describe("RateLimitGuard", () => {
         });
 
         it("should override default providers", async () => {
-            reflectorMock.get.mockReturnValueOnce(undefined);
-
             if (useRouteLevelMetadata) {
-                reflectorMock.get.mockReturnValueOnce(undefined).mockReturnValueOnce(undefined);
+                reflectorMock.get.mockReturnValueOnce(undefined);
             }
 
             reflectorMock.get.mockReturnValueOnce({
@@ -104,7 +133,7 @@ describe("RateLimitGuard", () => {
             discoveryServiceMock.getErrorFactory.mockResolvedValue(new CustomErrorFactory());
             discoveryServiceMock.getOptionsFactory.mockResolvedValue({ getOptions: () => ({ scope: "custom-scope" }) });
 
-            const result = await guard.canActivate(context as unknown as ExecutionContext);
+            const result = await guard.canActivate(context);
 
             expect(result).toBeTrue();
             expect(discoveryServiceMock.getKeyExtractor).toHaveBeenCalledWith(CustomKeyExtractor);
@@ -118,10 +147,8 @@ describe("RateLimitGuard", () => {
         ["class-level", false]
     ])("custom providers (%s metadata)", (_, useRouteLevelMetadata) => {
         it("should throw custom error", async () => {
-            reflectorMock.get.mockReturnValueOnce(undefined);
-
             if (useRouteLevelMetadata) {
-                reflectorMock.get.mockReturnValueOnce(undefined).mockReturnValueOnce(undefined);
+                reflectorMock.get.mockReturnValueOnce(undefined);
             }
 
             reflectorMock.get.mockReturnValueOnce({
@@ -132,16 +159,14 @@ describe("RateLimitGuard", () => {
             discoveryServiceMock.getKeyExtractor.mockResolvedValue(new CustomKeyExtractor());
             discoveryServiceMock.getErrorFactory.mockResolvedValue(new CustomErrorFactory());
 
-            const resultPromise = guard.canActivate(context as unknown as ExecutionContext);
+            const resultPromise = guard.canActivate(context);
 
             expect(resultPromise).rejects.toThrow(CustomError);
         });
 
         it("should not override static options", async () => {
-            reflectorMock.get.mockReturnValueOnce(false);
-
             if (useRouteLevelMetadata) {
-                reflectorMock.get.mockReturnValueOnce(undefined).mockReturnValueOnce(undefined);
+                reflectorMock.get.mockReturnValueOnce(undefined);
             }
 
             reflectorMock.get.mockReturnValueOnce({
@@ -154,7 +179,7 @@ describe("RateLimitGuard", () => {
             discoveryServiceMock.getErrorFactory.mockResolvedValue(new CustomErrorFactory());
             discoveryServiceMock.getOptionsFactory.mockResolvedValue({ getOptions: () => ({ keyExtractor: BuiltinKeyExtractor }) });
 
-            const result = await guard.canActivate(context as unknown as ExecutionContext);
+            const result = await guard.canActivate(context);
 
             expect(result).toBeTrue();
             expect(discoveryServiceMock.getKeyExtractor).toHaveBeenCalledWith(CustomKeyExtractor);

@@ -1,13 +1,13 @@
 import { Inject, Injectable, type InjectionToken, type OnModuleInit } from "@nestjs/common";
 import { DiscoveryService, ModuleRef, Reflector } from "@nestjs/core";
 import type { InstanceWrapper } from "@nestjs/core/injector/instance-wrapper";
-import type { RateLimiterModuleOptions } from "../config/options";
+import type { RateLimiterModuleOptions } from "../config";
 import { ERROR_FACTORY_METADATA, type IErrorFactory } from "../custom/error-factories";
 import { type IKeyExtractor, KEY_EXTRACTOR_METADATA } from "../custom/key-extractors";
 import { type IOptionsFactory, OPTIONS_FACTORY_METADATA } from "../custom/options-factories";
 import { MODULE_OPTIONS_TOKEN } from "../di";
-import { type AllStrategiesOptions, EXECUTOR_METADATA_KEY, type ExecutorMetadata, type IExecutor } from "../executors";
-import type { Strategies } from "../shared/model";
+import { EXECUTOR_METADATA_KEY, type ExecutorMetadata, type IExecutor } from "../executors";
+import type { Strategies, StrategyOptionsMap } from "../shared/model";
 
 @Injectable()
 export class ProvidersResolver implements OnModuleInit {
@@ -30,7 +30,7 @@ export class ProvidersResolver implements OnModuleInit {
             throw new Error(`[RateLimiterModule] No executor found for strategy: "${strategy}""`);
         }
 
-        return executor as IExecutor<AllStrategiesOptions[Strategy]>;
+        return executor as IExecutor<StrategyOptionsMap[Strategy]>;
     }
 
     public async getKeyExtractor(token: InjectionToken): Promise<IKeyExtractor> {

@@ -1,14 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, jest } from "bun:test";
 import type { RateLimiterModuleFullOptions } from "../../../src/config/options";
 import { InMemoryGarbageCollector } from "../../../src/services/in-memory.garbage-collector";
-import type { BaseStrategyState, InMemoryStorage } from "../../../src/shared/model";
+import type { BaseStrategyInMemoryState, InMemoryStorage } from "../../../src/shared/model";
 import { createInMemoryStorage, MS_IN_MINUTE, MS_IN_SECOND } from "../../shared";
 
 const GC_TIME = MS_IN_MINUTE;
 
 describe("InMemoryGarbageCollector", () => {
     let collector: InMemoryGarbageCollector;
-    let storage: InMemoryStorage<BaseStrategyState>;
+    let storage: InMemoryStorage<BaseStrategyInMemoryState>;
 
     beforeEach(async () => {
         storage = createInMemoryStorage();

@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, describe, expect, it } from "bun:test";
 import { Test, type TestingModule } from "@nestjs/testing";
 import { RateLimiterModule, type RateLimiterModuleOptions } from "../../../src";
-import { DEFAULT_MODULE_OPTIONS } from "../../../src/config/defaults/default-options.constants";
+import { DEFAULT_MODULE_OPTIONS } from "../../../src/config/default-options.constants";
 import { ProvidersResolver } from "../../../src/services/providers.resolver";
 import { CustomErrorFactory, CustomKeyExtractor, CustomOptionsFactory } from "../../shared";
 

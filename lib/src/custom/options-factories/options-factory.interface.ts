@@ -1,6 +1,7 @@
 import type { ExecutionContext } from "@nestjs/common";
-import type { RateLimitOptions } from "../../config/options";
+import type { RateLimitOptions } from "../../decorators";
 
+// FIX: Options factory cannot return object with `factory` field.
 /**
  * Interface for custom dynamic options factories.
  *

@@ -1,6 +1,5 @@
 import type { ExecutionContext } from "@nestjs/common";
-import type { AllStrategiesOptions } from "../../executors";
-import type { Key, Scope, Strategies } from "../../shared/model";
+import type { Key, Scope, Strategies, StrategyOptionsMap } from "../../shared/model";
 
 /**
  * Options for the custom rate limiting error creating.
@@ -9,9 +8,9 @@ import type { Key, Scope, Strategies } from "../../shared/model";
  */
 export type ErrorFactoryOptions = {
     /**
-     * Key for rate limiting data saving.
+     * Key for rate limiting data saving. Key can be not defined, for example when request was forcibly rejected.
      */
-    key: Key;
+    key?: Key;
 
     /**
      * Rate limiting scope.
@@ -27,7 +26,12 @@ export type ErrorFactoryOptions = {
     /**
      * Configuration for selected rate limiting algorithm.
      */
-    strategyOptions: AllStrategiesOptions[keyof AllStrategiesOptions];
+    strategyOptions: StrategyOptionsMap;
+
+    /**
+     * Was this field forcibly rejected.
+     */
+    forceReject: boolean;
 };
 
 /**

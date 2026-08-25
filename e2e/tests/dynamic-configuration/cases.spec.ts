@@ -1,36 +1,31 @@
 import { afterEach, beforeEach, describe, it } from "bun:test";
 import { HttpStatus, type INestApplication } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
-import { RateLimiterModule, type RateLimiterModuleAsyncOptions, type RateLimiterModuleOptions } from "nestjs-multi-limiter";
+import { RateLimiterModule, type RateLimiterModuleAsyncOptions } from "nestjs-multi-limiter";
 import request from "supertest";
 import { AppController } from "./controllers";
 import { ADMIN_LIMIT, RoleBasedOptionsFactory, USER_LIMIT } from "./providers";
 
-const syncOptions: RateLimiterModuleOptions = {
-    storage: {
-        type: "in-memory"
-    },
-    strategy: "fixed-window",
-    strategyOptions: {
-        fixedWindow: {
-            limit: 1
+const options: RateLimiterModuleAsyncOptions = {
+    useFactory: () => ({
+        storage: {
+            type: "in-memory"
+        },
+        strategy: "fixed-window",
+        strategyOptions: {
+            fixedWindow: {
+                limit: 1
+            }
         }
-    }
+    })
 };
 
-const asyncOptions: RateLimiterModuleAsyncOptions = {
-    useFactory: () => syncOptions
-};
-
-describe.each([
-    ["sync", "forRoot", syncOptions],
-    ["async", "forRootAsync", asyncOptions]
-])("Dynamic options (%s configuration)", (_, method, options) => {
+describe("Dynamic options", () => {
     let app: INestApplication;
 
     beforeEach(async () => {
         const moduleFixture = await Test.createTestingModule({
-            imports: [RateLimiterModule[method](options)],
+            imports: [RateLimiterModule.forRootAsync(options)],
             controllers: [AppController],
             providers: [RoleBasedOptionsFactory]
         }).compile();
