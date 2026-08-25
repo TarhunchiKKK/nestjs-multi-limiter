@@ -128,7 +128,7 @@ export class RateLimitGuard implements CanActivate {
             key: key,
             scope: options.scope,
             strategy: options.strategy,
-            strategyOptions: options.strategyOptions[options.strategy]
+            strategyOptions: options.strategyOptions
         };
 
         const error = await options.errorFactory.getError(context, errorOptions);

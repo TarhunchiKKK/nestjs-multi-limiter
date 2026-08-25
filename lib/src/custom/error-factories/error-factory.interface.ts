@@ -26,7 +26,7 @@ export type ErrorFactoryOptions = {
     /**
      * Configuration for selected rate limiting algorithm.
      */
-    strategyOptions: StrategyOptionsMap[keyof StrategyOptionsMap];
+    strategyOptions: StrategyOptionsMap;
 };
 
 /**
