@@ -77,7 +77,7 @@ export class RateLimitGuard implements CanActivate {
     }
 
     private async getFinalGuardOptions(context: ExecutionContext, metadataOptions: RateLimitNormalizedOptions): Promise<RunOptions> {
-        // FIX: Remove commented code.
+        // DELETE: Remove commented code.
         // if (!metadataOptions) {
         //     const factory = this.options.factory ? await this.providersResolver.getOptionsFactory(this.options.factory) : undefined;
 
@@ -106,6 +106,7 @@ export class RateLimitGuard implements CanActivate {
         }
 
         return {
+            bypass: finalDecoratorOptions.bypass,
             scope: finalDecoratorOptions.scope ?? this.options.scope,
             keyExtractor: await this.providersResolver.getKeyExtractor(keyExtractorToken),
             errorFactory: await this.providersResolver.getErrorFactory(errorFactoryToken),
