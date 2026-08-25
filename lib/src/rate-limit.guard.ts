@@ -7,7 +7,7 @@ import { RateLimit, type RateLimitNormalizedOptions, type RateLimitOptions } fro
 import { normalizeOptions } from "./decorators/rate-limit.decorator";
 import { GUARD_OPTIONS_TOKEN } from "./di";
 import { ProvidersResolver } from "./services/providers.resolver";
-import { getKey, type Key, type Scope } from "./shared/model";
+import { type BypassStrategies, getKey, type Key, type Scope } from "./shared/model";
 
 export type RateLimitGuardOptions = Required<Pick<RateLimitOptions, "scope" | "keyExtractor" | "errorFactory">> &
     Pick<RateLimitOptions, "factory"> &
@@ -15,6 +15,7 @@ export type RateLimitGuardOptions = Required<Pick<RateLimitOptions, "scope" | "k
 
 type RunOptions = StrategyOptions & {
     scope: Scope;
+    bypass?: BypassStrategies;
     keyExtractor: IKeyExtractor;
     errorFactory: IErrorFactory;
 };
@@ -34,11 +35,16 @@ export class RateLimitGuard implements CanActivate {
 
     public async canActivate(context: ExecutionContext) {
         const metadataOptions = this.getMetadataOptions(context);
+
         if (metadataOptions?.bypass === "skip") {
             return true;
         }
 
         const finalGuardOptions = await this.getFinalGuardOptions(context, metadataOptions);
+
+        if (finalGuardOptions.bypass === "reject") {
+            await this.rejectWithError(context, undefined, finalGuardOptions);
+        }
 
         const key = await finalGuardOptions.keyExtractor.extract(context);
 
@@ -70,17 +76,18 @@ export class RateLimitGuard implements CanActivate {
         };
     }
 
-    private async getFinalGuardOptions(context: ExecutionContext, metadataOptions?: RateLimitOptions): Promise<RunOptions> {
-        if (!metadataOptions) {
-            const factory = this.options.factory ? await this.providersResolver.getOptionsFactory(this.options.factory) : undefined;
+    private async getFinalGuardOptions(context: ExecutionContext, metadataOptions: RateLimitOptions): Promise<RunOptions> {
+        // FIX: Remove commented code.
+        // if (!metadataOptions) {
+        //     const factory = this.options.factory ? await this.providersResolver.getOptionsFactory(this.options.factory) : undefined;
 
-            return {
-                ...this.options,
-                ...(factory ? await factory.getOptions(context) : undefined),
-                keyExtractor: await this.providersResolver.getKeyExtractor(this.options.keyExtractor),
-                errorFactory: await this.providersResolver.getErrorFactory(this.options.errorFactory)
-            };
-        }
+        //     return {
+        //         ...this.options,
+        //         ...(factory ? await factory.getOptions(context) : undefined),
+        //         keyExtractor: await this.providersResolver.getKeyExtractor(this.options.keyExtractor),
+        //         errorFactory: await this.providersResolver.getErrorFactory(this.options.errorFactory)
+        //     };
+        // }
 
         const keyExtractorToken = metadataOptions.keyExtractor ?? this.options.keyExtractor;
         const errorFactoryToken = metadataOptions.errorFactory ?? this.options.errorFactory;
@@ -123,12 +130,13 @@ export class RateLimitGuard implements CanActivate {
         return await executor.check(finalKey, options.strategyOptions[options.strategy]);
     }
 
-    private async rejectWithError(context: ExecutionContext, key: Key, options: RunOptions) {
+    private async rejectWithError(context: ExecutionContext, key: Key | undefined, options: RunOptions) {
         const errorOptions: ErrorFactoryOptions = {
             key: key,
             scope: options.scope,
             strategy: options.strategy,
-            strategyOptions: options.strategyOptions
+            strategyOptions: options.strategyOptions,
+            forceReject: options.bypass === "reject"
         };
 
         const error = await options.errorFactory.getError(context, errorOptions);

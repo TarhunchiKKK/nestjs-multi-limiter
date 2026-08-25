@@ -8,9 +8,9 @@ import type { Key, Scope, Strategies, StrategyOptionsMap } from "../../shared/mo
  */
 export type ErrorFactoryOptions = {
     /**
-     * Key for rate limiting data saving.
+     * Key for rate limiting data saving. Key can be not defined, for example when request was forcibly rejected.
      */
-    key: Key;
+    key?: Key;
 
     /**
      * Rate limiting scope.
@@ -27,6 +27,11 @@ export type ErrorFactoryOptions = {
      * Configuration for selected rate limiting algorithm.
      */
     strategyOptions: StrategyOptionsMap;
+
+    /**
+     * Was this field forcibly rejected.
+     */
+    forceReject: boolean;
 };
 
 /**
