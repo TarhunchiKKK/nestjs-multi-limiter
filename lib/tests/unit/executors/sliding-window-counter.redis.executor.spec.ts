@@ -1,18 +1,19 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { Test } from "@nestjs/testing";
-import { DEFAULT_MODULE_OPTIONS, DEFAULT_STORAGE_OPTIONS } from "../../../../src/config/default-options.constants";
-import { MODULE_OPTIONS_TOKEN, STORAGE_TOKEN } from "../../../../src/di";
-import { type LeakyBucketOptions, LeakyBucketRedisExecutor } from "../../../../src/executors";
-import { clearMock, createRedisMock, MS_IN_MINUTE } from "../../../shared";
+import { DEFAULT_MODULE_OPTIONS, DEFAULT_STORAGE_OPTIONS } from "../../../src/config";
+import { MODULE_OPTIONS_TOKEN, STORAGE_TOKEN } from "../../../src/di";
+import { SlidingWindowCounterRedisExecutor } from "../../../src/executors";
+import type { SlidingWindowCounterOptions } from "../../../src/shared/model";
+import { clearMock, createRedisMock, MS_IN_MINUTE } from "../../shared";
 
-describe("LeakyBucketRedisExecutor", () => {
-    let executor: LeakyBucketRedisExecutor;
+describe("SlidingWindowCounterRedisExecutor", () => {
+    let executor: SlidingWindowCounterRedisExecutor;
     const redisMock = createRedisMock();
 
     beforeEach(async () => {
         const module = await Test.createTestingModule({
             providers: [
-                LeakyBucketRedisExecutor,
+                SlidingWindowCounterRedisExecutor,
                 {
                     provide: STORAGE_TOKEN,
                     useValue: redisMock
@@ -27,7 +28,7 @@ describe("LeakyBucketRedisExecutor", () => {
             ]
         }).compile();
 
-        executor = module.get(LeakyBucketRedisExecutor);
+        executor = module.get(SlidingWindowCounterRedisExecutor);
     });
 
     afterEach(() => {
@@ -36,10 +37,9 @@ describe("LeakyBucketRedisExecutor", () => {
 
     it("should allow request", async () => {
         const key = crypto.randomUUID();
-        const options: LeakyBucketOptions = {
-            capacity: 10,
-            leakRate: 1 / MS_IN_MINUTE,
-            ttl: 5 * MS_IN_MINUTE
+        const options: SlidingWindowCounterOptions = {
+            limit: 10,
+            windowMs: MS_IN_MINUTE
         };
 
         redisMock.eval.mockResolvedValue(1);
@@ -51,10 +51,9 @@ describe("LeakyBucketRedisExecutor", () => {
 
     it("should disallow request", async () => {
         const key = crypto.randomUUID();
-        const options: LeakyBucketOptions = {
-            capacity: 10,
-            leakRate: 1 / MS_IN_MINUTE,
-            ttl: 5 * MS_IN_MINUTE
+        const options: SlidingWindowCounterOptions = {
+            limit: 10,
+            windowMs: MS_IN_MINUTE
         };
 
         redisMock.eval.mockResolvedValue(0);

@@ -16,7 +16,7 @@ export class SlidingWindowCounterRedisExecutor extends AbstractRedisExecutor<Sli
     ) {
         super(moduleOptions);
 
-        const luaScriptPath = path.join(__dirname, "../../../../lua/sliding-window-counter.lua");
+        const luaScriptPath = path.join(__dirname, "../../../lua/sliding-window-counter.lua");
 
         this.luaScript = fs.readFileSync(luaScriptPath, "utf-8");
     }

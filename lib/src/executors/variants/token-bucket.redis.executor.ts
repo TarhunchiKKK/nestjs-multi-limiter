@@ -16,7 +16,7 @@ export class TokenBucketRedisExecutor extends AbstractRedisExecutor<TokenBucketO
     ) {
         super(moduleOptions);
 
-        const luaScriptPath = path.join(__dirname, "../../../../lua/token-bucket.lua");
+        const luaScriptPath = path.join(__dirname, "../../../lua/token-bucket.lua");
 
         this.luaScript = fs.readFileSync(luaScriptPath, "utf-8");
     }

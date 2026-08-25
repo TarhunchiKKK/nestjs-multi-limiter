@@ -1,18 +1,19 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { Test } from "@nestjs/testing";
-import { DEFAULT_MODULE_OPTIONS, DEFAULT_STORAGE_OPTIONS } from "../../../../src/config/default-options.constants";
-import { MODULE_OPTIONS_TOKEN, STORAGE_TOKEN } from "../../../../src/di";
-import { type FixedWindowOptions, FixedWindowRedisExecutor } from "../../../../src/executors";
-import { clearMock, createRedisMock, MS_IN_DAY } from "../../../shared";
+import { DEFAULT_MODULE_OPTIONS, DEFAULT_STORAGE_OPTIONS } from "../../../src/config/default-options.constants";
+import { MODULE_OPTIONS_TOKEN, STORAGE_TOKEN } from "../../../src/di";
+import { SlidingWindowLogRedisExecutor } from "../../../src/executors";
+import type { SlidingWindowLogOptions } from "../../../src/shared/model";
+import { clearMock, createRedisMock, MS_IN_DAY } from "../../shared";
 
-describe("FixedWindowRedisExecutor", () => {
-    let executor: FixedWindowRedisExecutor;
+describe("SlidingWindowLogRedisExecutor", () => {
+    let executor: SlidingWindowLogRedisExecutor;
     const redisMock = createRedisMock();
 
     beforeEach(async () => {
         const module = await Test.createTestingModule({
             providers: [
-                FixedWindowRedisExecutor,
+                SlidingWindowLogRedisExecutor,
                 {
                     provide: STORAGE_TOKEN,
                     useValue: redisMock
@@ -27,7 +28,7 @@ describe("FixedWindowRedisExecutor", () => {
             ]
         }).compile();
 
-        executor = module.get(FixedWindowRedisExecutor);
+        executor = module.get(SlidingWindowLogRedisExecutor);
     });
 
     afterEach(() => {
@@ -36,9 +37,9 @@ describe("FixedWindowRedisExecutor", () => {
 
     it("should allow request", async () => {
         const key = crypto.randomUUID();
-        const options: FixedWindowOptions = {
+        const options: SlidingWindowLogOptions = {
             limit: 100,
-            ttl: MS_IN_DAY
+            windowMs: MS_IN_DAY
         };
 
         redisMock.eval.mockResolvedValue(1);
@@ -50,9 +51,9 @@ describe("FixedWindowRedisExecutor", () => {
 
     it("should disallow request", async () => {
         const key = crypto.randomUUID();
-        const options: FixedWindowOptions = {
+        const options: SlidingWindowLogOptions = {
             limit: 100,
-            ttl: MS_IN_DAY
+            windowMs: MS_IN_DAY
         };
 
         redisMock.eval.mockResolvedValue(0);

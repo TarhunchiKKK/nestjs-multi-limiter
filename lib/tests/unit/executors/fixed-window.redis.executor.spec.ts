@@ -1,18 +1,19 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { Test } from "@nestjs/testing";
-import { DEFAULT_MODULE_OPTIONS, DEFAULT_STORAGE_OPTIONS } from "../../../../src/config/default-options.constants";
-import { MODULE_OPTIONS_TOKEN, STORAGE_TOKEN } from "../../../../src/di";
-import { type SlidingWindowCounterOptions, SlidingWindowCounterRedisExecutor } from "../../../../src/executors";
-import { clearMock, createRedisMock, MS_IN_MINUTE } from "../../../shared";
+import { DEFAULT_MODULE_OPTIONS, DEFAULT_STORAGE_OPTIONS } from "../../../src/config";
+import { MODULE_OPTIONS_TOKEN, STORAGE_TOKEN } from "../../../src/di";
+import { FixedWindowRedisExecutor } from "../../../src/executors";
+import type { FixedWindowOptions } from "../../../src/shared/model";
+import { clearMock, createRedisMock, MS_IN_DAY } from "../../shared";
 
-describe("SlidingWindowCounterRedisExecutor", () => {
-    let executor: SlidingWindowCounterRedisExecutor;
+describe("FixedWindowRedisExecutor", () => {
+    let executor: FixedWindowRedisExecutor;
     const redisMock = createRedisMock();
 
     beforeEach(async () => {
         const module = await Test.createTestingModule({
             providers: [
-                SlidingWindowCounterRedisExecutor,
+                FixedWindowRedisExecutor,
                 {
                     provide: STORAGE_TOKEN,
                     useValue: redisMock
@@ -27,7 +28,7 @@ describe("SlidingWindowCounterRedisExecutor", () => {
             ]
         }).compile();
 
-        executor = module.get(SlidingWindowCounterRedisExecutor);
+        executor = module.get(FixedWindowRedisExecutor);
     });
 
     afterEach(() => {
@@ -36,9 +37,9 @@ describe("SlidingWindowCounterRedisExecutor", () => {
 
     it("should allow request", async () => {
         const key = crypto.randomUUID();
-        const options: SlidingWindowCounterOptions = {
-            limit: 10,
-            windowMs: MS_IN_MINUTE
+        const options: FixedWindowOptions = {
+            limit: 100,
+            ttl: MS_IN_DAY
         };
 
         redisMock.eval.mockResolvedValue(1);
@@ -50,9 +51,9 @@ describe("SlidingWindowCounterRedisExecutor", () => {
 
     it("should disallow request", async () => {
         const key = crypto.randomUUID();
-        const options: SlidingWindowCounterOptions = {
-            limit: 10,
-            windowMs: MS_IN_MINUTE
+        const options: FixedWindowOptions = {
+            limit: 100,
+            ttl: MS_IN_DAY
         };
 
         redisMock.eval.mockResolvedValue(0);

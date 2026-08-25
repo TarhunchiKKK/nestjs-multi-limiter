@@ -1,18 +1,19 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { Test } from "@nestjs/testing";
-import { DEFAULT_MODULE_OPTIONS, DEFAULT_STORAGE_OPTIONS } from "../../../../src/config/default-options.constants";
-import { MODULE_OPTIONS_TOKEN, STORAGE_TOKEN } from "../../../../src/di";
-import { type TokenBucketOptions, TokenBucketRedisExecutor } from "../../../../src/executors";
-import { clearMock, createRedisMock, MS_IN_DAY, MS_IN_MINUTE } from "../../../shared";
+import { DEFAULT_MODULE_OPTIONS, DEFAULT_STORAGE_OPTIONS } from "../../../src/config";
+import { MODULE_OPTIONS_TOKEN, STORAGE_TOKEN } from "../../../src/di";
+import { LeakyBucketRedisExecutor } from "../../../src/executors";
+import type { LeakyBucketOptions } from "../../../src/shared/model";
+import { clearMock, createRedisMock, MS_IN_MINUTE } from "../../shared";
 
-describe("TokenBucketRedisExecutor", () => {
-    let executor: TokenBucketRedisExecutor;
+describe("LeakyBucketRedisExecutor", () => {
+    let executor: LeakyBucketRedisExecutor;
     const redisMock = createRedisMock();
 
     beforeEach(async () => {
         const module = await Test.createTestingModule({
             providers: [
-                TokenBucketRedisExecutor,
+                LeakyBucketRedisExecutor,
                 {
                     provide: STORAGE_TOKEN,
                     useValue: redisMock
@@ -27,7 +28,7 @@ describe("TokenBucketRedisExecutor", () => {
             ]
         }).compile();
 
-        executor = module.get(TokenBucketRedisExecutor);
+        executor = module.get(LeakyBucketRedisExecutor);
     });
 
     afterEach(() => {
@@ -36,10 +37,10 @@ describe("TokenBucketRedisExecutor", () => {
 
     it("should allow request", async () => {
         const key = crypto.randomUUID();
-        const options: TokenBucketOptions = {
+        const options: LeakyBucketOptions = {
             capacity: 10,
-            refillRate: 1 / MS_IN_MINUTE,
-            ttl: MS_IN_DAY
+            leakRate: 1 / MS_IN_MINUTE,
+            ttl: 5 * MS_IN_MINUTE
         };
 
         redisMock.eval.mockResolvedValue(1);
@@ -51,10 +52,10 @@ describe("TokenBucketRedisExecutor", () => {
 
     it("should disallow request", async () => {
         const key = crypto.randomUUID();
-        const options: TokenBucketOptions = {
+        const options: LeakyBucketOptions = {
             capacity: 10,
-            refillRate: 1 / MS_IN_MINUTE,
-            ttl: MS_IN_DAY
+            leakRate: 1 / MS_IN_MINUTE,
+            ttl: 5 * MS_IN_MINUTE
         };
 
         redisMock.eval.mockResolvedValue(0);

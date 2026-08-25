@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, jest } from "bun:test";
 import { Test } from "@nestjs/testing";
-import { STORAGE_TOKEN } from "../../../../src/di";
-import { FixedWindowInMemoryExecutor, type FixedWindowOptions, type FixedWindowState } from "../../../../src/executors";
-import type { InMemoryStorage } from "../../../../src/shared/model";
-import { createInMemoryStorage, MS_IN_SECOND } from "../../../shared";
+import { STORAGE_TOKEN } from "../../../src/di";
+import { FixedWindowInMemoryExecutor, type FixedWindowState } from "../../../src/executors";
+import type { FixedWindowOptions, InMemoryStorage } from "../../../src/shared/model";
+import { createInMemoryStorage, MS_IN_SECOND } from "../../shared";
 
 describe("FixedWindowInMemoryExecutor", () => {
     let executor: FixedWindowInMemoryExecutor;
