@@ -21,7 +21,7 @@ const options: RateLimiterModuleAsyncOptions = {
     })
 };
 
-describe("Skipping", () => {
+describe("Bypass - Reject", () => {
     let app: INestApplication;
 
     beforeEach(async () => {
@@ -39,20 +39,12 @@ describe("Skipping", () => {
         await app.close();
     });
 
-    it("should skip rate limiting (controller level)", async () => {
-        for (let i = 0; i < LIMIT; i++) {
-            await request(app.getHttpServer()).get("/controller/test").expect(HttpStatus.OK);
-        }
-
-        await request(app.getHttpServer()).get("/controller/test").expect(HttpStatus.OK);
+    it("should reject rate limiting (controller level)", async () => {
+        await request(app.getHttpServer()).get("/controller/test").expect(HttpStatus.TOO_MANY_REQUESTS);
     });
 
-    it("should skip rate limiting (route level)", async () => {
-        for (let i = 0; i < LIMIT; i++) {
-            await request(app.getHttpServer()).get("/route/test").expect(HttpStatus.OK);
-        }
-
-        await request(app.getHttpServer()).get("/route/test").expect(HttpStatus.OK);
+    it("should reject rate limiting (route level)", async () => {
+        await request(app.getHttpServer()).get("/route/test").expect(HttpStatus.TOO_MANY_REQUESTS);
     });
 
     it("should execute rate limiting", async () => {

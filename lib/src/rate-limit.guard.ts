@@ -42,8 +42,12 @@ export class RateLimitGuard implements CanActivate {
 
         const finalGuardOptions = await this.getFinalGuardOptions(context, metadataOptions);
 
-        if (finalGuardOptions.bypass === "reject") {
-            await this.rejectWithError(context, undefined, finalGuardOptions);
+        switch (finalGuardOptions.bypass) {
+            case "skip":
+                return true;
+            case "reject":
+                await this.rejectWithError(context, undefined, finalGuardOptions);
+                break;
         }
 
         const key = await finalGuardOptions.keyExtractor.extract(context);
@@ -58,17 +62,13 @@ export class RateLimitGuard implements CanActivate {
     }
 
     private getMetadataOptions(context: ExecutionContext): RateLimitNormalizedOptions {
-        const handlerOptions = this.reflector.get(RATE_LIMIT_METADATA, context.getHandler());
+        const handlerOptions: RateLimitNormalizedOptions = this.reflector.get(RATE_LIMIT_METADATA, context.getHandler());
 
         if (handlerOptions && handlerOptions.bypass === "skip") {
             return handlerOptions;
         }
 
-        const classOptions = this.reflector.get(RATE_LIMIT_METADATA, context.getClass());
-
-        if (classOptions && classOptions.bypass === "skip") {
-            return classOptions;
-        }
+        const classOptions: RateLimitNormalizedOptions = this.reflector.get(RATE_LIMIT_METADATA, context.getClass());
 
         return {
             ...(classOptions ?? {}),
@@ -77,18 +77,6 @@ export class RateLimitGuard implements CanActivate {
     }
 
     private async getFinalGuardOptions(context: ExecutionContext, metadataOptions: RateLimitNormalizedOptions): Promise<RunOptions> {
-        // DELETE: Remove commented code.
-        // if (!metadataOptions) {
-        //     const factory = this.options.factory ? await this.providersResolver.getOptionsFactory(this.options.factory) : undefined;
-
-        //     return {
-        //         ...this.options,
-        //         ...(factory ? await factory.getOptions(context) : undefined),
-        //         keyExtractor: await this.providersResolver.getKeyExtractor(this.options.keyExtractor),
-        //         errorFactory: await this.providersResolver.getErrorFactory(this.options.errorFactory)
-        //     };
-        // }
-
         const keyExtractorToken = metadataOptions.keyExtractor ?? this.options.keyExtractor;
         const errorFactoryToken = metadataOptions.errorFactory ?? this.options.errorFactory;
         const optionsFactoryToken = metadataOptions.factory ?? this.options.factory;

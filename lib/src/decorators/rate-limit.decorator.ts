@@ -82,7 +82,7 @@ export function normalizeOptions(options: RateLimitOptions): RateLimitNormalized
  * @publicApi
  */
 export function RateLimit(options: OmitFields<RateLimitOptions, "bypass">) {
-    const normalizedOptions = normalizeOptions(options);
+    const normalizedOptions = normalizeOptions({ ...options, bypass: undefined });
 
     return SetMetadata<typeof RATE_LIMIT_METADATA, RateLimitNormalizedOptions>(RATE_LIMIT_METADATA, normalizedOptions);
 }
