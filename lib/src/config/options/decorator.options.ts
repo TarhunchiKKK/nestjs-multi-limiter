@@ -4,7 +4,7 @@ import type { IKeyExtractor } from "../../custom/key-extractors";
 import type { IOptionsFactory } from "../../custom/options-factories";
 import type { StrategyOptionsUnion } from "../../executors";
 import type { DeepPartial, PartialUnionMembers } from "../../shared/lib";
-import type { Scope } from "../../shared/model";
+import type { BypassStrategies, Scope } from "../../shared/model";
 import type { StrategyOptions } from "./common.options";
 
 /**
@@ -29,9 +29,14 @@ export type RateLimitOptions = {
     errorFactory?: InjectionToken<IErrorFactory>;
 
     /**
-     * Overrides default options factory
+     * Overrides default options factory.
      */
     factory?: InjectionToken<IOptionsFactory>;
+
+    /**
+     * This allows to bypass rate limiting (skip or reject).
+     */
+    bypass?: BypassStrategies;
 } & PartialUnionMembers<StrategyOptionsUnion>;
 
 export type RateLimitNormalizedOptions = Pick<RateLimitOptions, "scope" | "keyExtractor" | "errorFactory" | "factory"> & DeepPartial<StrategyOptions>;
