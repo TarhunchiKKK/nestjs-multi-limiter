@@ -5,7 +5,6 @@ import { Test } from "@nestjs/testing";
 import { Redis } from "ioredis";
 import { RateLimiterModule, type RateLimiterModuleAsyncOptions, RateLimitGuard } from "nestjs-multi-limiter";
 import request from "supertest";
-import { USER_LIMIT } from "../dynamic-configuration/providers";
 import { AppController } from "./controllers";
 
 const LIMIT = 3;
@@ -53,7 +52,7 @@ describe("Global guard", () => {
     });
 
     it("should apply guard globally", async () => {
-        for (let i = 0; i < USER_LIMIT; i++) {
+        for (let i = 0; i < LIMIT; i++) {
             await request(app.getHttpServer()).get("/app/test").expect(HttpStatus.OK);
         }
 
