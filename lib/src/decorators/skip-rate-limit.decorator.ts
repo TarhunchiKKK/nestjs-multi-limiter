@@ -1,10 +1,11 @@
-import { Reflector } from "@nestjs/core";
+import { applyDecorators } from "@nestjs/common";
+import { RateLimit } from "./rate-limit.decorator";
 
 /**
  * Decorator that excludes handler/controller from rate limiting check.
  *
  * @publicApi
  */
-export const SkipRateLimit = Reflector.createDecorator<boolean, true>({
-    transform: () => true
-});
+export function SkipRateLimit() {
+    return applyDecorators(RateLimit({ bypass: "skip" }));
+}

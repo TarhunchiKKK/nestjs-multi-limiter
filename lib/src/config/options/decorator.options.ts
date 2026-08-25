@@ -7,6 +7,7 @@ import type { DeepPartial, PartialUnionMembers } from "../../shared/lib";
 import type { BypassStrategies, Scope } from "../../shared/model";
 import type { StrategyOptions } from "./common.options";
 
+// REFACTOR: Move this type to `rate-limit.decorator.ts` file
 /**
  * Options for `RateLimit` decorator.
  *
