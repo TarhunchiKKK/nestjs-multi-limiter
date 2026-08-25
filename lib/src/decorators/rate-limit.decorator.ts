@@ -44,17 +44,36 @@ export type RateLimitNormalizedOptions = Pick<RateLimitOptions, "scope" | "bypas
     DeepPartial<StrategyOptions>;
 
 export function normalizeOptions(options: RateLimitOptions): RateLimitNormalizedOptions {
+    const result: RateLimitNormalizedOptions = {};
+
     const { bypass, scope, keyExtractor, errorFactory, factory, strategy, ...strategyOptions } = options;
 
-    return {
-        bypass: bypass,
-        scope: scope,
-        keyExtractor: keyExtractor,
-        errorFactory: errorFactory,
-        factory: factory,
-        strategy: strategy,
-        strategyOptions: strategy ? { [strategy]: strategyOptions } : undefined
-    };
+    if ("bypass" in options) {
+        result.bypass = bypass;
+    }
+
+    if ("scope" in options) {
+        result.scope = scope;
+    }
+
+    if ("keyExtractor" in options) {
+        result.keyExtractor = keyExtractor;
+    }
+
+    if ("errorFactory" in options) {
+        result.errorFactory = errorFactory;
+    }
+
+    if ("factory" in options) {
+        result.factory = factory;
+    }
+
+    if (strategy && "strategy" in options) {
+        result.strategy = strategy;
+        result.strategyOptions = { [strategy]: strategyOptions };
+    }
+
+    return result;
 }
 
 /**

@@ -86,10 +86,7 @@ describe("normalizeOptions", () => {
         for (let i = 0; i < inputs.length; i++) {
             const result = normalizeOptions(inputs[i]);
 
-            const output = outputs[i];
-
-            expect(result.strategy).toBe(output.strategy);
-            expect(result.strategyOptions?.[output.strategy]).toEqual(output.strategyOptions?.[output.strategy]);
+            expect(result).toEqual(outputs[i]);
         }
     });
 
@@ -129,19 +126,11 @@ describe("normalizeOptions", () => {
 
     it("should return empty options", () => {
         const input: RateLimitOptions = {};
-
-        const output: RateLimitNormalizedOptions = {
-            scope: undefined,
-            bypass: undefined,
-            strategy: undefined,
-            strategyOptions: undefined,
-            keyExtractor: undefined,
-            errorFactory: undefined,
-            factory: undefined
-        };
+        const output: RateLimitNormalizedOptions = {};
 
         const result = normalizeOptions(input);
 
         expect(result).toEqual(output);
+        expect(Object.keys(result)).toEqual(Object.keys(output));
     });
 });

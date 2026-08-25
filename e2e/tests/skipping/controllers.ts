@@ -26,7 +26,7 @@ export class RouteLevelController {
 @SkipRateLimit()
 export class RouteLevelExecuteController {
     @Get("test")
-    @RateLimit()
+    @RateLimit({})
     public test() {
         return { success: true };
     }
