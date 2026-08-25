@@ -3,8 +3,8 @@ import { Reflector } from "@nestjs/core";
 import type { StrategyOptions } from "./config";
 import type { ErrorFactoryOptions, IErrorFactory } from "./custom/error-factories";
 import type { IKeyExtractor } from "./custom/key-extractors";
-import { RateLimit, type RateLimitNormalizedOptions, type RateLimitOptions } from "./decorators";
-import { normalizeOptions } from "./decorators/rate-limit.decorator";
+import type { RateLimitNormalizedOptions, RateLimitOptions } from "./decorators";
+import { normalizeOptions, RATE_LIMIT_METADATA } from "./decorators/rate-limit.decorator";
 import { GUARD_OPTIONS_TOKEN } from "./di";
 import { ProvidersResolver } from "./services/providers.resolver";
 import { type BypassStrategies, getKey, type Key, type Scope } from "./shared/model";
@@ -58,13 +58,13 @@ export class RateLimitGuard implements CanActivate {
     }
 
     private getMetadataOptions(context: ExecutionContext): RateLimitNormalizedOptions {
-        const handlerOptions = this.reflector.get(RateLimit, context.getHandler());
+        const handlerOptions = this.reflector.get(RATE_LIMIT_METADATA, context.getHandler());
 
         if (handlerOptions && handlerOptions.bypass === "skip") {
             return handlerOptions;
         }
 
-        const classOptions = this.reflector.get(RateLimit, context.getClass());
+        const classOptions = this.reflector.get(RATE_LIMIT_METADATA, context.getClass());
 
         if (classOptions && classOptions.bypass === "skip") {
             return classOptions;

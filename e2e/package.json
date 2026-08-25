@@ -1,7 +1,7 @@
 {
     "name": "e2e",
     "scripts": {
-        "test:e2e": "bun test tests --preload ../scripts/test/preload.ts"
+        "test:e2e": "bun test tests --preload ../scripts/test/preload.ts "
     },
     "dependencies": {
         "@nestjs/common": "^11.0.1",

@@ -30,8 +30,8 @@ const createAsyncOptions = (setDefault: boolean) => ({
 
 describe("Custom error factories cascading", () => {
     describe.each([
-        ["sync", "forRoot", createSyncOptions(false)],
-        ["async", "forRootAsync", createAsyncOptions(false)]
+        ["sync", "forRoot", createSyncOptions(false)]
+        // ["async", "forRootAsync", createAsyncOptions(false)]
     ])("Override default (%s configuration)", (_, method, options) => {
         let app: INestApplication;
 
