@@ -1,7 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import type { RateLimiterModuleOptions } from "../../../src";
-import { DEFAULT_MODULE_OPTIONS } from "../../../src/config/default-options.constants";
-import { mergeDefaultOptions } from "../../../src/config/defaults";
+import { DEFAULT_MODULE_OPTIONS, mergeDefaultOptions } from "../../../src/config";
 import { DEFAULT_SCOPE } from "../../../src/shared/model";
 
 describe("mergeDefaultOptions", () => {

@@ -1,7 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import type { RateLimitOptions } from "../../../src";
-import { normalizeOptions } from "../../../src/config/helpers";
-import type { RateLimitNormalizedOptions } from "../../../src/config/options";
+import { normalizeOptions, type RateLimitNormalizedOptions, type RateLimitOptions } from "../../../src/decorators";
 
 describe("normalizeOptions", () => {
     it("with different strategies", () => {
