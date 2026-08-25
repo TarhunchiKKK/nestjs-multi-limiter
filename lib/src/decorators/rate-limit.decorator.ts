@@ -40,12 +40,14 @@ export type RateLimitOptions = {
     bypass?: BypassStrategies;
 } & PartialUnionMembers<StrategyOptionsUnion>;
 
-export type RateLimitNormalizedOptions = Pick<RateLimitOptions, "scope" | "keyExtractor" | "errorFactory" | "factory"> & DeepPartial<StrategyOptions>;
+export type RateLimitNormalizedOptions = Pick<RateLimitOptions, "scope" | "bypass" | "keyExtractor" | "errorFactory" | "factory"> &
+    DeepPartial<StrategyOptions>;
 
 export function normalizeOptions(options: RateLimitOptions): RateLimitNormalizedOptions {
-    const { scope, keyExtractor, errorFactory, factory, strategy, ...strategyOptions } = options;
+    const { bypass, scope, keyExtractor, errorFactory, factory, strategy, ...strategyOptions } = options;
 
     return {
+        bypass: bypass,
         scope: scope,
         keyExtractor,
         errorFactory,

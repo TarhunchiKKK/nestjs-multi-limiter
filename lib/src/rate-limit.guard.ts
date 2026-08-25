@@ -3,7 +3,7 @@ import { Reflector } from "@nestjs/core";
 import type { StrategyOptions } from "./config";
 import type { ErrorFactoryOptions, IErrorFactory } from "./custom/error-factories";
 import type { IKeyExtractor } from "./custom/key-extractors";
-import { RateLimit, type RateLimitNormalizedOptions, type RateLimitOptions, SkipRateLimit } from "./decorators";
+import { RateLimit, type RateLimitNormalizedOptions, type RateLimitOptions } from "./decorators";
 import { normalizeOptions } from "./decorators/rate-limit.decorator";
 import { GUARD_OPTIONS_TOKEN } from "./di";
 import { ProvidersResolver } from "./services/providers.resolver";
@@ -34,7 +34,7 @@ export class RateLimitGuard implements CanActivate {
 
     public async canActivate(context: ExecutionContext) {
         const metadataOptions = this.getMetadataOptions(context);
-        if (metadataOptions === true) {
+        if (metadataOptions?.bypass === "skip") {
             return true;
         }
 
@@ -51,36 +51,23 @@ export class RateLimitGuard implements CanActivate {
         return true;
     }
 
-    private getMetadataOptions(context: ExecutionContext): RateLimitOptions | true | undefined {
-        const handler = context.getHandler();
-        const targetClass = context.getClass();
+    private getMetadataOptions(context: ExecutionContext): RateLimitOptions {
+        const handlerOptions = this.reflector.get(RateLimit, context.getHandler());
 
-        const handlerSkip = this.reflector.get(SkipRateLimit, handler);
-        if (handlerSkip) {
-            return true;
+        if (handlerOptions && handlerOptions.bypass === "skip") {
+            return handlerOptions;
         }
 
-        const handlerOptions = this.reflector.get(RateLimit, handler);
-        if (handlerOptions) {
-            const classOptions = this.reflector.get(RateLimit, targetClass);
+        const classOptions = this.reflector.get(RateLimit, context.getClass());
 
-            if (!classOptions) {
-                return handlerOptions;
-            }
-
-            return {
-                ...classOptions,
-                ...handlerOptions
-            };
+        if (classOptions && classOptions.bypass === "skip") {
+            return classOptions;
         }
 
-        const classSkip = this.reflector.get(SkipRateLimit, targetClass);
-        if (classSkip) {
-            return true;
-        }
-
-        const classOptions = this.reflector.get(RateLimit, targetClass);
-        return classOptions;
+        return {
+            ...(classOptions ?? {}),
+            ...(handlerOptions ?? {})
+        };
     }
 
     private async getFinalGuardOptions(context: ExecutionContext, metadataOptions?: RateLimitOptions): Promise<RunOptions> {
