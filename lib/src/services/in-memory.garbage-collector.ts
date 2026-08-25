@@ -1,14 +1,15 @@
 import { Inject, Injectable, type OnApplicationBootstrap, type OnApplicationShutdown } from "@nestjs/common";
 import type { RateLimiterModuleFullOptions } from "../config";
 import { InjectStorage, MODULE_OPTIONS_TOKEN } from "../di";
-import type { BaseStrategyState, InMemoryStorage } from "../shared/model";
+import type { BaseStrategyInMemoryState } from "../executors";
+import type { InMemoryStorage } from "../shared/model";
 
 @Injectable()
 export class InMemoryGarbageCollector implements OnApplicationBootstrap, OnApplicationShutdown {
     private intervalRef: NodeJS.Timeout | null = null;
 
     public constructor(
-        @InjectStorage() private readonly storage: InMemoryStorage<BaseStrategyState>,
+        @InjectStorage() private readonly storage: InMemoryStorage<BaseStrategyInMemoryState>,
         @Inject(MODULE_OPTIONS_TOKEN) private readonly options: RateLimiterModuleFullOptions
     ) {}
 

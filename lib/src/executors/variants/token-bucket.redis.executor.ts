@@ -1,11 +1,10 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { Inject } from "@nestjs/common";
-import type { RateLimiterModuleFullOptions } from "../../../config";
-import { InjectStorage, MODULE_OPTIONS_TOKEN } from "../../../di";
-import type { IRedisAdapter, Key } from "../../../shared/model";
-import { AbstractRedisExecutor, Executor } from "../../lib";
-import type { TokenBucketOptions } from "./types";
+import type { RateLimiterModuleFullOptions } from "../../config";
+import { InjectStorage, MODULE_OPTIONS_TOKEN } from "../../di";
+import type { IRedisAdapter, Key, TokenBucketOptions } from "../../shared/model";
+import { AbstractRedisExecutor, Executor } from "../lib";
 
 @Executor({ strategy: "token-bucket", storage: "redis" })
 export class TokenBucketRedisExecutor extends AbstractRedisExecutor<TokenBucketOptions> {

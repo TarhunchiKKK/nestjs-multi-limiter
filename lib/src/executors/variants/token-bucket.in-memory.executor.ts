@@ -1,7 +1,18 @@
-import { InjectStorage } from "../../../di";
-import type { InMemoryStorage, Key } from "../../../shared/model";
-import { Executor, type IExecutor } from "../../lib";
-import type { TokenBucketOptions, TokenBucketState } from "./types";
+import { InjectStorage } from "../../di";
+import type { InMemoryStorage, Key, TokenBucketOptions } from "../../shared/model";
+import { type BaseStrategyInMemoryState, Executor, type IExecutor } from "../lib";
+
+export type TokenBucketState = BaseStrategyInMemoryState & {
+    /**
+     * Current tokens count.
+     */
+    tokens: number;
+
+    /**
+     * Timestamp of last tokens refilling.
+     */
+    lastRefilled: number;
+};
 
 @Executor({ strategy: "token-bucket", storage: "in-memory" })
 export class TokenBucketInMemoryExecutor implements IExecutor<TokenBucketOptions> {

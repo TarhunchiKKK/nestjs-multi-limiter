@@ -1,7 +1,10 @@
-import { InjectStorage } from "../../../di";
-import type { InMemoryStorage, Key } from "../../../shared/model";
-import { Executor, type IExecutor } from "../../lib";
-import type { SlidingWindowLogOptions, SlidingWindowLogState } from "./types";
+import { InjectStorage } from "../../di";
+import type { InMemoryStorage, Key, SlidingWindowLogOptions } from "../../shared/model";
+import { type BaseStrategyInMemoryState, Executor, type IExecutor } from "../lib";
+
+export type SlidingWindowLogState = BaseStrategyInMemoryState & {
+    timestamps: number[];
+};
 
 @Executor({ strategy: "sliding-window-log", storage: "in-memory" })
 export class SlidingWindowLogInMemoryExecutor implements IExecutor<SlidingWindowLogOptions> {

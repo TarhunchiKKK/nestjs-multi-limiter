@@ -1,7 +1,23 @@
-import { InjectStorage } from "../../../di";
-import type { InMemoryStorage, Key } from "../../../shared/model";
-import { Executor, type IExecutor } from "../../lib";
-import type { SlidingWindowCounterOptions, SlidingWindowCounterState } from "./types";
+import { InjectStorage } from "../../di";
+import type { InMemoryStorage, Key, SlidingWindowCounterOptions } from "../../shared/model";
+import { type BaseStrategyInMemoryState, Executor, type IExecutor } from "../lib";
+
+export type SlidingWindowCounterState = BaseStrategyInMemoryState & {
+    /**
+     * Current window start timestamp.
+     */
+    currentWindowStart: number;
+
+    /**
+     * Current window requests counter.
+     */
+    currentCount: number;
+
+    /**
+     * Previous window requests counter.
+     */
+    previousCount: number;
+};
 
 @Executor({ strategy: "sliding-window-counter", storage: "in-memory" })
 export class SlidingWindowCounterInMemoryExecutor implements IExecutor<SlidingWindowCounterOptions> {

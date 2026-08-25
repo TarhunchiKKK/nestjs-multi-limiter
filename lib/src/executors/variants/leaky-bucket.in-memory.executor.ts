@@ -1,7 +1,18 @@
-import { InjectStorage } from "../../../di";
-import type { InMemoryStorage, Key } from "../../../shared/model";
-import { Executor, type IExecutor } from "../../lib";
-import type { LeakyBucketOptions, LeakyBucketState } from "./types";
+import { InjectStorage } from "../../di";
+import type { InMemoryStorage, Key, LeakyBucketOptions } from "../../shared/model";
+import { type BaseStrategyInMemoryState, Executor, type IExecutor } from "../lib";
+
+export type LeakyBucketState = BaseStrategyInMemoryState & {
+    /**
+     * Current "water" level (requests count in queue).
+     */
+    water: number;
+
+    /**
+     * Timestamp of the last overflow recalculation.
+     */
+    lastLeaked: number;
+};
 
 @Executor({ strategy: "leaky-bucket", storage: "in-memory" })
 export class LeakyBucketInMemoryExecutor implements IExecutor<LeakyBucketOptions> {

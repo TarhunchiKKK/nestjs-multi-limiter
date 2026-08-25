@@ -3,8 +3,7 @@ import type { InjectionToken, ModuleMetadata, Type } from "@nestjs/common";
 import type { IErrorFactory } from "../custom/error-factories";
 import type { IKeyExtractor } from "../custom/key-extractors";
 import type { IOptionsFactory } from "../custom/options-factories";
-import type { StrategyOptionsMap } from "../executors";
-import type { Scope, Strategies } from "../shared/model";
+import type { Scope, Strategies, StrategyOptionsMap } from "../shared/model";
 import type { StorageOptions } from "./common-options.types";
 
 /**

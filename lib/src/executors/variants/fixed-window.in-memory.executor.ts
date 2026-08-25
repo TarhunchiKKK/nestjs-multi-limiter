@@ -1,7 +1,18 @@
-import { InjectStorage } from "../../../di";
-import type { InMemoryStorage, Key } from "../../../shared/model";
-import { Executor, type IExecutor } from "../../lib";
-import type { FixedWindowOptions, FixedWindowState } from "./types";
+import { InjectStorage } from "../../di";
+import type { FixedWindowOptions, InMemoryStorage, Key } from "../../shared/model";
+import { type BaseStrategyInMemoryState, Executor, type IExecutor } from "../lib";
+
+export type FixedWindowState = BaseStrategyInMemoryState & {
+    /**
+     * Current allowed requests count.
+     */
+    count: number;
+
+    /**
+     * Last reset timestamp.
+     */
+    resetTime: number;
+};
 
 @Executor({ strategy: "fixed-window", storage: "in-memory" })
 export class FixedWindowInMemoryExecutor implements IExecutor<FixedWindowOptions> {

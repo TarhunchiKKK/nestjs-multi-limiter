@@ -1,6 +1,5 @@
 import type { ExecutionContext } from "@nestjs/common";
-import type { StrategyOptionsMap } from "../../executors";
-import type { Key, Scope, Strategies } from "../../shared/model";
+import type { Key, Scope, Strategies, StrategyOptionsMap } from "../../shared/model";
 
 /**
  * Options for the custom rate limiting error creating.

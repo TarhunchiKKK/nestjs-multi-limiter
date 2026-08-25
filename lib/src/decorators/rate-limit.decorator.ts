@@ -4,9 +4,8 @@ import type { StrategyOptions } from "../config";
 import type { IErrorFactory } from "../custom/error-factories";
 import type { IKeyExtractor } from "../custom/key-extractors";
 import type { IOptionsFactory } from "../custom/options-factories";
-import type { StrategyOptionsUnion } from "../executors";
 import type { DeepPartial, PartialUnionMembers } from "../shared/lib";
-import type { BypassStrategies, Scope } from "../shared/model";
+import type { BypassStrategies, Scope, StrategyOptionsUnion } from "../shared/model";
 
 /**
  * Options for `RateLimit` decorator.

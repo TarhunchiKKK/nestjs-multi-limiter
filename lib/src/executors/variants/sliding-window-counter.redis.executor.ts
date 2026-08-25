@@ -1,11 +1,10 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { Inject } from "@nestjs/common";
-import type { RateLimiterModuleFullOptions } from "../../../config";
-import { InjectStorage, MODULE_OPTIONS_TOKEN } from "../../../di";
-import type { IRedisAdapter, Key } from "../../../shared/model";
-import { AbstractRedisExecutor, Executor } from "../../lib";
-import type { SlidingWindowCounterOptions } from "./types";
+import type { RateLimiterModuleFullOptions } from "../../config";
+import { InjectStorage, MODULE_OPTIONS_TOKEN } from "../../di";
+import type { IRedisAdapter, Key, SlidingWindowCounterOptions } from "../../shared/model";
+import { AbstractRedisExecutor, Executor } from "../lib";
 
 @Executor({ strategy: "sliding-window-counter", storage: "redis" })
 export class SlidingWindowCounterRedisExecutor extends AbstractRedisExecutor<SlidingWindowCounterOptions> {

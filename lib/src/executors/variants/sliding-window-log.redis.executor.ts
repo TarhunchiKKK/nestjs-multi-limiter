@@ -1,12 +1,11 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { Inject } from "@nestjs/common";
-import type { RateLimiterModuleFullOptions } from "../../../config";
-import { InjectStorage, MODULE_OPTIONS_TOKEN } from "../../../di";
-import { generateSalt } from "../../../shared/lib";
-import type { IRedisAdapter, Key } from "../../../shared/model";
-import { AbstractRedisExecutor, Executor } from "../../lib";
-import type { SlidingWindowLogOptions } from "./types";
+import type { RateLimiterModuleFullOptions } from "../../config";
+import { InjectStorage, MODULE_OPTIONS_TOKEN } from "../../di";
+import { generateSalt } from "../../shared/lib";
+import type { IRedisAdapter, Key, SlidingWindowLogOptions } from "../../shared/model";
+import { AbstractRedisExecutor, Executor } from "../lib";
 
 @Executor({ strategy: "sliding-window-log", storage: "redis" })
 export class SlidingWindowLogRedisExecutor extends AbstractRedisExecutor<SlidingWindowLogOptions> {

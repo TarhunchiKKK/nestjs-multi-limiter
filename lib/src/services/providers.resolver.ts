@@ -6,8 +6,8 @@ import { ERROR_FACTORY_METADATA, type IErrorFactory } from "../custom/error-fact
 import { type IKeyExtractor, KEY_EXTRACTOR_METADATA } from "../custom/key-extractors";
 import { type IOptionsFactory, OPTIONS_FACTORY_METADATA } from "../custom/options-factories";
 import { MODULE_OPTIONS_TOKEN } from "../di";
-import { EXECUTOR_METADATA_KEY, type ExecutorMetadata, type IExecutor, type StrategyOptionsMap } from "../executors";
-import type { Strategies } from "../shared/model";
+import { EXECUTOR_METADATA_KEY, type ExecutorMetadata, type IExecutor } from "../executors";
+import type { Strategies, StrategyOptionsMap } from "../shared/model";
 
 @Injectable()
 export class ProvidersResolver implements OnModuleInit {
