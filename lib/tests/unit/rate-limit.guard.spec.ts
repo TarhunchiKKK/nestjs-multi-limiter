@@ -3,7 +3,7 @@ import type { ExecutionContext } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { Test } from "@nestjs/testing";
 import { RateLimiterModule, RateLimitGuard } from "../../src";
-import { DEFAULT_MODULE_OPTIONS } from "../../src/config/defaults/default-options.constants";
+import { DEFAULT_MODULE_OPTIONS } from "../../src/config/default-options.constants";
 import type { RateLimitGuardOptions, RateLimitOptions } from "../../src/config/options";
 import { BuiltinKeyExtractor } from "../../src/custom/key-extractors";
 import { GUARD_OPTIONS_TOKEN } from "../../src/di";

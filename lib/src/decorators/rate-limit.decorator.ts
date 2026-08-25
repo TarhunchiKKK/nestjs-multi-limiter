@@ -1,6 +1,6 @@
 import type { InjectionToken } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import type { StrategyOptions } from "../config/options";
+import type { StrategyOptions } from "../config";
 import type { IErrorFactory } from "../custom/error-factories";
 import type { IKeyExtractor } from "../custom/key-extractors";
 import type { IOptionsFactory } from "../custom/options-factories";

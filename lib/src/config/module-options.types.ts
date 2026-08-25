@@ -1,11 +1,11 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: `any` type is necessary for real type providing */
 import type { InjectionToken, ModuleMetadata, Type } from "@nestjs/common";
-import type { IErrorFactory } from "../../custom/error-factories";
-import type { IKeyExtractor } from "../../custom/key-extractors";
-import type { IOptionsFactory } from "../../custom/options-factories";
-import type { AllStrategiesOptions } from "../../executors";
-import type { Scope, Strategies } from "../../shared/model";
-import type { StorageOptions } from "./common.options";
+import type { IErrorFactory } from "../custom/error-factories";
+import type { IKeyExtractor } from "../custom/key-extractors";
+import type { IOptionsFactory } from "../custom/options-factories";
+import type { AllStrategiesOptions } from "../executors";
+import type { Scope, Strategies } from "../shared/model";
+import type { StorageOptions } from "./common-options.types";
 
 /**
  * Sync options for `RateLimiterModule` configuration.

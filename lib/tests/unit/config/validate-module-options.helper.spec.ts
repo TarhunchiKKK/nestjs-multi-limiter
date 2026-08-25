@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { DEFAULT_MODULE_OPTIONS } from "../../../src/config/defaults/default-options.constants";
+import { DEFAULT_MODULE_OPTIONS } from "../../../src/config/default-options.constants";
 import { validateModuleOptions } from "../../../src/config/helpers";
 import type { RateLimiterModuleFullOptions, StorageOptions } from "../../../src/config/options";
 import { RateLimiterModuleConfigurationError } from "../../../src/shared/errors";

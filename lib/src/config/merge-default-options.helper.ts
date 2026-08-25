@@ -1,6 +1,7 @@
-import { UnknownRateLimitStorageError } from "../../shared/errors";
-import type { RateLimiterModuleFullOptions, RateLimiterModuleOptions, StorageOptions } from "../options";
+import { UnknownRateLimitStorageError } from "../shared/errors";
+import type { StorageOptions } from "./common-options.types";
 import { DEFAULT_MODULE_OPTIONS, DEFAULT_STORAGE_OPTIONS } from "./default-options.constants";
+import type { RateLimiterModuleFullOptions, RateLimiterModuleOptions } from "./module-options.types";
 
 export function mergeDefaultOptions(options: RateLimiterModuleOptions) {
     const storageOptions = mergeStorageOptions(options);

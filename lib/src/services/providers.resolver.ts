@@ -1,7 +1,7 @@
 import { Inject, Injectable, type InjectionToken, type OnModuleInit } from "@nestjs/common";
 import { DiscoveryService, ModuleRef, Reflector } from "@nestjs/core";
 import type { InstanceWrapper } from "@nestjs/core/injector/instance-wrapper";
-import type { RateLimiterModuleOptions } from "../config/options";
+import type { RateLimiterModuleOptions } from "../config";
 import { ERROR_FACTORY_METADATA, type IErrorFactory } from "../custom/error-factories";
 import { type IKeyExtractor, KEY_EXTRACTOR_METADATA } from "../custom/key-extractors";
 import { type IOptionsFactory, OPTIONS_FACTORY_METADATA } from "../custom/options-factories";

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { Test } from "@nestjs/testing";
-import { DEFAULT_MODULE_OPTIONS, DEFAULT_STORAGE_OPTIONS } from "../../../../src/config/defaults/default-options.constants";
+import { DEFAULT_MODULE_OPTIONS, DEFAULT_STORAGE_OPTIONS } from "../../../../src/config/default-options.constants";
 import { MODULE_OPTIONS_TOKEN, STORAGE_TOKEN } from "../../../../src/di";
 import { type LeakyBucketOptions, LeakyBucketRedisExecutor } from "../../../../src/executors";
 import { clearMock, createRedisMock, MS_IN_MINUTE } from "../../../shared";

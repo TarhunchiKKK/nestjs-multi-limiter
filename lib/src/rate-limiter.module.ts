@@ -1,8 +1,13 @@
 import { type DynamicModule, type FactoryProvider, Module, type Provider } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
-import { mergeDefaultOptions } from "./config/defaults";
-import { validateModuleOptions } from "./config/helpers";
-import type { IRateLimiterModuleOptionsFactory, RateLimiterModuleAsyncOptions, RateLimiterModuleFullOptions, RateLimiterModuleOptions } from "./config/options";
+import {
+    type IRateLimiterModuleOptionsFactory,
+    mergeDefaultOptions,
+    type RateLimiterModuleAsyncOptions,
+    type RateLimiterModuleFullOptions,
+    type RateLimiterModuleOptions,
+    validateModuleOptions
+} from "./config";
 import { BuiltinErrorFactory } from "./custom/error-factories";
 import { BuiltinKeyExtractor } from "./custom/key-extractors";
 import { GUARD_OPTIONS_TOKEN, MODULE_OPTIONS_TOKEN, STORAGE_TOKEN } from "./di";

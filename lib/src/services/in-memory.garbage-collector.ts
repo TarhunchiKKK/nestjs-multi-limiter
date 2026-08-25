@@ -1,5 +1,5 @@
 import { Inject, Injectable, type OnApplicationBootstrap, type OnApplicationShutdown } from "@nestjs/common";
-import type { RateLimiterModuleFullOptions } from "../config/options";
+import type { RateLimiterModuleFullOptions } from "../config";
 import { InjectStorage, MODULE_OPTIONS_TOKEN } from "../di";
 import type { BaseStrategyState, InMemoryStorage } from "../shared/model";
 

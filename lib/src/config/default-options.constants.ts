@@ -1,8 +1,9 @@
-import { BuiltinErrorFactory } from "../../custom/error-factories";
-import { BuiltinKeyExtractor } from "../../custom/key-extractors";
-import { MS_IN_MINUTE } from "../../shared/lib";
-import { DEFAULT_SCOPE } from "../../shared/model";
-import type { RateLimiterModuleFullOptions, StorageOptions } from "../options";
+import { BuiltinErrorFactory } from "../custom/error-factories";
+import { BuiltinKeyExtractor } from "../custom/key-extractors";
+import { MS_IN_MINUTE } from "../shared/lib";
+import { DEFAULT_SCOPE } from "../shared/model";
+import type { StorageOptions } from "./common-options.types";
+import type { RateLimiterModuleFullOptions } from "./module-options.types";
 
 export const DEFAULT_STORAGE_OPTIONS = {
     IN_MEMORY: {

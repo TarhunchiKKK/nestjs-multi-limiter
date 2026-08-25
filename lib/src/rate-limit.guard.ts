@@ -1,6 +1,6 @@
 import { type CanActivate, type ExecutionContext, Inject, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import type { StrategyOptions } from "./config/options";
+import type { StrategyOptions } from "./config";
 import type { ErrorFactoryOptions, IErrorFactory } from "./custom/error-factories";
 import type { IKeyExtractor } from "./custom/key-extractors";
 import { RateLimit, type RateLimitNormalizedOptions, type RateLimitOptions, SkipRateLimit } from "./decorators";

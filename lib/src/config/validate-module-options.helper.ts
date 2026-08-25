@@ -1,6 +1,6 @@
-import { RateLimiterModuleConfigurationError } from "../../shared/errors";
-import type { RedisFailingStrategies, Strategies } from "../../shared/model";
-import type { RateLimiterModuleFullOptions } from "../options";
+import { RateLimiterModuleConfigurationError } from "../shared/errors";
+import type { RedisFailingStrategies, Strategies } from "../shared/model";
+import type { RateLimiterModuleFullOptions } from "./module-options.types";
 
 export function validateModuleOptions(options: RateLimiterModuleFullOptions): asserts options is RateLimiterModuleFullOptions {
     const errors: string[] = [];

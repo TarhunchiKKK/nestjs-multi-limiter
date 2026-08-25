@@ -1,6 +1,6 @@
-import type { AllStrategiesOptions } from "../../executors";
-import type { ExtractMember } from "../../shared/lib";
-import type { IRedisAdapter, RedisFailingStrategies, StorageTypes, Strategies } from "../../shared/model";
+import type { AllStrategiesOptions } from "../executors";
+import type { ExtractMember } from "../shared/lib";
+import type { IRedisAdapter, RedisFailingStrategies, StorageTypes, Strategies } from "../shared/model";
 
 /**
  * Options for rate limiting data storage.
