@@ -1,11 +1,12 @@
-import type { InjectionToken } from "@nestjs/common";
-import { Reflector } from "@nestjs/core";
+import { type InjectionToken, SetMetadata } from "@nestjs/common";
 import type { StrategyOptions } from "../config";
 import type { IErrorFactory } from "../custom/error-factories";
 import type { IKeyExtractor } from "../custom/key-extractors";
-import type { IOptionsFactory } from "../custom/options-factories";
-import type { DeepPartial, PartialUnionMembers } from "../shared/lib";
+import { type IOptionsFactory, OptionsFactory } from "../custom/options-factories";
+import type { DeepPartial, OmitFields, PartialUnionMembers } from "../shared/lib";
 import type { BypassStrategies, Scope, StrategyOptionsUnion } from "../shared/model";
+
+export const RATE_LIMIT_METADATA = "_rate_limit_metadata";
 
 /**
  * Options for `RateLimit` decorator.
@@ -46,12 +47,12 @@ export function normalizeOptions(options: RateLimitOptions): RateLimitNormalized
     const { bypass, scope, keyExtractor, errorFactory, factory, strategy, ...strategyOptions } = options;
 
     return {
-        bypass: bypass,
+        bypass: undefined,
         scope: scope,
-        keyExtractor,
-        errorFactory,
-        factory,
-        strategy,
+        keyExtractor: keyExtractor,
+        errorFactory: OptionsFactory,
+        factory: factory,
+        strategy: strategy,
         strategyOptions: strategy ? { [strategy]: strategyOptions } : undefined
     };
 }
@@ -61,4 +62,8 @@ export function normalizeOptions(options: RateLimitOptions): RateLimitNormalized
  *
  * @publicApi
  */
-export const RateLimit = Reflector.createDecorator<RateLimitOptions>();
+export function RateLimit(options: OmitFields<RateLimitOptions, "bypass">) {
+    const normalizedOptions = normalizeOptions(options);
+
+    return SetMetadata<typeof RATE_LIMIT_METADATA, RateLimitNormalizedOptions>(RATE_LIMIT_METADATA, normalizedOptions);
+}

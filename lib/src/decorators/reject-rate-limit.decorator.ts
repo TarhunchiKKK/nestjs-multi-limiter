@@ -1,5 +1,5 @@
-import { applyDecorators } from "@nestjs/common";
-import { RateLimit } from "./rate-limit.decorator";
+import { SetMetadata } from "@nestjs/common";
+import { RATE_LIMIT_METADATA, type RateLimitNormalizedOptions } from "./rate-limit.decorator";
 
 /**
  * Decorator tah forcibly rejects rate limiting for handler/controller.
@@ -7,5 +7,5 @@ import { RateLimit } from "./rate-limit.decorator";
  * @publicApi
  */
 export function RejectRateLimit() {
-    return applyDecorators(RateLimit({ bypass: "reject" }));
+    return SetMetadata<typeof RATE_LIMIT_METADATA, RateLimitNormalizedOptions>(RATE_LIMIT_METADATA, { bypass: "reject" });
 }

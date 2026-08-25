@@ -57,7 +57,7 @@ export class RateLimitGuard implements CanActivate {
         return true;
     }
 
-    private getMetadataOptions(context: ExecutionContext): RateLimitOptions {
+    private getMetadataOptions(context: ExecutionContext): RateLimitNormalizedOptions {
         const handlerOptions = this.reflector.get(RateLimit, context.getHandler());
 
         if (handlerOptions && handlerOptions.bypass === "skip") {
@@ -76,7 +76,7 @@ export class RateLimitGuard implements CanActivate {
         };
     }
 
-    private async getFinalGuardOptions(context: ExecutionContext, metadataOptions: RateLimitOptions): Promise<RunOptions> {
+    private async getFinalGuardOptions(context: ExecutionContext, metadataOptions: RateLimitNormalizedOptions): Promise<RunOptions> {
         // FIX: Remove commented code.
         // if (!metadataOptions) {
         //     const factory = this.options.factory ? await this.providersResolver.getOptionsFactory(this.options.factory) : undefined;
