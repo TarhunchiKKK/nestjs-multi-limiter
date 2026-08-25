@@ -3,7 +3,7 @@ import type { InjectionToken, ModuleMetadata, Type } from "@nestjs/common";
 import type { IErrorFactory } from "../custom/error-factories";
 import type { IKeyExtractor } from "../custom/key-extractors";
 import type { IOptionsFactory } from "../custom/options-factories";
-import type { AllStrategiesOptions } from "../executors";
+import type { StrategyOptionsMap } from "../executors";
 import type { Scope, Strategies } from "../shared/model";
 import type { StorageOptions } from "./common-options.types";
 
@@ -32,11 +32,11 @@ export type RateLimiterModuleOptions = {
      * Default options for different algorithms.
      */
     strategyOptions?: {
-        fixedWindow?: Partial<AllStrategiesOptions["fixed-window"]>;
-        tokenBucket?: Partial<AllStrategiesOptions["token-bucket"]>;
-        slidingWindowCounter?: Partial<AllStrategiesOptions["sliding-window-counter"]>;
-        slidingWindowLog?: Partial<AllStrategiesOptions["sliding-window-log"]>;
-        leakyBucket?: Partial<AllStrategiesOptions["leaky-bucket"]>;
+        fixedWindow?: Partial<StrategyOptionsMap["fixed-window"]>;
+        tokenBucket?: Partial<StrategyOptionsMap["token-bucket"]>;
+        slidingWindowCounter?: Partial<StrategyOptionsMap["sliding-window-counter"]>;
+        slidingWindowLog?: Partial<StrategyOptionsMap["sliding-window-log"]>;
+        leakyBucket?: Partial<StrategyOptionsMap["leaky-bucket"]>;
     };
 
     /**
@@ -75,11 +75,11 @@ export type RateLimiterModuleFullOptions = {
 
     strategy: Strategies;
     strategyOptions: {
-        fixedWindow: AllStrategiesOptions["fixed-window"];
-        tokenBucket: AllStrategiesOptions["token-bucket"];
-        slidingWindowCounter: AllStrategiesOptions["sliding-window-counter"];
-        slidingWindowLog: AllStrategiesOptions["sliding-window-log"];
-        leakyBucket: AllStrategiesOptions["leaky-bucket"];
+        fixedWindow: StrategyOptionsMap["fixed-window"];
+        tokenBucket: StrategyOptionsMap["token-bucket"];
+        slidingWindowCounter: StrategyOptionsMap["sliding-window-counter"];
+        slidingWindowLog: StrategyOptionsMap["sliding-window-log"];
+        leakyBucket: StrategyOptionsMap["leaky-bucket"];
     };
 
     defaultProviders: {

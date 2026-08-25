@@ -6,7 +6,7 @@ import type { SlidingWindowCounterOptions } from "../variants/sliding-window-cou
 import type { SlidingWindowLogOptions } from "../variants/sliding-window-log";
 import type { TokenBucketOptions } from "../variants/token-bucket";
 
-export type AllStrategiesOptions = {
+export type StrategyOptionsMap = {
     "fixed-window": FixedWindowOptions;
     "token-bucket": TokenBucketOptions;
     "sliding-window-counter": SlidingWindowCounterOptions;

@@ -1,4 +1,4 @@
-import type { AllStrategiesOptions } from "../executors";
+import type { StrategyOptionsMap } from "../executors";
 import type { ExtractMember } from "../shared/lib";
 import type { IRedisAdapter, RedisFailingStrategies, StorageTypes, Strategies } from "../shared/model";
 
@@ -36,5 +36,6 @@ export type StorageOptions =
 
 export type StrategyOptions = {
     strategy: Strategies;
-    strategyOptions: AllStrategiesOptions;
+
+    strategyOptions: StrategyOptionsMap;
 };

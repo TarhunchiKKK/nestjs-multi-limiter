@@ -1,5 +1,5 @@
 import type { ExecutionContext } from "@nestjs/common";
-import type { AllStrategiesOptions } from "../../executors";
+import type { StrategyOptionsMap } from "../../executors";
 import type { Key, Scope, Strategies } from "../../shared/model";
 
 /**
@@ -27,7 +27,7 @@ export type ErrorFactoryOptions = {
     /**
      * Configuration for selected rate limiting algorithm.
      */
-    strategyOptions: AllStrategiesOptions[keyof AllStrategiesOptions];
+    strategyOptions: StrategyOptionsMap[keyof StrategyOptionsMap];
 };
 
 /**
