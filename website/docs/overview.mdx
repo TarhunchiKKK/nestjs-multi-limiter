@@ -47,6 +47,7 @@
 - **Different Storages**: In-memory (`Map`) and <a href="https://redis.io/?ref=soroushjp.com">Redis</a> (With <a href="https://www.lua.org/">Lua</a> scripts) storages.
 - **Runtime Configuration:** The system of options factories allows dynamically configure limits at runtime per request context (e.g., based on JWT user roles or pricing tiers).
 - **Driver-Agnostic Storage:** <a href="https://redis.io/?ref=soroushjp.com">Redis</a> integration is completely decoupled from specific npm packages (like `ioredis` or `node-redis`).   
+- **Redis Failure Handling:** _Fail-Open_, _Fail-Close_ and _Fail-Fast_ strategies
 - **Race-Condition Safe**: Powered Redis storage by execution <a href="https://www.lua.org/">Lua</a> scripts, preventing race conditions in multi-instant deployments.
 - **Protocol Agnosticism:** Ability to implement custom key extractors and error factories allows you to integrate the library with any protocol.
 - **Zero Memory Leaks:** An automatic background garbage collection provider for the In-Memory storage (`Map`), fully tied to <a href="http://nestjs.com/">NestJS</a> lifecycle hooks.
