@@ -1,30 +1,32 @@
 import { afterEach, beforeEach, describe, it } from "bun:test";
 import { HttpStatus, type INestApplication } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
-import { RateLimiterModule } from "nestjs-multi-limiter";
+import { RateLimiterModule, type RateLimiterModuleAsyncOptions } from "nestjs-multi-limiter";
 import request from "supertest";
 import { ControllerLevelController, RouteLevelController, RouteLevelExecuteController } from "./controllers";
 
 const LIMIT = 3;
+
+const options: RateLimiterModuleAsyncOptions = {
+    useFactory: () => ({
+        storage: {
+            type: "in-memory"
+        },
+        strategy: "fixed-window",
+        strategyOptions: {
+            fixedWindow: {
+                limit: LIMIT
+            }
+        }
+    })
+};
 
 describe("Skipping", () => {
     let app: INestApplication;
 
     beforeEach(async () => {
         const moduleFixture = await Test.createTestingModule({
-            imports: [
-                RateLimiterModule.forRoot({
-                    storage: {
-                        type: "in-memory"
-                    },
-                    strategy: "fixed-window",
-                    strategyOptions: {
-                        fixedWindow: {
-                            limit: LIMIT
-                        }
-                    }
-                })
-            ],
+            imports: [RateLimiterModule.forRootAsync(options)],
             controllers: [ControllerLevelController, RouteLevelController, RouteLevelExecuteController]
         }).compile();
 

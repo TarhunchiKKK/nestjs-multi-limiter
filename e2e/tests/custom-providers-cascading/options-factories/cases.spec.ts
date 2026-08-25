@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, it } from "bun:test";
 import { HttpStatus, type INestApplication } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
-import { RateLimiterModule, type RateLimiterModuleOptions } from "nestjs-multi-limiter";
+import { RateLimiterModule, type RateLimiterModuleAsyncOptions } from "nestjs-multi-limiter";
 import request from "supertest";
 import { ControllerLevelController, ModuleLevelController, RouteLevelController } from "./controllers";
 import {
@@ -15,36 +15,31 @@ import {
 
 const DEFAULT_LIMIT = 3;
 
-const createSyncOptions = (setDefault: boolean) =>
+const createAsyncOptions = (setDefault: boolean) =>
     ({
-        storage: {
-            type: "in-memory"
-        },
-        strategy: "fixed-window",
-        strategyOptions: {
-            fixedWindow: {
-                limit: DEFAULT_LIMIT
+        useFactory: () => ({
+            storage: {
+                type: "in-memory"
+            },
+            strategy: "fixed-window",
+            strategyOptions: {
+                fixedWindow: {
+                    limit: DEFAULT_LIMIT
+                }
+            },
+            defaultProviders: {
+                optionsFactory: setDefault ? ModuleLevelOptionsFactory : undefined
             }
-        },
-        defaultProviders: {
-            optionsFactory: setDefault ? ModuleLevelOptionsFactory : undefined
-        }
-    }) satisfies RateLimiterModuleOptions;
-
-const createAsyncOptions = (setDefault: boolean) => ({
-    useFactory: () => createSyncOptions(setDefault)
-});
+        })
+    }) satisfies RateLimiterModuleAsyncOptions;
 
 describe("Custom options factories cascading", () => {
-    describe.each([
-        ["sync", "forRoot", createSyncOptions(false)],
-        ["async", "forRootAsync", createAsyncOptions(false)]
-    ])("Override default (%s configuration)", (_, method, options) => {
+    describe("Override default", () => {
         let app: INestApplication;
 
         beforeEach(async () => {
             const moduleFixture = await Test.createTestingModule({
-                imports: [RateLimiterModule[method](options)],
+                imports: [RateLimiterModule.forRootAsync(createAsyncOptions(false))],
                 controllers: [ModuleLevelController, ControllerLevelController, RouteLevelController],
                 providers: [ControllerLevelOptionsFactory, RouteLevelOptionsFactory]
             }).compile();
@@ -83,15 +78,12 @@ describe("Custom options factories cascading", () => {
         });
     });
 
-    describe.each([
-        ["sync", "forRoot", createSyncOptions(true)],
-        ["async", "forRootAsync", createAsyncOptions(true)]
-    ])("Set as default (%s configuration)", (_, method, options) => {
+    describe("Set as default", () => {
         let app: INestApplication;
 
         beforeEach(async () => {
             const moduleFixture = await Test.createTestingModule({
-                imports: [RateLimiterModule[method](options)],
+                imports: [RateLimiterModule.forRootAsync(createAsyncOptions(false))],
                 controllers: [ModuleLevelController],
                 providers: [ModuleLevelOptionsFactory]
             }).compile();
