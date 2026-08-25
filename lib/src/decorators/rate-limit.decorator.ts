@@ -2,7 +2,7 @@ import { type InjectionToken, SetMetadata } from "@nestjs/common";
 import type { StrategyOptions } from "../config";
 import type { IErrorFactory } from "../custom/error-factories";
 import type { IKeyExtractor } from "../custom/key-extractors";
-import { type IOptionsFactory, OptionsFactory } from "../custom/options-factories";
+import type { IOptionsFactory } from "../custom/options-factories";
 import type { DeepPartial, OmitFields, PartialUnionMembers } from "../shared/lib";
 import type { BypassStrategies, Scope, StrategyOptionsUnion } from "../shared/model";
 
@@ -47,10 +47,10 @@ export function normalizeOptions(options: RateLimitOptions): RateLimitNormalized
     const { bypass, scope, keyExtractor, errorFactory, factory, strategy, ...strategyOptions } = options;
 
     return {
-        bypass: undefined,
+        bypass: bypass,
         scope: scope,
         keyExtractor: keyExtractor,
-        errorFactory: OptionsFactory,
+        errorFactory: errorFactory,
         factory: factory,
         strategy: strategy,
         strategyOptions: strategy ? { [strategy]: strategyOptions } : undefined

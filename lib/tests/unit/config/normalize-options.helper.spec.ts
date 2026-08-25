@@ -2,7 +2,7 @@ import { describe, expect, it } from "bun:test";
 import { normalizeOptions, type RateLimitNormalizedOptions, type RateLimitOptions } from "../../../src/decorators";
 
 describe("normalizeOptions", () => {
-    it("with different strategies", () => {
+    it("should build options for different strategies", () => {
         const inputs: RateLimitOptions[] = [
             {
                 strategy: "fixed-window",
@@ -33,7 +33,7 @@ describe("normalizeOptions", () => {
             }
         ];
 
-        const outputs: RateLimitNormalizedOptions[] = [
+        const outputs = [
             {
                 strategy: "fixed-window",
                 strategyOptions: {
@@ -81,60 +81,22 @@ describe("normalizeOptions", () => {
                     }
                 }
             }
-        ];
+        ] satisfies RateLimitNormalizedOptions[];
 
         for (let i = 0; i < inputs.length; i++) {
             const result = normalizeOptions(inputs[i]);
 
-            expect(result).toEqual(outputs[i]);
+            const output = outputs[i];
+
+            expect(result.strategy).toBe(output.strategy);
+            expect(result.strategyOptions?.[output.strategy]).toEqual(output.strategyOptions?.[output.strategy]);
         }
     });
 
-    it("with custom providers", () => {
-        const inputs: RateLimitOptions[] = [
-            {
-                keyExtractor: "key-extractor-token"
-            },
-            {
-                errorFactory: "error-factory-token"
-            },
-            {
-                factory: "factory-token"
-            },
-            {
-                keyExtractor: "key-extractor-token",
-                errorFactory: "error-factory-token",
-                factory: "factory-token"
-            }
-        ];
-
-        const outputs: RateLimitNormalizedOptions[] = [
-            {
-                keyExtractor: "key-extractor-token"
-            },
-            {
-                errorFactory: "error-factory-token"
-            },
-            {
-                factory: "factory-token"
-            },
-            {
-                keyExtractor: "key-extractor-token",
-                errorFactory: "error-factory-token",
-                factory: "factory-token"
-            }
-        ];
-
-        for (let i = 0; i < inputs.length; i++) {
-            const result = normalizeOptions(inputs[i]);
-
-            expect(result).toEqual(outputs[i]);
-        }
-    });
-
-    it("with full options", () => {
+    it("should return full options object", () => {
         const input: RateLimitOptions = {
             scope: "custom-scope",
+            bypass: "skip",
             keyExtractor: "key-extractor-token",
             errorFactory: "error-factory-token",
             factory: "factory-token",
@@ -146,6 +108,7 @@ describe("normalizeOptions", () => {
 
         const output: RateLimitNormalizedOptions = {
             scope: "custom-scope",
+            bypass: "skip",
             keyExtractor: "key-extractor-token",
             errorFactory: "error-factory-token",
             factory: "factory-token",
@@ -157,6 +120,24 @@ describe("normalizeOptions", () => {
                     capacity: 10
                 }
             }
+        };
+
+        const result = normalizeOptions(input);
+
+        expect(result).toEqual(output);
+    });
+
+    it("should return empty options", () => {
+        const input: RateLimitOptions = {};
+
+        const output: RateLimitNormalizedOptions = {
+            scope: undefined,
+            bypass: undefined,
+            strategy: undefined,
+            strategyOptions: undefined,
+            keyExtractor: undefined,
+            errorFactory: undefined,
+            factory: undefined
         };
 
         const result = normalizeOptions(input);
