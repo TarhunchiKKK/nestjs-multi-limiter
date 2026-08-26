@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import type { ExecutionContext } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { Test } from "@nestjs/testing";
 import { DEFAULT_MODULE_OPTIONS } from "../../src/config/default-options.constants";
@@ -16,13 +15,9 @@ import {
     CustomOptionsFactory,
     clearMock,
     createProvidersDiscoveryServiceMock,
-    createReflectorMock
+    createReflectorMock,
+    EXECUTION_CONTEXT
 } from "../shared";
-
-const context = {
-    getHandler: () => ({}),
-    getClass: () => ({})
-} as unknown as ExecutionContext;
 
 describe("RateLimitGuard", () => {
     let guard: RateLimitGuard;
@@ -51,50 +46,46 @@ describe("RateLimitGuard", () => {
     });
 
     describe("bypassing", () => {
-        describe("skip", () => {
-            it("should skip rate limiting (route level)", async () => {
-                reflectorMock.get.mockReturnValue({ bypass: "skip" });
+        it("should skip rate limiting (route level)", async () => {
+            reflectorMock.get.mockReturnValue({ bypass: "skip" });
 
-                const result = await guard.canActivate(context);
+            const result = await guard.canActivate(EXECUTION_CONTEXT);
 
-                expect(result).toBeTrue();
-            });
-
-            it("should skip rate limiting (class level)", async () => {
-                reflectorMock.get.mockReturnValueOnce(undefined).mockReturnValueOnce({ bypass: "skip" });
-
-                const result = await guard.canActivate(context);
-
-                expect(result).toBeTrue();
-            });
+            expect(result).toBeTrue();
         });
 
-        describe("reject", () => {
-            beforeEach(() => {
-                discoveryServiceMock.getKeyExtractor.mockResolvedValue(new CustomKeyExtractor());
-                discoveryServiceMock.getErrorFactory.mockResolvedValue(new CustomErrorFactory());
-                discoveryServiceMock.getOptionsFactory.mockResolvedValue({ getOptions: () => ({ keyExtractor: BuiltinKeyExtractor }) });
-            });
+        it("should skip rate limiting (class level)", async () => {
+            reflectorMock.get.mockReturnValueOnce(undefined).mockReturnValueOnce({ bypass: "skip" });
 
-            it("should reject rate limiting (route level)", async () => {
-                reflectorMock.get
-                    .mockReturnValueOnce({ bypass: "reject", errorFactory: CustomErrorFactory } satisfies RateLimitOptions)
-                    .mockReturnValueOnce(undefined);
+            const result = await guard.canActivate(EXECUTION_CONTEXT);
 
-                const resultPromise = guard.canActivate(context);
+            expect(result).toBeTrue();
+        });
 
-                expect(resultPromise).rejects.toThrow(CustomError);
-            });
+        it("should reject rate limiting (route level)", async () => {
+            reflectorMock.get
+                .mockReturnValueOnce({ bypass: "reject", errorFactory: CustomErrorFactory } satisfies RateLimitOptions)
+                .mockReturnValueOnce(undefined);
 
-            it("should reject rate limiting (route level)", async () => {
-                reflectorMock.get
-                    .mockReturnValueOnce(undefined)
-                    .mockReturnValueOnce({ bypass: "reject", errorFactory: CustomErrorFactory } satisfies RateLimitOptions);
+            discoveryServiceMock.getKeyExtractor.mockResolvedValue(new CustomKeyExtractor());
+            discoveryServiceMock.getErrorFactory.mockResolvedValue(new CustomErrorFactory());
 
-                const resultPromise = guard.canActivate(context);
+            const resultPromise = guard.canActivate(EXECUTION_CONTEXT);
 
-                expect(resultPromise).rejects.toThrow(CustomError);
-            });
+            expect(resultPromise).rejects.toThrow(CustomError);
+        });
+
+        it("should reject rate limiting (class level)", async () => {
+            reflectorMock.get
+                .mockReturnValueOnce(undefined)
+                .mockReturnValueOnce({ bypass: "reject", errorFactory: CustomErrorFactory } satisfies RateLimitOptions);
+
+            discoveryServiceMock.getKeyExtractor.mockResolvedValue(new CustomKeyExtractor());
+            discoveryServiceMock.getErrorFactory.mockResolvedValue(new CustomErrorFactory());
+
+            const resultPromise = guard.canActivate(EXECUTION_CONTEXT);
+
+            expect(resultPromise).rejects.toThrow(CustomError);
         });
     });
 
@@ -110,7 +101,7 @@ describe("RateLimitGuard", () => {
             discoveryServiceMock.getErrorFactory.mockResolvedValue(new CustomErrorFactory());
             discoveryServiceMock.getOptionsFactory.mockResolvedValue(new CustomOptionsFactory());
 
-            const result = await guard.canActivate(context);
+            const result = await guard.canActivate(EXECUTION_CONTEXT);
 
             expect(result).toBeTrue();
             expect(discoveryServiceMock.getKeyExtractor).toHaveBeenCalledWith(guardOptions.keyExtractor);
@@ -133,7 +124,7 @@ describe("RateLimitGuard", () => {
             discoveryServiceMock.getErrorFactory.mockResolvedValue(new CustomErrorFactory());
             discoveryServiceMock.getOptionsFactory.mockResolvedValue({ getOptions: () => ({ scope: "custom-scope" }) });
 
-            const result = await guard.canActivate(context);
+            const result = await guard.canActivate(EXECUTION_CONTEXT);
 
             expect(result).toBeTrue();
             expect(discoveryServiceMock.getKeyExtractor).toHaveBeenCalledWith(CustomKeyExtractor);
@@ -159,7 +150,7 @@ describe("RateLimitGuard", () => {
             discoveryServiceMock.getKeyExtractor.mockResolvedValue(new CustomKeyExtractor());
             discoveryServiceMock.getErrorFactory.mockResolvedValue(new CustomErrorFactory());
 
-            const resultPromise = guard.canActivate(context);
+            const resultPromise = guard.canActivate(EXECUTION_CONTEXT);
 
             expect(resultPromise).rejects.toThrow(CustomError);
         });
@@ -179,7 +170,7 @@ describe("RateLimitGuard", () => {
             discoveryServiceMock.getErrorFactory.mockResolvedValue(new CustomErrorFactory());
             discoveryServiceMock.getOptionsFactory.mockResolvedValue({ getOptions: () => ({ keyExtractor: BuiltinKeyExtractor }) });
 
-            const result = await guard.canActivate(context);
+            const result = await guard.canActivate(EXECUTION_CONTEXT);
 
             expect(result).toBeTrue();
             expect(discoveryServiceMock.getKeyExtractor).toHaveBeenCalledWith(CustomKeyExtractor);
