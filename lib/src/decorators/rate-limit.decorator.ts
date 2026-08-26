@@ -45,5 +45,5 @@ export type RateLimitOptions = {
  * @publicApi
  */
 export function RateLimit(options: OmitFields<RateLimitOptions, "bypass">) {
-    return SetMetadata<typeof RATE_LIMIT_METADATA, RateLimitOptions>(RATE_LIMIT_METADATA, { ...options, bypass: "none" });
+    return SetMetadata<typeof RATE_LIMIT_METADATA, RateLimitOptions>(RATE_LIMIT_METADATA, options);
 }

@@ -3,7 +3,7 @@ import { HttpStatus, type INestApplication } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import { RateLimiterModule, type RateLimiterModuleAsyncOptions } from "nestjs-multi-limiter";
 import request from "supertest";
-import { ControllerLevelController, RouteLevelController, RouteLevelExecuteController } from "./controllers";
+import { ControllerLevelController, RouteLevelController } from "./controllers";
 
 const LIMIT = 3;
 
@@ -27,7 +27,7 @@ describe("Bypass - Skip", () => {
     beforeEach(async () => {
         const moduleFixture = await Test.createTestingModule({
             imports: [RateLimiterModule.forRootAsync(options)],
-            controllers: [ControllerLevelController, RouteLevelController, RouteLevelExecuteController]
+            controllers: [ControllerLevelController, RouteLevelController]
         }).compile();
 
         app = moduleFixture.createNestApplication();
@@ -53,13 +53,5 @@ describe("Bypass - Skip", () => {
         }
 
         await request(app.getHttpServer()).get("/route/test").expect(HttpStatus.OK);
-    });
-
-    it("should execute rate limiting", async () => {
-        for (let i = 0; i < LIMIT; i++) {
-            await request(app.getHttpServer()).get("/execute/test").expect(HttpStatus.OK);
-        }
-
-        await request(app.getHttpServer()).get("/execute/test").expect(HttpStatus.TOO_MANY_REQUESTS);
     });
 });

@@ -85,8 +85,8 @@ export class RateLimitGuard implements CanActivate {
 
         const strategy = metadataOptions.strategy ?? dynamicOptions.strategy ?? this.options.strategy;
         const strategyOptions = {
-            ...(metadataOptions.options ?? {}),
-            ...(dynamicOptions.options ?? {})
+            ...(dynamicOptions.options ?? {}),
+            ...(metadataOptions.options ?? {})
         };
 
         return {

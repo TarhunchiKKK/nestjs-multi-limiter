@@ -1,5 +1,5 @@
 import { Controller, Get, UseGuards } from "@nestjs/common";
-import { RateLimit, RateLimitGuard, RejectRateLimit } from "nestjs-multi-limiter";
+import { RateLimitGuard, RejectRateLimit } from "nestjs-multi-limiter";
 
 @Controller("controller")
 @UseGuards(RateLimitGuard)
@@ -16,17 +16,6 @@ export class ControllerLevelController {
 export class RouteLevelController {
     @Get("test")
     @RejectRateLimit()
-    public test() {
-        return { success: true };
-    }
-}
-
-@Controller("execute")
-@UseGuards(RateLimitGuard)
-@RejectRateLimit()
-export class RouteLevelExecuteController {
-    @Get("test")
-    @RateLimit({})
     public test() {
         return { success: true };
     }
