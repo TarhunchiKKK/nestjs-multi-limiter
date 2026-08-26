@@ -76,10 +76,10 @@ import { RateLimit, RateLimitGuard } from "nestjs-multi-limiter";
 
 @Controller()
 @UseGuards(RateLimitGuard)
-@RateLimit({ /* override default options */ })
+@RateLimit({ strategy: "fixed-window", options: { /* override default options */ } })
 export class AppController {
     @Get("/hello")
-    @RateLimit({ /* this options will be merged with controller options */ })
+    @RateLimit({ strategy: "fixed-window", options:{ /* merge with controller options */ } })
     public hello() {
         return "Hello";
     }

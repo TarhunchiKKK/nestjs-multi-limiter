@@ -30,8 +30,10 @@ import {
 
     // strategy-specific options
     strategy: "sliding-window-counter",
-    limit: 100,
-    windowMs: 1_000
+    options: {
+        limit: 100,
+        windowMs: 1_000
+    }
 })
 ```
 
