@@ -107,4 +107,4 @@ export type StrategyPartialOptionsUnion =
     | ({ strategy: ExtractMember<Strategies, "sliding-window-counter"> } & { options?: Partial<SlidingWindowCounterOptions> })
     | ({ strategy: ExtractMember<Strategies, "sliding-window-log"> } & { options?: Partial<SlidingWindowLogOptions> })
     | ({ strategy: ExtractMember<Strategies, "leaky-bucket"> } & { options?: Partial<LeakyBucketOptions> })
-    | { strategy?: Strategies };
+    | { strategy?: Strategies; options?: unknown };

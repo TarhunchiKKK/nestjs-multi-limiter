@@ -4,7 +4,7 @@ import { Reflector } from "@nestjs/core";
 import { Test } from "@nestjs/testing";
 import { DEFAULT_MODULE_OPTIONS } from "../../src/config/default-options.constants";
 import { BuiltinKeyExtractor } from "../../src/custom/key-extractors";
-import type { RateLimitNormalizedOptions, RateLimitOptions } from "../../src/decorators";
+import type { RateLimitOptions } from "../../src/decorators";
 import { GUARD_OPTIONS_TOKEN } from "../../src/di";
 import { RateLimitGuard, type RateLimitGuardOptions } from "../../src/rate-limit.guard";
 import { RateLimiterModule } from "../../src/rate-limiter.module";
@@ -78,7 +78,7 @@ describe("RateLimitGuard", () => {
 
             it("should reject rate limiting (route level)", async () => {
                 reflectorMock.get
-                    .mockReturnValueOnce({ bypass: "reject", errorFactory: CustomErrorFactory } satisfies RateLimitNormalizedOptions)
+                    .mockReturnValueOnce({ bypass: "reject", errorFactory: CustomErrorFactory } satisfies RateLimitOptions)
                     .mockReturnValueOnce(undefined);
 
                 const resultPromise = guard.canActivate(context);
@@ -89,7 +89,7 @@ describe("RateLimitGuard", () => {
             it("should reject rate limiting (route level)", async () => {
                 reflectorMock.get
                     .mockReturnValueOnce(undefined)
-                    .mockReturnValueOnce({ bypass: "reject", errorFactory: CustomErrorFactory } satisfies RateLimitNormalizedOptions);
+                    .mockReturnValueOnce({ bypass: "reject", errorFactory: CustomErrorFactory } satisfies RateLimitOptions);
 
                 const resultPromise = guard.canActivate(context);
 
