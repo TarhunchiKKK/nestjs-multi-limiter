@@ -11,7 +11,9 @@ export class ModuleLevelOptionsFactory implements IOptionsFactory {
     public getOptions(): RateLimitOptions {
         return {
             strategy: "fixed-window",
-            limit: MODULE_LEVEL_LIMIT
+            options: {
+                limit: MODULE_LEVEL_LIMIT
+            }
         };
     }
 }
@@ -21,7 +23,9 @@ export class ControllerLevelOptionsFactory implements IOptionsFactory {
     public getOptions(): RateLimitOptions {
         return {
             strategy: "fixed-window",
-            limit: CONTROLLER_LEVEL_LIMIT
+            options: {
+                limit: CONTROLLER_LEVEL_LIMIT
+            }
         };
     }
 }
@@ -31,7 +35,9 @@ export class RouteLevelOptionsFactory implements IOptionsFactory {
     public getOptions(): RateLimitOptions {
         return {
             strategy: "fixed-window",
-            limit: ROUTE_LEVEL_LIMIT
+            options: {
+                limit: ROUTE_LEVEL_LIMIT
+            }
         };
     }
 }

@@ -1,7 +1,9 @@
 import type { ExecutionContext } from "@nestjs/common";
 import type { RateLimitOptions } from "../../decorators";
+import type { OmitFields } from "../../shared/lib";
 
-// FIX: Options factory cannot return object with `factory` field.
+export type DynamicRateLimitOptions = OmitFields<RateLimitOptions, "factory">;
+
 /**
  * Interface for custom dynamic options factories.
  *
@@ -12,5 +14,5 @@ export interface IOptionsFactory {
      * @param context Execution context of current request.
      * @returns Created dynamic options object.
      */
-    getOptions: (context: ExecutionContext) => RateLimitOptions | Promise<RateLimitOptions>;
+    getOptions: (context: ExecutionContext) => DynamicRateLimitOptions | Promise<DynamicRateLimitOptions>;
 }

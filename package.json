@@ -10,6 +10,7 @@
         "build": "turbo run build",
         "build:lib": "turbo run build --filter=nestjs-multi-limiter",
         "build:website": "turbo run build --filter=website",
+        "build:sample": "turbo run build --filter=sample",
         "test:unit": "turbo run test:unit",
         "test:integration": "bun run ./scripts/test/integration.ts",
         "test:e2e": "bun run ./scripts/test/e2e.ts",
