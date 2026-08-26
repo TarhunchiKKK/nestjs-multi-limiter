@@ -21,7 +21,7 @@ export default {
                 type: "generated-index",
                 description: "Learn about library decorators."
             },
-            items: ["decorators/rate-limit", "decorators/skip-rate-limit"]
+            items: ["decorators/rate-limit", "decorators/bypass"]
         },
         {
             type: "category",

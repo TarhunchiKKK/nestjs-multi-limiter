@@ -1,0 +1,94 @@
+# Rate Limit Bypassing
+
+## Skipping
+
+You can also skip rate limiting for method/controller using `@SkipRateLimit` decorator:
+
+```typescript
+import { RateLimitGuard, SkipRateLimit } from "nestjs-multi-limiter";
+
+@Controller()
+@UseGuards(RateLimitGuard)
+export class MyController {
+    // Rate limiting for this method will be enabled
+    public method1() {}
+
+    // Rate limiting for this method will be skipped
+    @SkipRateLimit()
+    public method2() {}
+}
+```
+
+## Rejecting
+
+You can also forcibly reject rate limiting for method/controller using `@RejectRateLimit` decorator:
+
+```typescript
+import { RateLimitGuard, RejectRateLimit } from "nestjs-multi-limiter";
+
+@Controller()
+@UseGuards(RateLimitGuard)
+export class MyController {
+    // Rate limiting for this method will be enabled
+    public method1() {}
+
+    // Rate limiting for this method will be forcibly rejected
+    @RejectRateLimit()
+    public method2() {}
+}
+```
+
+## Bypassing with options factories
+
+You can conditionally skip or reject rate limiting for handler/controller using mechanism of options factories. Let's implement such functionality.
+
+1. Create options factory:
+
+```typescript title="skip.options-factory.ts"
+import { type ExecutionContext } from "@nestjs/common";
+import { type IOptionsFactory, OptionsFactory, type DynamicRateLimitOptions } from "nestjs-multi-limiter";
+import { type Request } from "express";
+
+@OptionsFactory()
+export class SkipOptionsFactory implements IOptionsFactory {
+    public async getOptions(context: ExecutionContext): Promise<DynamicRateLimitOptions> {
+        // ...
+
+        return {
+            bypass: "skip"
+            // or `reject` to forcibly reject rate limiting
+        };
+    }
+}
+```
+
+2. Register this options factory as provider and use it in `@RateLimitDecorator`:
+
+```typescript 
+@RateLimit({ factory: SkipOptionsFactory })
+```
+
+## Combination with `@RateLimit` decorator❗️
+
+:::info[Remember]
+If `@SkipRateLimit` and `@RejectRateLimit` decorators are used in pair with `@RateLimit`, **they will also have higher priority**. 
+This rule works even if:
+* `@SkipRateLimit` or `@RejectRateLimit` is used in controller level and `@RateLimit` is used in route level
+* options factory (provided in `@rateLimit` decorator) returns the opposite value in `bypass` field  
+:::
+
+```typescript
+import { RateLimitGuard, SkipRateLimit } from "nestjs-multi-limiter";
+
+@Controller()
+@UseGuards(RateLimitGuard)
+@SkipRateLimit()
+export class MyController {
+    // Rate limiting for this method will be enabled
+    public method1() {}
+
+    // Rate limiting for this method will be skipped❗️
+    @RateLimit({ /**/ })
+    public method2() {}
+}
+```

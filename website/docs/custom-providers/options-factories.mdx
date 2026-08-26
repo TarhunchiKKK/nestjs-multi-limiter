@@ -12,14 +12,14 @@ Our custom options factory should apply `@OptionsFactory` decorator and implemen
 
 ```typescript title="my-custom.options-factory.ts"
 import { type ExecutionContext } from "@nestjs/common";
-import { type IOptionsFactory, OptionsFactory } from "nestjs-multi-limiter";
+import { type IOptionsFactory, OptionsFactory, type DynamicRateLimitOptions } from "nestjs-multi-limiter";
 import { type Request } from "express";
 
 @OptionsFactory()
 export class MyCustomOptionsFactory implements IOptionsFactory {
     public constructor(@Inject(AuthService) private readonly usersService: UsersService) {}
 
-    public async getOptions(context: ExecutionContext): Promise<RateLimitOptions> {
+    public async getOptions(context: ExecutionContext): Promise<DynamicRateLimitOptions> {
         const request: Request = context.switchToHttp().getRequest();
 
         const userId: string = request["user"]?.id;
