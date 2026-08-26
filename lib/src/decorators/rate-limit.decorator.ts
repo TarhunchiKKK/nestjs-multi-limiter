@@ -4,7 +4,7 @@ import type { IErrorFactory } from "../custom/error-factories";
 import type { IKeyExtractor } from "../custom/key-extractors";
 import type { IOptionsFactory } from "../custom/options-factories";
 import type { DeepPartial, OmitFields, PartialUnionMembers } from "../shared/lib";
-import type { BypassStrategies, Scope, StrategyOptionsUnion } from "../shared/model";
+import type { BypassStrategies, Scope, StrategyPartialOptionsUnion } from "../shared/model";
 
 export const RATE_LIMIT_METADATA = "_rate_limit_metadata";
 
@@ -38,7 +38,7 @@ export type RateLimitOptions = {
      * This allows to bypass rate limiting (skip or reject).
      */
     bypass?: BypassStrategies;
-} & PartialUnionMembers<StrategyOptionsUnion>;
+} & PartialUnionMembers<StrategyPartialOptionsUnion>;
 
 export type RateLimitNormalizedOptions = Pick<RateLimitOptions, "scope" | "bypass" | "keyExtractor" | "errorFactory" | "factory"> &
     DeepPartial<StrategyOptions>;
