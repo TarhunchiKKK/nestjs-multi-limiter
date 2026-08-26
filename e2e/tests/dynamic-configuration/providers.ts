@@ -17,13 +17,17 @@ export class RoleBasedOptionsFactory implements IOptionsFactory {
             case "user": {
                 return {
                     strategy: "fixed-window",
-                    limit: USER_LIMIT
+                    options: {
+                        limit: USER_LIMIT
+                    }
                 };
             }
             case "admin": {
                 return {
                     strategy: "fixed-window",
-                    limit: ADMIN_LIMIT
+                    options: {
+                        limit: ADMIN_LIMIT
+                    }
                 };
             }
             default: {

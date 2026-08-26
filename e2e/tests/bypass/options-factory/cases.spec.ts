@@ -22,8 +22,7 @@ const options: RateLimiterModuleAsyncOptions = {
     })
 };
 
-// FIX: This tests should not be skipped
-describe.skip("Bypass - Options Factories", () => {
+describe("Bypass - Options Factories", () => {
     let app: INestApplication;
 
     beforeEach(async () => {
