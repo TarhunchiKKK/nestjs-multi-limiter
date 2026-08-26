@@ -15,25 +15,25 @@ export class ChatsController {
     public constructor(private readonly chatsService: ChatsService) {}
 
     @Post()
-    @RateLimit({ limit: 20 })
+    @RateLimit({ strategy: "sliding-window-counter", options: { limit: 20 } })
     public async create(@Authorized() userId: string, @Body(ValidationPipe) dto: CreateChatDto) {
         return await this.chatsService.create(userId, dto);
     }
 
     @Get()
-    @RateLimit({ limit: 60 })
+    @RateLimit({ strategy: "sliding-window-counter", options: { limit: 60 } })
     public async findAll(@Authorized() userId: string) {
         return await this.chatsService.findAll(userId);
     }
 
     @Patch(":chatId")
-    @RateLimit({ limit: 20 })
+    @RateLimit({ strategy: "sliding-window-counter", options: { limit: 20 } })
     public async update(@Param("chatId") id: string, @Body(ValidationPipe) dto: UpdateChatDto) {
         return await this.chatsService.update(id, dto);
     }
 
     @Delete(":chatId")
-    @RateLimit({ limit: 20 })
+    @RateLimit({ strategy: "sliding-window-counter", options: { limit: 20 } })
     public async remove(@Param("id") id: string) {
         return await this.chatsService.remove(id);
     }

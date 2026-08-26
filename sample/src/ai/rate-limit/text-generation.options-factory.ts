@@ -6,7 +6,9 @@ import { MS_IN_DAY } from "../../shared/time.constants";
 
 const baseOptions: RateLimitOptions = {
     strategy: "token-bucket",
-    ttl: 1 * MS_IN_DAY
+    options: {
+        ttl: 1 * MS_IN_DAY
+    }
 };
 
 @OptionsFactory()
@@ -22,19 +24,25 @@ export class TextGenerationOptionsFactory implements IOptionsFactory {
             case "free": {
                 return {
                     ...baseOptions,
-                    capacity: 20
+                    options: {
+                        capacity: 20
+                    }
                 };
             }
             case "pro": {
                 return {
                     ...baseOptions,
-                    capacity: 100
+                    options: {
+                        capacity: 100
+                    }
                 };
             }
             case "enterprise": {
                 return {
                     ...baseOptions,
-                    capacity: 1_000
+                    options: {
+                        capacity: 1_000
+                    }
                 };
             }
         }

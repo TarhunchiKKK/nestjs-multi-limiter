@@ -7,8 +7,10 @@ import { TrySignUpLaterOptionsFactory } from "./try-sign-up-later.error-factory"
 export const SIGN_UP_RATE_LIMIT_OPTIONS: RateLimitOptions = {
     scope: "sign-up",
     strategy: "fixed-window",
-    limit: 3,
-    ttl: 1 * MS_IN_MINUTE,
+    options: {
+        limit: 3,
+        ttl: 1 * MS_IN_MINUTE
+    },
     keyExtractor: IpKeyExtractor,
     errorFactory: TrySignUpLaterOptionsFactory
 };
@@ -16,7 +18,9 @@ export const SIGN_UP_RATE_LIMIT_OPTIONS: RateLimitOptions = {
 export const SIGN_IN_RATE_LIMIT_OPTIONS: RateLimitOptions = {
     scope: "sign-in",
     strategy: "fixed-window",
-    limit: 5,
-    ttl: 1 * MS_IN_MINUTE,
+    options: {
+        limit: 5,
+        ttl: 1 * MS_IN_MINUTE
+    },
     keyExtractor: BruteForceKeyExtractor
 };

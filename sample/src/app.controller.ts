@@ -6,8 +6,10 @@ import { MS_IN_MINUTE } from "./shared/time.constants";
 const HEALTH_RATE_LIMIT_OPTIONS: RateLimitOptions = {
     // 📌 This options use default scope
     strategy: "fixed-window",
-    limit: 100,
-    ttl: 1 * MS_IN_MINUTE,
+    options: {
+        limit: 100,
+        ttl: 1 * MS_IN_MINUTE
+    },
     keyExtractor: IpKeyExtractor
 };
 
