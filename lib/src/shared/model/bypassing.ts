@@ -1,1 +1,1 @@
-export type BypassStrategies = "skip" | "reject";
+export type BypassStrategies = "skip" | "reject" | "none";

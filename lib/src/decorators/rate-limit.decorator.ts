@@ -3,7 +3,7 @@ import type { StrategyOptions } from "../config";
 import type { IErrorFactory } from "../custom/error-factories";
 import type { IKeyExtractor } from "../custom/key-extractors";
 import type { IOptionsFactory } from "../custom/options-factories";
-import type { DeepPartial, OmitFields, PartialUnionMembers } from "../shared/lib";
+import type { DeepPartial, OmitFields } from "../shared/lib";
 import type { BypassStrategies, Scope, StrategyPartialOptionsUnion } from "../shared/model";
 
 export const RATE_LIMIT_METADATA = "_rate_limit_metadata";
@@ -38,42 +38,24 @@ export type RateLimitOptions = {
      * This allows to bypass rate limiting (skip or reject).
      */
     bypass?: BypassStrategies;
-} & PartialUnionMembers<StrategyPartialOptionsUnion>;
+} & StrategyPartialOptionsUnion;
+
+export const temp: RateLimitOptions = {};
 
 export type RateLimitNormalizedOptions = Pick<RateLimitOptions, "scope" | "bypass" | "keyExtractor" | "errorFactory" | "factory"> &
     DeepPartial<StrategyOptions>;
 
-export function normalizeOptions(options: RateLimitOptions): RateLimitNormalizedOptions {
-    const result: RateLimitNormalizedOptions = {};
+export function normalizeOptions(rateLimitOptions: RateLimitOptions): RateLimitNormalizedOptions {
+    if ("options" in rateLimitOptions) {
+        const { options, ...rest } = rateLimitOptions;
 
-    const { bypass, scope, keyExtractor, errorFactory, factory, strategy, ...strategyOptions } = options;
-
-    if ("bypass" in options) {
-        result.bypass = bypass;
+        return {
+            ...rest,
+            strategyOptions: rateLimitOptions.strategy ? { [rateLimitOptions.strategy]: options } : {}
+        };
     }
 
-    if ("scope" in options) {
-        result.scope = scope;
-    }
-
-    if ("keyExtractor" in options) {
-        result.keyExtractor = keyExtractor;
-    }
-
-    if ("errorFactory" in options) {
-        result.errorFactory = errorFactory;
-    }
-
-    if ("factory" in options) {
-        result.factory = factory;
-    }
-
-    if (strategy && "strategy" in options) {
-        result.strategy = strategy;
-        result.strategyOptions = { [strategy]: strategyOptions };
-    }
-
-    return result;
+    return rateLimitOptions;
 }
 
 /**
@@ -82,7 +64,7 @@ export function normalizeOptions(options: RateLimitOptions): RateLimitNormalized
  * @publicApi
  */
 export function RateLimit(options: OmitFields<RateLimitOptions, "bypass">) {
-    const normalizedOptions = normalizeOptions({ ...options, bypass: undefined });
+    const normalizedOptions = normalizeOptions({ ...options, bypass: "none" });
 
     return SetMetadata<typeof RATE_LIMIT_METADATA, RateLimitNormalizedOptions>(RATE_LIMIT_METADATA, normalizedOptions);
 }
