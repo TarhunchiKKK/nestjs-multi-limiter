@@ -1,7 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, jest } from "bun:test";
-import type { RateLimiterModuleFullOptions } from "../../../src/config/options";
+import type { RateLimiterModuleFullOptions } from "../../../src/config";
+import type { BaseStrategyInMemoryState } from "../../../src/executors";
 import { InMemoryGarbageCollector } from "../../../src/services/in-memory.garbage-collector";
-import type { BaseStrategyInMemoryState, InMemoryStorage } from "../../../src/shared/model";
+import type { InMemoryStorage } from "../../../src/shared/model";
 import { createInMemoryStorage, MS_IN_MINUTE, MS_IN_SECOND } from "../../shared";
 
 const GC_TIME = MS_IN_MINUTE;
@@ -54,7 +55,8 @@ describe("InMemoryGarbageCollector", () => {
                 type: "redis",
                 adapter: {
                     eval: () => Promise.resolve(1)
-                }
+                },
+                failingStrategy: "fail-fast"
             } satisfies RateLimiterModuleFullOptions["storage"]
         };
 

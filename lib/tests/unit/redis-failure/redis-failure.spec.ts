@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import { Test } from "@nestjs/testing";
 import { RateLimiterModule } from "../../../src";
-import { type FixedWindowOptions, FixedWindowRedisExecutor } from "../../../src/executors";
-import type { IRedisAdapter, RedisFailingStrategies } from "../../../src/shared/model";
+import { FixedWindowRedisExecutor } from "../../../src/executors";
+import type { FixedWindowOptions, IRedisAdapter, RedisFailingStrategies } from "../../../src/shared/model";
 import { clearMock, createRedisMock, MS_IN_DAY } from "../../shared";
 
 const key = "rate-limiter:key:fixed-window:redis-failure";
@@ -46,7 +46,7 @@ describe("Redis failure handling", () => {
         const result = await executor.check(key, options);
 
         expect(result).toBeTrue();
-        expect(redisMock.onError).toHaveBeenCalledWith(error);
+        expect(redisMock.handleError).toHaveBeenCalledWith(error, key);
     });
 
     it("should block request", async () => {
@@ -60,7 +60,7 @@ describe("Redis failure handling", () => {
         const result = await executor.check(key, options);
 
         expect(result).toBeFalse();
-        expect(redisMock.onError).toHaveBeenCalledWith(error);
+        expect(redisMock.handleError).toHaveBeenCalledWith(error, key);
     });
 
     it("should throw error", async () => {
@@ -74,6 +74,6 @@ describe("Redis failure handling", () => {
         const resultPromise = executor.check(key, options);
 
         expect(resultPromise).rejects.toThrow(error);
-        expect(redisMock.onError).toHaveBeenCalledWith(error);
+        expect(redisMock.handleError).toHaveBeenCalledWith(error, key);
     });
 });
