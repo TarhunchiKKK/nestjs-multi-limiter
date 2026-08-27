@@ -29,16 +29,16 @@ RateLimiterModule.forRoot({
 To subscribe on `Redis` errors via rate limiting (for example, for logging) you can implement optional `handleError` property of `IRedisAdapter` type:
 
 ```typescript title="redis.service.ts"
-import type { IRedisAdapter } from "nestjs-multi-limiter";
+import type { IRedisAdapter, Key } from "nestjs-multi-limiter";
 
 @Injectable()
 export class RedisService implements IRedisAdapter {
-    public constructor(private readonly loggerService: LoggerService) { /**/ }
+    public constructor(private readonly loggerService: LoggerService) { }
 
     // ...
     
-    public async handleError(error: unknown) {
-        this.loggerService.warn(`Redis disconnected with error: ${error}`)
+    public async handleError(error: unknown, key: Key) {
+        this.loggerService.warn(`Redis disconnected for "${key}" key with error: ${error}`);
     }
 }
 ```
