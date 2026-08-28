@@ -8,6 +8,7 @@ Unlike standard rate limiters, this library is built with four core architectura
 
 - **Algorithm Flexibility:** It decouples the rate-limiting logic from the storage layer, allowing execution of 5 different algorithms dynamically.
 - **Race-Condition Safe:** Library should provide atomic rate limiting logic to prevent race conditions in multi-instance deployments.
+- **Redis Failure Handling:** Library should have mechanism to handle Redis failure (*Fail-Open*, *Fail-Close* and *fail-Fast* algorithms)
 - **Driver Independence:** It abstracts away the Redis library implementation (e.g., `ioredis`, `redis`). Users can plug in any client using a lightweight Adapter pattern.
 - **Protocol Agnostic:** It does not rely on HTTP-specific objects (like Express `Request`). It handles HTTP, WebSockets, GraphQL, and RPC (gRPC) seamlessly via custom Key Providers.
 - **Runtime Extensibility:** Strategy options and error behaviors are resolved dynamically at runtime via Factories.
