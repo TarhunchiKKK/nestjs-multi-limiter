@@ -51,7 +51,7 @@ cd lib
 
 npm login
 
-npm publish --access public
+npm publish
 ```
 
 ## GitHub Release

@@ -24,6 +24,9 @@
         }
     },
     "files": ["dist", "lua"],
+    "publishConfig": {
+        "access": "public"
+    },
     "scripts": {
         "build": "tsc -p tsconfig.build.json",
         "test:unit": "bun test tests/unit --preload ../scripts/test/preload.ts",
