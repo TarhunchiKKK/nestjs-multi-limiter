@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.0.0 (Aug 28, 2026)
+
+### Added
+
+- dynamic rate limiting bypassing
+- `@RejectRateLimit` decorator
+
+### Breaking Changes
+
+- `@RateLimit` decorator options type
+- `onError` method name (now `handleError`) and signature of `IRedisAdapter` interface
+
 ## 1.2.0 (Aug 21, 2026)
 
 ### Added
