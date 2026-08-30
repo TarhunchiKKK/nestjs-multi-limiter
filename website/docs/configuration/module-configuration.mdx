@@ -11,7 +11,8 @@ RateLimiterModule.forRoot({
     // storage configuration (Map or Redis)
     storage: {
         type: "in-memory",
-        gcTime: 15 * 60 * 1000 // time to clear `old` data from memory
+        gcTime: 15 * 60 * 1000 // time to clear `dead` data from memory
+        gcBatchSize: 1000 // batch size for `dead` data collection
     },
 
     // strategy configuration
@@ -50,7 +51,8 @@ Properties of this object defines storage options.
 |Property|Storage Type|Description|
 |:-|:-|:-|
 |`type`||Defines storage type|
-|`gcTime`|`in-memory`|Defines the dead data records deleting interval|
+|`gcTime`|`in-memory`|Defines the dead data records collection interval|
+|`gcBatchSize`|`in-memory`|Defines the data records collection batch size |
 |`adapter`|`redis`|Provider object/provider that will be used to `Redis` access|
 |`failingStrategy`|`string`|Defines how to handle `Redis` failure|
 

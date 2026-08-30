@@ -8,8 +8,8 @@ import type { RateLimiterModuleFullOptions } from "./module-options.types";
 export const DEFAULT_STORAGE_OPTIONS = {
     IN_MEMORY: {
         type: "in-memory",
-        gcTime: 15 * MS_IN_MINUTE,
-        gcBatchSize: 2000
+        gcTime: 0.5 * MS_IN_MINUTE,
+        gcBatchSize: 1_000
     } satisfies StorageOptions,
     REDIS: {
         type: "redis",
