@@ -1,5 +1,5 @@
 import { type CanActivate, type ExecutionContext, Inject, Injectable } from "@nestjs/common";
-import { Reflector } from "@nestjs/core";
+import { type ContextId, ContextIdFactory, Reflector } from "@nestjs/core";
 import type { StrategyOptions } from "./config";
 import type { ErrorFactoryOptions, IErrorFactory } from "./custom/error-factories";
 import type { IKeyExtractor } from "./custom/key-extractors";
@@ -137,5 +137,32 @@ export class RateLimitGuard implements CanActivate {
         const optionsFactoryInstance = await this.providersResolver.getOptionsFactory(optionsFactoryToken);
 
         return await optionsFactoryInstance.getOptions(context);
+    }
+
+    private getContextId(context: ExecutionContext): ContextId {
+        const contextType: string = context.getType();
+
+        switch (contextType) {
+            case "http": {
+                const request = context.switchToHttp().getRequest();
+                return ContextIdFactory.getByRequest(request);
+            }
+            case "ws": {
+                const client = context.switchToWs();
+                return ContextIdFactory.getByRequest(client);
+            }
+            case "rpc": {
+                const rpcContext = context.switchToRpc();
+                return ContextIdFactory.getByRequest(rpcContext);
+            }
+            case "graphql": {
+                const args = context.getArgs();
+                return ContextIdFactory.getByRequest(args[2]);
+            }
+            default: {
+                const arg = context.getArgByIndex(0);
+                return ContextIdFactory.getByRequest(arg);
+            }
+        }
     }
 }
