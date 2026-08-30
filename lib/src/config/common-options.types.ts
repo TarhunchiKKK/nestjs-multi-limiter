@@ -15,6 +15,11 @@ export type StorageOptions =
            * Time for collecting dead data.
            */
           gcTime?: number;
+
+          /**
+           * Batch size for dead data collection.
+           */
+          gcBatchSize?: number;
       }
     | {
           /**

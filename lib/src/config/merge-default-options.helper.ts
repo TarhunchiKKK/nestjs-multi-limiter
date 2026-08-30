@@ -47,7 +47,8 @@ function mergeStorageOptions(options: RateLimiterModuleOptions): Required<Storag
         case "in-memory": {
             return {
                 type: "in-memory",
-                gcTime: options.storage.gcTime ?? DEFAULT_STORAGE_OPTIONS.IN_MEMORY.gcTime
+                gcTime: options.storage.gcTime ?? DEFAULT_STORAGE_OPTIONS.IN_MEMORY.gcTime,
+                gcBatchSize: options.storage.gcBatchSize ?? DEFAULT_STORAGE_OPTIONS.IN_MEMORY.gcBatchSize
             };
         }
         case "redis": {
