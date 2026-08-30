@@ -7,6 +7,7 @@ import type { InMemoryStorage } from "../shared/model";
 @Injectable()
 export class InMemoryGarbageCollector implements OnApplicationBootstrap, OnApplicationShutdown {
     private intervalRef: NodeJS.Timeout | null = null;
+    private isCleaning = false;
 
     public constructor(
         @InjectStorage() private readonly storage: InMemoryStorage<BaseStrategyInMemoryState>,
@@ -14,13 +15,41 @@ export class InMemoryGarbageCollector implements OnApplicationBootstrap, OnAppli
     ) {}
 
     private collect() {
-        const now = Date.now();
-
-        for (const [key, state] of this.storage.entries()) {
-            if (state.expiresAt < now) {
-                this.storage.delete(key);
-            }
+        if (this.isCleaning) {
+            return;
         }
+        this.isCleaning = true;
+
+        const now = Date.now();
+        const iterator = this.storage.entries();
+
+        const cleanBatch = () => {
+            if (this.options.storage.type !== "in-memory") {
+                return;
+            }
+
+            let processed = 0;
+
+            while (processed < this.options.storage.gcBatchSize) {
+                const { value, done } = iterator.next();
+
+                if (done) {
+                    this.isCleaning = false;
+                    return;
+                }
+
+                const [key, state] = value;
+                if (state.expiresAt < now) {
+                    this.storage.delete(key);
+                }
+
+                processed++;
+            }
+
+            setImmediate(cleanBatch);
+        };
+
+        cleanBatch();
     }
 
     public onApplicationBootstrap() {

@@ -6,6 +6,7 @@ import type { InMemoryStorage } from "../../../src/shared/model";
 import { createInMemoryStorage, MS_IN_MINUTE, MS_IN_SECOND } from "../../shared";
 
 const GC_TIME = MS_IN_MINUTE;
+const BATCH_SIZE = 1000;
 
 describe("InMemoryGarbageCollector", () => {
     let collector: InMemoryGarbageCollector;
@@ -18,8 +19,7 @@ describe("InMemoryGarbageCollector", () => {
     });
 
     afterEach(() => {
-        // biome-ignore lint/style/noNonNullAssertion: It is necessary for valid interval cleaning.
-        if (collector!) {
+        if (collector) {
             collector.onApplicationShutdown();
         }
 
@@ -30,7 +30,8 @@ describe("InMemoryGarbageCollector", () => {
         const options = {
             storage: {
                 type: "in-memory",
-                gcTime: GC_TIME
+                gcTime: GC_TIME,
+                gcBatchSize: BATCH_SIZE
             } satisfies RateLimiterModuleFullOptions["storage"]
         };
 
