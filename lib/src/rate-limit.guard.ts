@@ -78,7 +78,9 @@ export class RateLimitGuard implements CanActivate {
     }
 
     private async getFinalGuardOptions(context: ExecutionContext, metadataOptions: RateLimitOptions): Promise<RunOptions> {
-        const dynamicOptions = await this.getDynamicOptions(context, metadataOptions);
+        const contextId = this.getContextId(context);
+
+        const dynamicOptions = await this.getDynamicOptions(context, metadataOptions, contextId);
 
         const keyExtractorToken = metadataOptions.keyExtractor ?? dynamicOptions.keyExtractor ?? this.options.keyExtractor;
         const errorFactoryToken = metadataOptions.errorFactory ?? dynamicOptions.errorFactory ?? this.options.errorFactory;
@@ -92,8 +94,8 @@ export class RateLimitGuard implements CanActivate {
         return {
             bypass: metadataOptions.bypass ?? dynamicOptions.bypass,
             scope: metadataOptions.scope ?? dynamicOptions.scope ?? this.options.scope,
-            keyExtractor: await this.providersResolver.getKeyExtractor(keyExtractorToken),
-            errorFactory: await this.providersResolver.getErrorFactory(errorFactoryToken),
+            keyExtractor: await this.providersResolver.getKeyExtractor(keyExtractorToken, contextId),
+            errorFactory: await this.providersResolver.getErrorFactory(errorFactoryToken, contextId),
             strategy: strategy,
             strategyOptions: {
                 ...this.options.strategyOptions,
@@ -127,14 +129,14 @@ export class RateLimitGuard implements CanActivate {
         throw error;
     }
 
-    private async getDynamicOptions(context: ExecutionContext, metadataOptions: RateLimitOptions): Promise<DynamicRateLimitOptions> {
+    private async getDynamicOptions(context: ExecutionContext, metadataOptions: RateLimitOptions, contextId?: ContextId): Promise<DynamicRateLimitOptions> {
         const optionsFactoryToken = metadataOptions.factory ?? this.options.factory;
 
         if (!optionsFactoryToken) {
             return {};
         }
 
-        const optionsFactoryInstance = await this.providersResolver.getOptionsFactory(optionsFactoryToken);
+        const optionsFactoryInstance = await this.providersResolver.getOptionsFactory(optionsFactoryToken, contextId);
 
         return await optionsFactoryInstance.getOptions(context);
     }

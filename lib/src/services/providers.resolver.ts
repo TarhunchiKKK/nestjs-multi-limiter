@@ -1,6 +1,6 @@
 import { Inject, Injectable, type InjectionToken, type OnModuleInit } from "@nestjs/common";
 import { DiscoveryService, ModuleRef, Reflector } from "@nestjs/core";
-import type { InstanceWrapper } from "@nestjs/core/injector/instance-wrapper";
+import type { ContextId, InstanceWrapper } from "@nestjs/core/injector/instance-wrapper";
 import type { RateLimiterModuleOptions } from "../config";
 import { ERROR_FACTORY_METADATA, type IErrorFactory } from "../custom/error-factories";
 import { type IKeyExtractor, KEY_EXTRACTOR_METADATA } from "../custom/key-extractors";
@@ -33,44 +33,44 @@ export class ProvidersResolver implements OnModuleInit {
         return executor as IExecutor<StrategyOptionsMap[Strategy]>;
     }
 
-    public async getKeyExtractor(token: InjectionToken): Promise<IKeyExtractor> {
+    public async getKeyExtractor(token: InjectionToken, contextId?: ContextId): Promise<IKeyExtractor> {
         const wrapper = this.keyExtractorsMap.get(token);
 
         if (!wrapper) {
             throw new Error(`[RateLimiterModule] No key extractor found for token: ${String(token)}`);
         }
 
-        return await this.resolveCustomProvider(token, wrapper);
+        return await this.resolveCustomProvider(token, wrapper, contextId);
     }
 
-    public async getErrorFactory(token: InjectionToken): Promise<IErrorFactory> {
+    public async getErrorFactory(token: InjectionToken, contextId?: ContextId): Promise<IErrorFactory> {
         const wrapper = this.errorFactoriesMap.get(token);
 
         if (!wrapper) {
             throw new Error(`[RateLimiterModule] No error factory found for token: ${String(token)}`);
         }
 
-        return await this.resolveCustomProvider(token, wrapper);
+        return await this.resolveCustomProvider(token, wrapper, contextId);
     }
 
-    public async getOptionsFactory(token: InjectionToken): Promise<IOptionsFactory> {
+    public async getOptionsFactory(token: InjectionToken, contextId?: ContextId): Promise<IOptionsFactory> {
         const wrapper = this.optionsFactoriesMap.get(token);
 
         if (!wrapper) {
             throw new Error(`[RateLimiterModule] No options factory found for token: ${String(token)}`);
         }
 
-        return await this.resolveCustomProvider(token, wrapper);
+        return await this.resolveCustomProvider(token, wrapper, contextId);
     }
 
-    private async resolveCustomProvider<T>(token: InjectionToken, wrapper: InstanceWrapper<T>): Promise<T> {
+    private async resolveCustomProvider<T>(token: InjectionToken, wrapper: InstanceWrapper<T>, contextId?: ContextId): Promise<T> {
         if (wrapper.isDependencyTreeStatic()) {
             // For static provider
             return wrapper.instance;
         }
 
         // For request scoped provider
-        return await this.moduleRef.resolve<T>(token, undefined, { strict: false });
+        return await this.moduleRef.resolve<T>(token, contextId, { strict: false });
     }
 
     public onModuleInit() {
