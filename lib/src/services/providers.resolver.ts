@@ -1,6 +1,7 @@
-import { Inject, Injectable, type InjectionToken, type OnModuleInit } from "@nestjs/common";
+import { Inject, Injectable, type InjectionToken, type OnModuleInit, Scope } from "@nestjs/common";
 import { DiscoveryService, ModuleRef, Reflector } from "@nestjs/core";
 import type { ContextId, InstanceWrapper } from "@nestjs/core/injector/instance-wrapper";
+import { STATIC_CONTEXT } from "@nestjs/core/internal";
 import type { RateLimiterModuleOptions } from "../config";
 import { ERROR_FACTORY_METADATA, type IErrorFactory } from "../custom/error-factories";
 import { type IKeyExtractor, KEY_EXTRACTOR_METADATA } from "../custom/key-extractors";
@@ -65,12 +66,15 @@ export class ProvidersResolver implements OnModuleInit {
 
     private async resolveCustomProvider<T>(token: InjectionToken, wrapper: InstanceWrapper<T>, contextId?: ContextId): Promise<T> {
         if (wrapper.isDependencyTreeStatic()) {
-            // For static provider
+            // Static provider
             return wrapper.instance;
+        } else if (wrapper.scope === Scope.TRANSIENT) {
+            // Transient-scoped providers
+            return await this.moduleRef.resolve<T>(token, STATIC_CONTEXT, { strict: false });
+        } else {
+            // Request-scoped providers
+            return await this.moduleRef.resolve<T>(token, contextId, { strict: false });
         }
-
-        // For request scoped provider
-        return await this.moduleRef.resolve<T>(token, contextId, { strict: false });
     }
 
     public onModuleInit() {
