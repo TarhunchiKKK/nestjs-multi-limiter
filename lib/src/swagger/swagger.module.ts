@@ -26,7 +26,7 @@ export class RateLimiterSwaggerModule {
                 }
 
                 const prototype = Object.getPrototypeOf(wrapper.instance);
-                const controllerOptions = reflector.get<RateLimitOptions>(RATE_LIMIT_METADATA, prototype.constructor) ?? {};
+                const controllerOptions = reflector.get<RateLimitOptions>(RATE_LIMIT_METADATA, prototype.constructor);
                 const methodNames = Object.getOwnPropertyNames(prototype).filter((item) => typeof prototype[item] === "function" && item !== "constructor");
 
                 methodNames.forEach((methodName) => {
@@ -34,7 +34,9 @@ export class RateLimiterSwaggerModule {
 
                     const methodOptions = reflector.get<RateLimitOptions>(RATE_LIMIT_METADATA, method);
 
-                    if (methodOptions) {
+                    const addMetadata = !config.explicitOnly || (config.explicitOnly && (controllerOptions || methodOptions));
+
+                    if (addMetadata) {
                         const finalOptions = RateLimiterSwaggerModule.mergeRateLimitOptions(moduleOptions, controllerOptions, methodOptions);
 
                         RateLimiterSwaggerModule.appendSwaggerMetadata(method, finalOptions, config);
@@ -106,8 +108,8 @@ export class RateLimiterSwaggerModule {
 
     private static mergeRateLimitOptions(
         moduleOptions: RateLimiterModuleFullOptions,
-        controllerOptions?: RateLimitOptions,
-        methodOptions?: RateLimitOptions
+        controllerOptions: RateLimitOptions = {},
+        methodOptions: RateLimitOptions = {}
     ): RateLimitSwaggerOptions {
         const strategy = methodOptions?.strategy ?? controllerOptions?.strategy ?? moduleOptions.strategy;
 
