@@ -3,8 +3,14 @@ import { HttpStatus, type INestApplication } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import { RateLimiterModule, type RateLimiterModuleAsyncOptions } from "nestjs-multi-limiter";
 import request from "supertest";
-import { ControllerLevelController, ModuleLevelController, RouteLevelController } from "./controllers";
-import { ControllerLevelErrorFactory, ModuleLevelErrorFactory, RouteLevelErrorFactory } from "./providers";
+import {
+    ControllerLevelController,
+    ControllerLevelErrorFactory,
+    ModuleLevelController,
+    ModuleLevelErrorFactory,
+    RouteLevelController,
+    RouteLevelErrorFactory
+} from "./providers";
 
 const LIMIT = 3;
 

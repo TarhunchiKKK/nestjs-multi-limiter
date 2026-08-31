@@ -5,7 +5,7 @@ import { Test } from "@nestjs/testing";
 import { Redis } from "ioredis";
 import { RateLimiterModule, type RateLimiterModuleAsyncOptions, RateLimitGuard } from "nestjs-multi-limiter";
 import request from "supertest";
-import { AppController } from "./controllers";
+import { AppController } from "./providers";
 
 const LIMIT = 3;
 

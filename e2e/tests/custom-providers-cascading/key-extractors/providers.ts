@@ -1,6 +1,6 @@
-import type { ExecutionContext } from "@nestjs/common";
+import { Controller, type ExecutionContext, Get, UseGuards } from "@nestjs/common";
 import type { Request } from "express";
-import { type IKeyExtractor, KeyExtractor } from "nestjs-multi-limiter";
+import { type IKeyExtractor, KeyExtractor, RateLimit, RateLimitGuard } from "nestjs-multi-limiter";
 
 @KeyExtractor()
 export class ModuleLevelKeyExtractor implements IKeyExtractor {
@@ -37,5 +37,24 @@ export class ControllerLevelKeyExtractor implements IKeyExtractor {
         }
 
         return header;
+    }
+}
+
+@Controller("module")
+@UseGuards(RateLimitGuard)
+export class ModuleLevelController {
+    @Get("test")
+    public test() {
+        return { success: true };
+    }
+}
+
+@Controller("controller")
+@UseGuards(RateLimitGuard)
+@RateLimit({ keyExtractor: ControllerLevelKeyExtractor })
+export class ControllerLevelController {
+    @Get("test")
+    public test() {
+        return { success: true };
     }
 }

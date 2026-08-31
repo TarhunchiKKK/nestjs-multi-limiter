@@ -20,7 +20,7 @@ export class CustomKeyExtractor implements IKeyExtractor {
     }
 }
 
-export class CustomRateLimitError extends HttpException {
+class CustomRateLimitError extends HttpException {
     public constructor() {
         super("Too many requests.", HttpStatus.TOO_MANY_REQUESTS);
     }
