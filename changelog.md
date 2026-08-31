@@ -1,10 +1,21 @@
 # Changelog
 
+## 2.1.0 (Aug 31, 2026)
+
+### Added
+
+- Request-scoped providers support
+- Transient-scoped providers support
+
+### Improved
+
+- Added batching for "dead" in-memory data garbage collector
+
 ## 2.0.0 (Aug 28, 2026)
 
 ### Added
 
-- dynamic rate limiting bypassing
+- Dynamic rate limiting bypassing
 - `@RejectRateLimit` decorator
 
 ### Breaking Changes
