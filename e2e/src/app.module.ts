@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common";
 import { RateLimiterModule } from "nestjs-multi-limiter";
 import { AppController } from "./controllers/app.controller";
 import { BypassController } from "./controllers/bypass.controller";
-import { DynamicOptionsController } from "./controllers/dynamic-options.controller";
+import { CustomProvidersController } from "./controllers/custom-providers.controller";
 import { IgnoredController } from "./controllers/ignored.controller";
 import { IgnoredMethodController } from "./controllers/ignored-method.controller";
 import { NonMarkedController } from "./controllers/non-marked.controller";
@@ -19,7 +19,7 @@ import { CustomOptionsFactory } from "./providers/custom.options-factory";
             }
         })
     ],
-    controllers: [AppController, BypassController, DynamicOptionsController, IgnoredMethodController, IgnoredController, NonMarkedController],
+    controllers: [AppController, BypassController, CustomProvidersController, IgnoredMethodController, IgnoredController, NonMarkedController],
     providers: [AppService, CustomKeyExtractor, CustomErrorFactory, CustomOptionsFactory]
 })
 export class AppModule {}

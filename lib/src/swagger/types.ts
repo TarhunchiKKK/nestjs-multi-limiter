@@ -7,6 +7,17 @@ import type { IOptionsFactory } from "../custom/options-factories";
 import type { RateLimitOptions } from "../decorators";
 import type { BypassStrategies, Scope, StrategyRequiredOptionsUnion } from "../shared/model";
 
+/**
+ * Structural Nest application type.
+ *
+ * `INestApplication` from different `@nestjs/common` majors (11 vs 12) is not
+ * assignable because of unique-symbol fields, even though runtime `get()` is compatible.
+ */
+export type NestApplicationLike = {
+    // biome-ignore lint/suspicious/noExplicitAny: must stay compatible across Nest 11 and 12
+    get<T = any>(token: any, options?: any): T;
+};
+
 export type FilteredRoute = {
     controller: InstanceWrapper;
     methods: string[];

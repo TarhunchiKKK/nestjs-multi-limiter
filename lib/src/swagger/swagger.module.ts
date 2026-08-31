@@ -1,4 +1,4 @@
-import { HttpStatus, type INestApplication } from "@nestjs/common";
+import { HttpStatus } from "@nestjs/common";
 import { ModulesContainer, Reflector } from "@nestjs/core";
 import type { Module } from "@nestjs/core/internal";
 import type { ApiResponseOptions } from "@nestjs/swagger";
@@ -7,10 +7,10 @@ import { RATE_LIMIT_METADATA, type RateLimitOptions } from "../decorators";
 import { MODULE_OPTIONS_TOKEN } from "../di";
 import type { Strategies } from "../shared/model";
 import { RateLimiterModuleSwaggerError } from "./rate-limiter-module-swagger.error";
-import type { FilteredRoute, RateLimiterSwaggerConfig, RateLimitSwaggerOptions } from "./types";
+import type { FilteredRoute, NestApplicationLike, RateLimiterSwaggerConfig, RateLimitSwaggerOptions } from "./types";
 
 export class RateLimiterSwaggerModule {
-    public static patch(app: INestApplication, config: RateLimiterSwaggerConfig = {}) {
+    public static patch(app: NestApplicationLike, config: RateLimiterSwaggerConfig = {}) {
         try {
             require("@nestjs/swagger");
         } catch (_: unknown) {
@@ -40,20 +40,20 @@ export class RateLimiterSwaggerModule {
         });
     }
 
-    private static getAppProviders(app: INestApplication) {
-        const modulesContainer = app.get(ModulesContainer);
+    private static getAppProviders(app: NestApplicationLike) {
+        const modulesContainer = app.get<ModulesContainer>(ModulesContainer);
 
         if (!modulesContainer) {
             throw new RateLimiterModuleSwaggerError('"ModulesContainer" not found in provided app.');
         }
 
-        const reflector = app.get(Reflector);
+        const reflector = app.get<Reflector>(Reflector);
 
         if (!reflector) {
             throw new RateLimiterModuleSwaggerError('"Reflector" not found in provided app.');
         }
 
-        const moduleOptions: RateLimiterModuleFullOptions = app.get(MODULE_OPTIONS_TOKEN);
+        const moduleOptions = app.get<RateLimiterModuleFullOptions>(MODULE_OPTIONS_TOKEN);
 
         if (!moduleOptions) {
             throw new RateLimiterModuleSwaggerError('"RateLimiterModuleOptions" not found in provided app.');
