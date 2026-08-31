@@ -1,12 +1,14 @@
 import { HttpStatus, type INestApplication } from "@nestjs/common";
 import { ModulesContainer, Reflector } from "@nestjs/core";
-import { RATE_LIMIT_METADATA, type RateLimitOptions } from "../decorators";
-import { RateLimiterModuleSwaggerError } from "./rate-limiter-module-swagger.error";
-import { MODULE_OPTIONS_TOKEN } from "../di";
 import type { RateLimiterModuleFullOptions } from "../config";
+import { RATE_LIMIT_METADATA, type RateLimitOptions } from "../decorators";
+import { MODULE_OPTIONS_TOKEN } from "../di";
+import { RateLimiterModuleSwaggerError } from "./rate-limiter-module-swagger.error";
+import type { ApiResponseOptions } from "@nestjs/swagger";
+import { RateLimiterSwaggerConfig, RateLimiterSwaggerFullConfig } from "./types";
 
 export class RateLimiterSwaggerModule {
-    public static patch(app: INestApplication) {
+    public static patch(app: INestApplication, config: RateLimiterSwaggerConfig = {}) {
         try {
             require("@nestjs/swagger");
         } catch (_: unknown) {
@@ -15,6 +17,10 @@ export class RateLimiterSwaggerModule {
         }
 
         const { modules, reflector, moduleOptions } = RateLimiterSwaggerModule.getAppProviders(app);
+        const fullConfig = {
+            ...config,
+            app: app
+        };
 
         modules.forEach((module) => {
             module.controllers.forEach((wrapper) => {
@@ -34,7 +40,7 @@ export class RateLimiterSwaggerModule {
                     if (methodOptions) {
                         const finalOptions = RateLimiterSwaggerModule.mergeRateLimitOptions(moduleOptions, controllerOptions, methodOptions);
 
-                        RateLimiterSwaggerModule.appendSwaggerMetadata(method, finalOptions);
+                        RateLimiterSwaggerModule.appendSwaggerMetadata(method, finalOptions, fullConfig);
                     }
                 });
             });
@@ -42,14 +48,18 @@ export class RateLimiterSwaggerModule {
     }
 
     // biome-ignore lint/suspicious/noExplicitAny: `any` type is returned by `reflector`
-    private static appendSwaggerMetadata(method: any, options: RateLimitOptions) {
+    private static appendSwaggerMetadata(method: any, options: RateLimitOptions, config: RateLimiterSwaggerFullConfig) {
         const { DECORATORS } = require("@nestjs/swagger/dist/constants");
 
-        const apiResponseMetadata = Reflect.getMetadata(DECORATORS.API_RESPONSE, method) ?? {};
+        const apiResponseMetadata: Record<string, ApiResponseOptions> = Reflect.getMetadata(DECORATORS.API_RESPONSE, method) ?? {};
 
-        apiResponseMetadata[HttpStatus.TOO_MANY_REQUESTS] = {
-            description: `Strategy:${options.strategy}`
-        };
+        if (config?.transform) {
+            apiResponseMetadata[HttpStatus.TOO_MANY_REQUESTS.toString()] = config.transform(config.app, options);
+        } else {
+            apiResponseMetadata[HttpStatus.TOO_MANY_REQUESTS.toString()] = {
+                description: `Route is protected by "${options.strategy}" algorithm`
+            };
+        }
 
         Reflect.defineMetadata(DECORATORS.API_RESPONSE, apiResponseMetadata, method);
     }
