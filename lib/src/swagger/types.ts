@@ -1,17 +1,42 @@
-import type { INestApplication } from "@nestjs/common";
+import type { InjectionToken } from "@nestjs/common";
 import type { ApiResponseOptions } from "@nestjs/swagger";
+import type { IErrorFactory } from "../custom/error-factories";
+import type { IKeyExtractor } from "../custom/key-extractors";
+import type { IOptionsFactory } from "../custom/options-factories";
 import type { RateLimitOptions } from "../decorators";
-
-export type RateLimiterSwaggerPatchFn = (app: INestApplication, options: RateLimitOptions) => ApiResponseOptions;
+import type { BypassStrategies, Scope, StrategyRequiredOptionsUnion } from "../shared/model";
 
 export type RateLimiterSwaggerConfig = {
-    transform?: (app: INestApplication, options: RateLimitOptions) => ApiResponseOptions;
+    transform?: (options: RateLimitOptions) => ApiResponseOptions;
 
     excludeRoutes?: string[];
 
     explicitOnly?: boolean;
 };
 
-export type RateLimiterSwaggerFullConfig = RateLimiterSwaggerConfig & {
-    app: INestApplication;
-};
+export type RateLimitSwaggerOptions = {
+    /**
+     * Overrides default scope.
+     */
+    scope: Scope;
+
+    /**
+     * Overrides default key extractor.
+     */
+    keyExtractor: InjectionToken<IKeyExtractor>;
+
+    /**
+     * Overrides default error factory.
+     */
+    errorFactory: InjectionToken<IErrorFactory>;
+
+    /**
+     * Overrides default options factory.
+     */
+    factory?: InjectionToken<IOptionsFactory>;
+
+    /**
+     * This allows to bypass rate limiting (skip or reject).
+     */
+    bypass?: BypassStrategies;
+} & StrategyRequiredOptionsUnion;
