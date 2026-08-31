@@ -1,3 +1,3 @@
-export { RateLimit, type RateLimitOptions } from "./rate-limit.decorator";
+export { RATE_LIMIT_METADATA, RateLimit, type RateLimitOptions } from "./rate-limit.decorator";
 export { RejectRateLimit } from "./reject-rate-limit.decorator";
 export { SkipRateLimit } from "./skip-rate-limit.decorator";
