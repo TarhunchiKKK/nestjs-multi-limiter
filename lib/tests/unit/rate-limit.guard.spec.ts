@@ -14,16 +14,17 @@ import {
     CustomKeyExtractor,
     CustomOptionsFactory,
     clearMock,
-    createProvidersDiscoveryServiceMock,
+    createProvidersResolverMock,
     createReflectorMock,
-    EXECUTION_CONTEXT
+    EXECUTION_CONTEXT,
+    MOCK_CONTEXT_ID
 } from "../shared";
 
 describe("RateLimitGuard", () => {
     let guard: RateLimitGuard;
     let guardOptions: RateLimitGuardOptions;
     const reflectorMock = createReflectorMock();
-    const discoveryServiceMock = createProvidersDiscoveryServiceMock();
+    const providersResolverMock = createProvidersResolverMock();
 
     beforeEach(async () => {
         const module = await Test.createTestingModule({
@@ -33,7 +34,7 @@ describe("RateLimitGuard", () => {
             .overrideProvider(Reflector)
             .useValue(reflectorMock)
             .overrideProvider(ProvidersResolver)
-            .useValue(discoveryServiceMock)
+            .useValue(providersResolverMock)
             .compile();
 
         guard = module.get(RateLimitGuard);
@@ -42,7 +43,7 @@ describe("RateLimitGuard", () => {
 
     afterEach(() => {
         clearMock(reflectorMock);
-        clearMock(discoveryServiceMock);
+        clearMock(providersResolverMock);
     });
 
     describe("bypassing", () => {
@@ -67,8 +68,8 @@ describe("RateLimitGuard", () => {
                 .mockReturnValueOnce({ bypass: "reject", errorFactory: CustomErrorFactory } satisfies RateLimitOptions)
                 .mockReturnValueOnce(undefined);
 
-            discoveryServiceMock.getKeyExtractor.mockResolvedValue(new CustomKeyExtractor());
-            discoveryServiceMock.getErrorFactory.mockResolvedValue(new CustomErrorFactory());
+            providersResolverMock.getKeyExtractor.mockResolvedValue(new CustomKeyExtractor());
+            providersResolverMock.getErrorFactory.mockResolvedValue(new CustomErrorFactory());
 
             const resultPromise = guard.canActivate(EXECUTION_CONTEXT);
 
@@ -80,8 +81,8 @@ describe("RateLimitGuard", () => {
                 .mockReturnValueOnce(undefined)
                 .mockReturnValueOnce({ bypass: "reject", errorFactory: CustomErrorFactory } satisfies RateLimitOptions);
 
-            discoveryServiceMock.getKeyExtractor.mockResolvedValue(new CustomKeyExtractor());
-            discoveryServiceMock.getErrorFactory.mockResolvedValue(new CustomErrorFactory());
+            providersResolverMock.getKeyExtractor.mockResolvedValue(new CustomKeyExtractor());
+            providersResolverMock.getErrorFactory.mockResolvedValue(new CustomErrorFactory());
 
             const resultPromise = guard.canActivate(EXECUTION_CONTEXT);
 
@@ -96,16 +97,16 @@ describe("RateLimitGuard", () => {
         it("should use default providers", async () => {
             reflectorMock.get.mockReturnValue(undefined);
 
-            discoveryServiceMock.getExecutor.mockReturnValue({ check: () => true });
-            discoveryServiceMock.getKeyExtractor.mockResolvedValue(new CustomKeyExtractor());
-            discoveryServiceMock.getErrorFactory.mockResolvedValue(new CustomErrorFactory());
-            discoveryServiceMock.getOptionsFactory.mockResolvedValue(new CustomOptionsFactory());
+            providersResolverMock.getExecutor.mockReturnValue({ check: () => true });
+            providersResolverMock.getKeyExtractor.mockResolvedValue(new CustomKeyExtractor());
+            providersResolverMock.getErrorFactory.mockResolvedValue(new CustomErrorFactory());
+            providersResolverMock.getOptionsFactory.mockResolvedValue(new CustomOptionsFactory());
 
             const result = await guard.canActivate(EXECUTION_CONTEXT);
 
             expect(result).toBeTrue();
-            expect(discoveryServiceMock.getKeyExtractor).toHaveBeenCalledWith(guardOptions.keyExtractor);
-            expect(discoveryServiceMock.getErrorFactory).toHaveBeenCalledWith(guardOptions.errorFactory);
+            expect(providersResolverMock.getKeyExtractor).toHaveBeenCalledWith(guardOptions.keyExtractor, MOCK_CONTEXT_ID);
+            expect(providersResolverMock.getErrorFactory).toHaveBeenCalledWith(guardOptions.errorFactory, MOCK_CONTEXT_ID);
         });
 
         it("should override default providers", async () => {
@@ -119,17 +120,17 @@ describe("RateLimitGuard", () => {
                 factory: CustomOptionsFactory
             } satisfies RateLimitOptions);
 
-            discoveryServiceMock.getExecutor.mockReturnValue({ check: () => true });
-            discoveryServiceMock.getKeyExtractor.mockResolvedValue(new CustomKeyExtractor());
-            discoveryServiceMock.getErrorFactory.mockResolvedValue(new CustomErrorFactory());
-            discoveryServiceMock.getOptionsFactory.mockResolvedValue({ getOptions: () => ({ scope: "custom-scope" }) });
+            providersResolverMock.getExecutor.mockReturnValue({ check: () => true });
+            providersResolverMock.getKeyExtractor.mockResolvedValue(new CustomKeyExtractor());
+            providersResolverMock.getErrorFactory.mockResolvedValue(new CustomErrorFactory());
+            providersResolverMock.getOptionsFactory.mockResolvedValue({ getOptions: () => ({ scope: "custom-scope" }) });
 
             const result = await guard.canActivate(EXECUTION_CONTEXT);
 
             expect(result).toBeTrue();
-            expect(discoveryServiceMock.getKeyExtractor).toHaveBeenCalledWith(CustomKeyExtractor);
-            expect(discoveryServiceMock.getErrorFactory).toHaveBeenCalledWith(CustomErrorFactory);
-            expect(discoveryServiceMock.getOptionsFactory).toHaveBeenCalledWith(CustomOptionsFactory);
+            expect(providersResolverMock.getKeyExtractor).toHaveBeenCalledWith(CustomKeyExtractor, MOCK_CONTEXT_ID);
+            expect(providersResolverMock.getErrorFactory).toHaveBeenCalledWith(CustomErrorFactory, MOCK_CONTEXT_ID);
+            expect(providersResolverMock.getOptionsFactory).toHaveBeenCalledWith(CustomOptionsFactory, MOCK_CONTEXT_ID);
         });
     });
 
@@ -146,9 +147,9 @@ describe("RateLimitGuard", () => {
                 errorFactory: CustomErrorFactory
             } satisfies RateLimitOptions);
 
-            discoveryServiceMock.getExecutor.mockReturnValue({ check: () => false });
-            discoveryServiceMock.getKeyExtractor.mockResolvedValue(new CustomKeyExtractor());
-            discoveryServiceMock.getErrorFactory.mockResolvedValue(new CustomErrorFactory());
+            providersResolverMock.getExecutor.mockReturnValue({ check: () => false });
+            providersResolverMock.getKeyExtractor.mockResolvedValue(new CustomKeyExtractor());
+            providersResolverMock.getErrorFactory.mockResolvedValue(new CustomErrorFactory());
 
             const resultPromise = guard.canActivate(EXECUTION_CONTEXT);
 
@@ -165,15 +166,15 @@ describe("RateLimitGuard", () => {
                 factory: CustomOptionsFactory
             } satisfies RateLimitOptions);
 
-            discoveryServiceMock.getExecutor.mockReturnValue({ check: () => true });
-            discoveryServiceMock.getKeyExtractor.mockResolvedValue(new CustomKeyExtractor());
-            discoveryServiceMock.getErrorFactory.mockResolvedValue(new CustomErrorFactory());
-            discoveryServiceMock.getOptionsFactory.mockResolvedValue({ getOptions: () => ({ keyExtractor: BuiltinKeyExtractor }) });
+            providersResolverMock.getExecutor.mockReturnValue({ check: () => true });
+            providersResolverMock.getKeyExtractor.mockResolvedValue(new CustomKeyExtractor());
+            providersResolverMock.getErrorFactory.mockResolvedValue(new CustomErrorFactory());
+            providersResolverMock.getOptionsFactory.mockResolvedValue({ getOptions: () => ({ keyExtractor: BuiltinKeyExtractor }) });
 
             const result = await guard.canActivate(EXECUTION_CONTEXT);
 
             expect(result).toBeTrue();
-            expect(discoveryServiceMock.getKeyExtractor).toHaveBeenCalledWith(CustomKeyExtractor);
+            expect(providersResolverMock.getKeyExtractor).toHaveBeenCalledWith(CustomKeyExtractor, MOCK_CONTEXT_ID);
         });
     });
 });
