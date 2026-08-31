@@ -11,15 +11,12 @@
         "experimentalDecorators": true,
         "allowSyntheticDefaultImports": true,
         "target": "ES2023",
+        "types": ["node", "bun"],
         "sourceMap": true,
         "outDir": "./dist",
         "incremental": true,
         "skipLibCheck": true,
-        "strictNullChecks": true,
-        "forceConsistentCasingInFileNames": true,
-        "noImplicitAny": false,
-        "strictBindCallApply": false,
-        "noFallthroughCasesInSwitch": false,
-        "types": ["bun"]
+        "strict": true,
+        "strictPropertyInitialization": false
     }
 }
