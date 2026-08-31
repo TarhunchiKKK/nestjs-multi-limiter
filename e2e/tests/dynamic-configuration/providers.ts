@@ -1,6 +1,6 @@
-import type { ExecutionContext } from "@nestjs/common";
+import { Controller, type ExecutionContext, Get, UseGuards } from "@nestjs/common";
 import type { Request } from "express";
-import { type IOptionsFactory, OptionsFactory, type RateLimitOptions } from "nestjs-multi-limiter";
+import { type IOptionsFactory, OptionsFactory, RateLimit, RateLimitGuard, type RateLimitOptions } from "nestjs-multi-limiter";
 
 export const USER_LIMIT = 3;
 
@@ -34,5 +34,15 @@ export class RoleBasedOptionsFactory implements IOptionsFactory {
                 throw new Error("No role find in request");
             }
         }
+    }
+}
+
+@Controller("app")
+@UseGuards(RateLimitGuard)
+export class AppController {
+    @Get("test")
+    @RateLimit({ factory: RoleBasedOptionsFactory })
+    public test() {
+        return { success: true };
     }
 }

@@ -1,5 +1,5 @@
 import { type CanActivate, type ExecutionContext, Inject, Injectable } from "@nestjs/common";
-import { Reflector } from "@nestjs/core";
+import { type ContextId, ContextIdFactory, Reflector } from "@nestjs/core";
 import type { StrategyOptions } from "./config";
 import type { ErrorFactoryOptions, IErrorFactory } from "./custom/error-factories";
 import type { IKeyExtractor } from "./custom/key-extractors";
@@ -78,7 +78,9 @@ export class RateLimitGuard implements CanActivate {
     }
 
     private async getFinalGuardOptions(context: ExecutionContext, metadataOptions: RateLimitOptions): Promise<RunOptions> {
-        const dynamicOptions = await this.getDynamicOptions(context, metadataOptions);
+        const contextId = this.getContextId(context);
+
+        const dynamicOptions = await this.getDynamicOptions(context, metadataOptions, contextId);
 
         const keyExtractorToken = metadataOptions.keyExtractor ?? dynamicOptions.keyExtractor ?? this.options.keyExtractor;
         const errorFactoryToken = metadataOptions.errorFactory ?? dynamicOptions.errorFactory ?? this.options.errorFactory;
@@ -92,8 +94,8 @@ export class RateLimitGuard implements CanActivate {
         return {
             bypass: metadataOptions.bypass ?? dynamicOptions.bypass,
             scope: metadataOptions.scope ?? dynamicOptions.scope ?? this.options.scope,
-            keyExtractor: await this.providersResolver.getKeyExtractor(keyExtractorToken),
-            errorFactory: await this.providersResolver.getErrorFactory(errorFactoryToken),
+            keyExtractor: await this.providersResolver.getKeyExtractor(keyExtractorToken, contextId),
+            errorFactory: await this.providersResolver.getErrorFactory(errorFactoryToken, contextId),
             strategy: strategy,
             strategyOptions: {
                 ...this.options.strategyOptions,
@@ -127,15 +129,42 @@ export class RateLimitGuard implements CanActivate {
         throw error;
     }
 
-    private async getDynamicOptions(context: ExecutionContext, metadataOptions: RateLimitOptions): Promise<DynamicRateLimitOptions> {
+    private async getDynamicOptions(context: ExecutionContext, metadataOptions: RateLimitOptions, contextId?: ContextId): Promise<DynamicRateLimitOptions> {
         const optionsFactoryToken = metadataOptions.factory ?? this.options.factory;
 
         if (!optionsFactoryToken) {
             return {};
         }
 
-        const optionsFactoryInstance = await this.providersResolver.getOptionsFactory(optionsFactoryToken);
+        const optionsFactoryInstance = await this.providersResolver.getOptionsFactory(optionsFactoryToken, contextId);
 
         return await optionsFactoryInstance.getOptions(context);
+    }
+
+    private getContextId(context: ExecutionContext): ContextId {
+        const contextType: string = context.getType();
+
+        switch (contextType) {
+            case "http": {
+                const request = context.switchToHttp().getRequest();
+                return ContextIdFactory.getByRequest(request);
+            }
+            case "ws": {
+                const client = context.switchToWs();
+                return ContextIdFactory.getByRequest(client);
+            }
+            case "rpc": {
+                const rpcContext = context.switchToRpc();
+                return ContextIdFactory.getByRequest(rpcContext);
+            }
+            case "graphql": {
+                const args = context.getArgs();
+                return ContextIdFactory.getByRequest(args[2]);
+            }
+            default: {
+                const arg = context.getArgByIndex(0);
+                return ContextIdFactory.getByRequest(arg);
+            }
+        }
     }
 }

@@ -1,4 +1,5 @@
-import { type IOptionsFactory, OptionsFactory, type RateLimitOptions } from "nestjs-multi-limiter";
+import { Controller, Get, UseGuards } from "@nestjs/common";
+import { type IOptionsFactory, OptionsFactory, RateLimit, RateLimitGuard, type RateLimitOptions } from "nestjs-multi-limiter";
 
 export const MODULE_LEVEL_LIMIT = 3;
 
@@ -39,5 +40,34 @@ export class RouteLevelOptionsFactory implements IOptionsFactory {
                 limit: ROUTE_LEVEL_LIMIT
             }
         };
+    }
+}
+
+@Controller("module")
+@UseGuards(RateLimitGuard)
+export class ModuleLevelController {
+    @Get("test")
+    public test() {
+        return { success: true };
+    }
+}
+
+@Controller("controller")
+@UseGuards(RateLimitGuard)
+@RateLimit({ factory: ControllerLevelOptionsFactory })
+export class ControllerLevelController {
+    @Get("test")
+    public test() {
+        return { success: true };
+    }
+}
+
+@Controller("route")
+@UseGuards(RateLimitGuard)
+export class RouteLevelController {
+    @Get("test")
+    @RateLimit({ factory: RouteLevelOptionsFactory })
+    public test() {
+        return { success: true };
     }
 }
