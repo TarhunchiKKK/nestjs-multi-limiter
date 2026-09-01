@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.0 (Sep 1, 2026)
+
+### Added
+
+- Integration with [@nestjs/swagger](https://www.npmjs.com/package/@nestjs/swagger) package with ability to customize `429` api response metadata
+
 ## 2.1.0 (Aug 31, 2026)
 
 ### Added

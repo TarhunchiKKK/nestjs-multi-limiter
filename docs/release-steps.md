@@ -2,7 +2,7 @@
 
 ## Project Setup
 
-1. Clean ol library build:
+1. Clean old library build:
 
 ```bash
 bun run clean:cache
@@ -51,7 +51,7 @@ cd lib
 
 npm login
 
-npm publish
+npm publish --auth-type=web
 ```
 
 ## GitHub Release
