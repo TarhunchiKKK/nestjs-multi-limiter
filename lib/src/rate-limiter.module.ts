@@ -133,7 +133,6 @@ export class RateLimiterModule {
             throw new InvalidAsyncConfigurationError();
         }
 
-        // FIX: Remove `!` operator from this method.
         if (options.useFactory) {
             return [
                 {
@@ -141,6 +140,7 @@ export class RateLimiterModule {
                     inject: options.inject ?? [],
                     // biome-ignore lint/suspicious/noExplicitAny: `any` type is necessary for factory customization
                     useFactory: async (...args: any[]) => {
+                        // DELETE: `!` operator from this method.
                         // biome-ignore lint/style/noNonNullAssertion: `useFactory` field will be defined
                         const calculatedOptions = await options.useFactory!(...args);
 

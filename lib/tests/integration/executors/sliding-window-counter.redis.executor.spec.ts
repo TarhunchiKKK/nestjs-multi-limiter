@@ -61,7 +61,7 @@ describe("SlidingWindowCounterRedisExecutor", () => {
         expect(blockedCheck).toBeFalse();
     });
 
-    // FIX: flaking test
+    // FIX: Flaking test
     it.skip("should dynamically decay previous window weight as time progresses", async () => {
         const options: SlidingWindowCounterOptions = {
             limit: 2,

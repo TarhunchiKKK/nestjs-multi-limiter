@@ -89,7 +89,7 @@ export class ProvidersResolver implements OnModuleInit {
                 const metadata = this.reflector.get<ExecutorMetadata>(EXECUTOR_METADATA_KEY, wrapper.instance.constructor);
 
                 if (metadata && metadata.storage === this.moduleOptions.storage.type) {
-                    // FIX: type casting
+                    // FIX: Type casting
                     this.executorsMap.set(metadata.strategy, wrapper.instance as unknown as IExecutor<unknown>);
                 }
             }

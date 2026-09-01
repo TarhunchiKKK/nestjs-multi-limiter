@@ -8,7 +8,7 @@ import { IoRedisAdapter, MS_IN_MINUTE, RedisModule } from "../../shared";
 describe("Different Redis adapters (Provider)", () => {
     describe.each([
         ['"ioredis" adapter (class)', [IoRedisAdapter]]
-        // FIX: This case throws "error:Socket already opened" error
+        // BUG: This case throws "error:Socket already opened" error
         // ['"redis" adapter (class)', [NodeRedisAdapter]]
     ])("%s", (_, inject) => {
         let executor: FixedWindowRedisExecutor;

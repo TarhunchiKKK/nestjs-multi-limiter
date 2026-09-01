@@ -1,5 +1,6 @@
 import type { SidebarsConfig } from "@docusaurus/plugin-content-docs";
 
+// QUESTION: Maybe flat sidebar tree?
 export default {
     docs: [
         "overview",
