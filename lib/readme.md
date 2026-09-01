@@ -89,6 +89,15 @@ export class AppController {
 
 👉 [See Documentation](https://tarhunchikkk.github.io/nestjs-multi-limiter/)
 
+## 💡 Advanced Use Cases
+
+Go beyond basic DDoS protection. Thanks to its protocol-agnostic architecture, dynamic runtime configuration, and resilient storage layer, this library is built to power complex enterprise workflows:
+
+* 💰 **API Monetization & Tiered Pricing:** Fetch and apply rate limits dynamically in real-time based on the user's subscription model (e.g., *Free*, *Premium*, *Enterprise*) using custom error and limit factories.
+* 🤖 **AI & LLM Infrastructure Cost Control:** Prevent infinite loops or rogue frontends from burning through your OpenAI/Anthropic budgets. Rely on the **Fail-Close** strategy to lock down outgoing requests if Redis becomes unavailable.
+* 🕸️ **Distributed Microservices & Multiple Protocols:** Secure more than just HTTP. Effortlessly apply cross-service rate limiting to **WebSockets**, **gRPC**, **GraphQL**, or message queues using custom key providers.
+* 📊 **Intelligent Traffic Shaping:** Smooth out volatile traffic spikes and prevent downstream database lockups by switching from simple window limits to advanced **Token Bucket** or **Leaky Bucket** algorithms.
+
 ## License
 
-This library is [MIT licensed](license).
+`nestjs-multi-limiter` is [MIT licensed](license).
