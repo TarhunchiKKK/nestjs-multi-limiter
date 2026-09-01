@@ -2,9 +2,9 @@ import { HttpStatus } from "@nestjs/common";
 import { ModulesContainer, Reflector } from "@nestjs/core";
 import type { Module } from "@nestjs/core/internal";
 import type { ApiResponseOptions } from "@nestjs/swagger";
-import type { RateLimiterModuleFullOptions } from "../config";
 import { RATE_LIMIT_METADATA, type RateLimitOptions } from "../decorators";
-import { MODULE_OPTIONS_TOKEN } from "../di";
+import { GUARD_OPTIONS_TOKEN } from "../di";
+import type { RateLimitGuardOptions } from "../rate-limit.guard";
 import type { Strategies } from "../shared/model";
 import { RateLimiterModuleSwaggerError } from "./rate-limiter-module-swagger.error";
 import type { FilteredRoute, NestApplicationLike, RateLimiterSwaggerConfig, RateLimitSwaggerOptions } from "./types";
@@ -18,7 +18,7 @@ export class RateLimiterSwaggerModule {
             return;
         }
 
-        const { modules, reflector, moduleOptions } = RateLimiterSwaggerModule.getAppProviders(app);
+        const { modules, reflector, guardOptions } = RateLimiterSwaggerModule.getAppProviders(app);
 
         const filteredRoutes = RateLimiterSwaggerModule.filterRoutes(modules, config);
 
@@ -34,7 +34,7 @@ export class RateLimiterSwaggerModule {
                     return;
                 }
 
-                const finalOptions = RateLimiterSwaggerModule.mergeRateLimitOptions(moduleOptions, controllerOptions, methodOptions);
+                const finalOptions = RateLimiterSwaggerModule.mergeRateLimitOptions(guardOptions, controllerOptions, methodOptions);
                 RateLimiterSwaggerModule.appendSwaggerMetadata(method, finalOptions, config);
             });
         });
@@ -53,14 +53,16 @@ export class RateLimiterSwaggerModule {
             throw new RateLimiterModuleSwaggerError('"Reflector" not found in provided app.');
         }
 
-        const moduleOptions = app.get<RateLimiterModuleFullOptions>(MODULE_OPTIONS_TOKEN);
+        const guardOptions = app.get<RateLimitGuardOptions>(GUARD_OPTIONS_TOKEN);
 
-        if (!moduleOptions) {
+        if (!guardOptions) {
             throw new RateLimiterModuleSwaggerError('"RateLimiterModuleOptions" not found in provided app.');
         }
 
+        console.log(guardOptions);
+
         return {
-            moduleOptions,
+            guardOptions,
             reflector,
             modules: [...modulesContainer.values()]
         };
@@ -105,25 +107,25 @@ export class RateLimiterSwaggerModule {
     }
 
     private static mergeRateLimitOptions(
-        moduleOptions: RateLimiterModuleFullOptions,
+        guardOptions: RateLimitGuardOptions,
         controllerOptions: RateLimitOptions = {},
         methodOptions: RateLimitOptions = {}
     ): RateLimitSwaggerOptions {
-        const strategy = methodOptions?.strategy ?? controllerOptions?.strategy ?? moduleOptions.strategy;
+        const strategy = methodOptions?.strategy ?? controllerOptions?.strategy ?? guardOptions.strategy;
 
         return {
-            scope: methodOptions?.scope ?? controllerOptions?.scope ?? moduleOptions.scope,
-            keyExtractor: methodOptions?.keyExtractor ?? controllerOptions?.keyExtractor ?? moduleOptions.defaultProviders.keyExtractor,
-            errorFactory: methodOptions?.errorFactory ?? controllerOptions?.errorFactory ?? moduleOptions.defaultProviders.errorFactory,
-            factory: methodOptions?.factory ?? controllerOptions?.factory ?? moduleOptions.defaultProviders.optionsFactory,
+            scope: methodOptions?.scope ?? controllerOptions?.scope ?? guardOptions.scope,
+            keyExtractor: methodOptions?.keyExtractor ?? controllerOptions?.keyExtractor ?? guardOptions.keyExtractor,
+            errorFactory: methodOptions?.errorFactory ?? controllerOptions?.errorFactory ?? guardOptions.errorFactory,
+            factory: methodOptions?.factory ?? controllerOptions?.factory ?? guardOptions.factory,
             bypass: methodOptions?.bypass ?? controllerOptions?.bypass,
             strategy: strategy,
             options: {
-                ...moduleOptions.strategyOptions[strategy],
+                ...guardOptions.strategyOptions[strategy],
                 ...(controllerOptions?.options || {}),
                 ...(methodOptions?.options || {})
             }
-        };
+        } as RateLimitSwaggerOptions;
     }
 
     // biome-ignore lint/suspicious/noExplicitAny: `any` type is returned by `reflector`
@@ -144,7 +146,7 @@ export class RateLimiterSwaggerModule {
     private static getDefaultApiResponseOptions(options: RateLimitSwaggerOptions): ApiResponseOptions {
         if (options.factory) {
             return {
-                description: "Rate limiting for this route is computed dynamically"
+                description: "Rate limiting options for this route are computed dynamically"
             };
         } else if (options.bypass === "skip") {
             return {
