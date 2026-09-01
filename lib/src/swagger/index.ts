@@ -1,2 +1,2 @@
-export { RateLimiterSwaggerModule } from "./swagger.module";
+export { RateLimiterSwaggerModule } from "./module";
 export type { RateLimiterSwaggerConfig, RateLimitSwaggerOptions } from "./types";

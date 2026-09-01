@@ -6,7 +6,7 @@ import { RATE_LIMIT_METADATA, type RateLimitOptions } from "../decorators";
 import { GUARD_OPTIONS_TOKEN } from "../di";
 import type { RateLimitGuardOptions } from "../rate-limit.guard";
 import type { Strategies } from "../shared/model";
-import { RateLimiterModuleSwaggerError } from "./rate-limiter-module-swagger.error";
+import { RateLimiterModuleSwaggerError } from "./errors";
 import type { FilteredRoute, NestApplicationLike, RateLimiterSwaggerConfig, RateLimitSwaggerOptions } from "./types";
 
 export class RateLimiterSwaggerModule {
