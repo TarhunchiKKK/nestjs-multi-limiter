@@ -4,7 +4,7 @@ import { RateLimit, RateLimitGuard } from "nestjs-multi-limiter";
 import { AppService } from "../providers/app.service";
 
 @Controller("ignored-method")
-@ApiTags("Ignored MEthod")
+@ApiTags("Ignored Method")
 @UseGuards(RateLimitGuard)
 @RateLimit({})
 export class IgnoredMethodController {
