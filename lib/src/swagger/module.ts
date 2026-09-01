@@ -161,28 +161,28 @@ export class RateLimiterSwaggerModule {
         switch (options.strategy) {
             case "fixed-window":
                 return {
-                    description: `This route is rate limited (scope=${options.scope}) with "${options.strategy}" algorithm (limit=${options.options.limit}, ttl=${options.options.ttl} ms)`
+                    description: `This route is rate limited (scope="${options.scope}") with "${options.strategy}" algorithm (limit=${options.options.limit}, ttl=${options.options.ttl} ms)`
                 };
             case "sliding-window-counter":
             case "sliding-window-log": {
                 return {
-                    description: `This route is rate limited (scope=${options.scope}) with "${options.strategy}" algorithm (limit=${options.options.limit}, windowMs=${options.options.windowMs} ms)`
+                    description: `This route is rate limited (scope="${options.scope}") with "${options.strategy}" algorithm (limit=${options.options.limit}, windowMs=${options.options.windowMs} ms)`
                 };
             }
             case "token-bucket": {
                 return {
-                    description: `This route is rate limited (scope=${options.scope}) with "${options.strategy}" algorithm (capacity=${options.options.capacity}, refillRate=${options.options.refillRate} tokens/ms)`
+                    description: `This route is rate limited (scope="${options.scope}") with "${options.strategy}" algorithm (capacity=${options.options.capacity}, refillRate=${options.options.refillRate} tokens/ms)`
                 };
             }
             case "leaky-bucket": {
                 return {
-                    description: `This route is rate limited (scope=${options.scope}) with "${options.strategy}" algorithm (capacity=${options.options.capacity}, leakRate=${options.options.leakRate} tokens/ms)`
+                    description: `This route is rate limited (scope="${options.scope}") with "${options.strategy}" algorithm (capacity=${options.options.capacity}, leakRate=${options.options.leakRate} tokens/ms)`
                 };
             }
             default: {
-                console.warn(`[RateLimiterModule]: Unknown rate limiting strategy: ${(options as { strategy: Strategies }).strategy}`);
+                console.warn(`[RateLimiterModule]: Unknown rate limiting strategy: "${(options as { strategy: Strategies }).strategy}"`);
                 return {
-                    description: `Unknown rate limiting strategy: ${(options as { strategy: Strategies }).strategy}`
+                    description: `Unknown rate limiting strategy: "${(options as { strategy: Strategies }).strategy}"`
                 };
             }
         }

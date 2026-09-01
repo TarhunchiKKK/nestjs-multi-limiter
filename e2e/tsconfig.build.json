@@ -1,8 +1,8 @@
 {
     "extends": "./tsconfig.json",
     "compilerOptions": {
-        "rootDir": "./src"
+        "rootDir": "swagger"
     },
-    "include": ["src"],
+    "include": ["swagger"],
     "exclude": ["node_modules", "tests", "dist", "**/*spec.ts"]
 }
