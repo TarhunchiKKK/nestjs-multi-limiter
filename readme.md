@@ -28,7 +28,7 @@
 - **Race-Condition Safe:** Powered Redis storage by execution <a href="https://www.lua.org/">Lua</a> scripts, preventing race conditions in multi-instant deployments.
 - **Protocol Agnosticism:** Ability to implement custom key extractors and error factories allows you to integrate the library with any protocol.
 - **Zero Memory Leaks:** An automatic background garbage collection provider for the In-Memory storage (`Map`), fully tied to <a href="http://nestjs.com/">NestJS</a> lifecycle hooks.
-- **Swagger Integration:** Ability to automatically apply `429` response metadata to your Swagger docs.
+- **Swagger Integration:** Native integration with <a href="https://www.npmjs.com/package/@nestjs/swagger">@nestjs/swagger</a> package with ability to customize metadata in Swagger docs.
 
 👉 [See Documentation](https://tarhunchikkk.github.io/nestjs-multi-limiter/)
 
