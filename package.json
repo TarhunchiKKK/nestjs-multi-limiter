@@ -10,7 +10,7 @@
         "build": "turbo run build",
         "build:lib": "turbo run build --filter=nestjs-multi-limiter",
         "build:website": "turbo run build --filter=website",
-        "build:sample": "turbo run build --filter=sample",
+        "build:sample": "turbo run start --filter=sample",
         "start:swagger": "turbo run start --filter=e2e",
         "start:sample": "turbo run start --filter=sample",
         "start:website": "turbo run start --filter=website",

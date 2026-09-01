@@ -6,20 +6,19 @@
         "test:e2e": "bun test tests --preload ../scripts/test/preload.ts"
     },
     "dependencies": {
-        "@nestjs/common": "^12.0.1",
-        "@nestjs/core": "^12.0.1",
-        "@nestjs/platform-express": "^12.0.1",
-        "@nestjs/swagger": "^12.0.1",
+        "@nestjs/common": "^11.0.0",
+        "@nestjs/core": "^11.0.0",
+        "@nestjs/platform-express": "^11.0.0",
+        "@nestjs/swagger": "^11.0.0",
         "ioredis": "^6.0.0",
         "nestjs-multi-limiter": "*",
         "reflect-metadata": "^0.2.2",
         "rxjs": "^7.8.1"
     },
     "devDependencies": {
-        "@nestjs/cli": "^12.0.0",
-        "@nestjs/mau": "^0.2.6",
-        "@nestjs/schematics": "^12.0.0",
-        "@nestjs/testing": "^12.0.1",
+        "@nestjs/cli": "^11.0.0",
+        "@nestjs/schematics": "^11.0.0",
+        "@nestjs/testing": "^11.0.0",
         "@types/bun": "^1.4.0",
         "@types/express": "^5.0.0",
         "@types/jest": "^30.0.0",
@@ -27,8 +26,6 @@
         "@types/supertest": "^7.0.0",
         "prettier": "^3.4.2",
         "supertest": "^7.0.0",
-        "ts-loader": "^9.5.2",
-        "tsconfig-paths": "^4.2.0",
         "typescript": "^6.0.2"
     }
 }

@@ -128,7 +128,7 @@ export class RateLimiterSwaggerModule {
 
     // biome-ignore lint/suspicious/noExplicitAny: `any` type is returned by `reflector`
     private static appendSwaggerMetadata(method: any, options: RateLimitSwaggerOptions, config: RateLimiterSwaggerConfig) {
-        const { DECORATORS } = require("@nestjs/swagger/dist/constants");
+        const { DECORATORS } = require("@nestjs/swagger");
 
         const apiResponseMetadata: Record<string, ApiResponseOptions> = Reflect.getMetadata(DECORATORS.API_RESPONSE, method) ?? {};
 
