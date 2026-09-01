@@ -41,6 +41,7 @@ export default {
             },
             items: ["custom-providers/overview", "custom-providers/key-extractors", "custom-providers/error-factories", "custom-providers/options-factories"]
         },
+        "swagger-integration",
         {
             type: "category",
             label: "Resources 📔",

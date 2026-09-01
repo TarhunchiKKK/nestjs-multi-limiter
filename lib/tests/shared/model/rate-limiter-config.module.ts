@@ -1,5 +1,5 @@
 import { Injectable, Module } from "@nestjs/common";
-import type { IRateLimiterModuleOptionsFactory, RateLimiterModuleOptions } from "../../../src/config/options";
+import type { IRateLimiterModuleOptionsFactory, RateLimiterModuleOptions } from "../../../src/config";
 
 export const RATE_LIMITER_MODULE_SYNC_REDIS_OPTIONS: RateLimiterModuleOptions = {
     storage: {

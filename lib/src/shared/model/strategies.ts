@@ -108,3 +108,10 @@ export type StrategyPartialOptionsUnion =
     | ({ strategy: ExtractMember<Strategies, "sliding-window-log"> } & { options?: Partial<SlidingWindowLogOptions> })
     | ({ strategy: ExtractMember<Strategies, "leaky-bucket"> } & { options?: Partial<LeakyBucketOptions> })
     | { strategy?: Strategies; options?: object };
+
+export type StrategyRequiredOptionsUnion =
+    | ({ strategy: ExtractMember<Strategies, "fixed-window"> } & { options: FixedWindowOptions })
+    | ({ strategy: ExtractMember<Strategies, "token-bucket"> } & { options: TokenBucketOptions })
+    | ({ strategy: ExtractMember<Strategies, "sliding-window-counter"> } & { options: SlidingWindowCounterOptions })
+    | ({ strategy: ExtractMember<Strategies, "sliding-window-log"> } & { options: SlidingWindowLogOptions })
+    | ({ strategy: ExtractMember<Strategies, "leaky-bucket"> } & { options: LeakyBucketOptions });
