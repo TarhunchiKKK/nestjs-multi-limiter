@@ -4,6 +4,7 @@ import { RateLimiterModule } from "../../../src";
 import { FixedWindowRedisExecutor } from "../../../src/executors";
 import type { FixedWindowOptions, IRedisAdapter, RedisFailingStrategies } from "../../../src/shared/model";
 import { clearMock, createRedisMock, MS_IN_DAY } from "../../shared";
+import { RedisAdapterError } from "../../../src/shared/errors";
 
 const key = "rate-limiter:key:fixed-window:redis-failure";
 
@@ -12,7 +13,8 @@ const options: FixedWindowOptions = {
     ttl: 1 * MS_IN_DAY
 };
 
-const error = new Error("Redis disconnect");
+const redisAdapterError = new RedisAdapterError();
+const unknownError = new Error("Redis disconnect");
 
 describe("Redis failure handling", () => {
     const redisMock = createRedisMock();
@@ -35,45 +37,59 @@ describe("Redis failure handling", () => {
         clearMock(redisMock);
     });
 
-    it("should allow request", async () => {
+    it('should correctly apply "fail-open" strategy', async () => {
         const module = await createModule(redisMock, "fail-open");
         const executor = module.get(FixedWindowRedisExecutor);
 
         redisMock.eval.mockImplementation(() => {
-            throw error;
+            throw redisAdapterError;
         });
 
         const result = await executor.check(key, options);
 
         expect(result).toBeTrue();
-        expect(redisMock.handleError).toHaveBeenCalledWith(error, key);
+        expect(redisMock.handleError).not.toHaveBeenCalled();
     });
 
-    it("should block request", async () => {
+    it('should correctly apply "fail-close" strategy', async () => {
         const module = await createModule(redisMock, "fail-close");
         const executor = module.get(FixedWindowRedisExecutor);
 
         redisMock.eval.mockImplementation(() => {
-            throw error;
+            throw redisAdapterError;
         });
 
         const result = await executor.check(key, options);
 
         expect(result).toBeFalse();
-        expect(redisMock.handleError).toHaveBeenCalledWith(error, key);
+        expect(redisMock.handleError).not.toHaveBeenCalled();
     });
 
-    it("should throw error", async () => {
+    it('should correctly apply "fail-fast" strategy', async () => {
         const module = await createModule(redisMock, "fail-fast");
         const executor = module.get(FixedWindowRedisExecutor);
 
         redisMock.eval.mockImplementation(() => {
-            throw error;
+            throw redisAdapterError;
         });
 
         const resultPromise = executor.check(key, options);
 
-        expect(resultPromise).rejects.toThrow(error);
-        expect(redisMock.handleError).toHaveBeenCalledWith(error, key);
+        expect(resultPromise).rejects.toThrow(redisAdapterError);
+        expect(redisMock.handleError).not.toHaveBeenCalled();
+    });
+
+    it("should handle unknown error", async () => {
+        const module = await createModule(redisMock, "fail-fast");
+        const executor = module.get(FixedWindowRedisExecutor);
+
+        redisMock.eval.mockImplementation(() => {
+            throw unknownError;
+        });
+
+        const resultPromise = executor.check(key, options);
+
+        expect(resultPromise).rejects.toThrow(unknownError);
+        expect(redisMock.handleError).toHaveBeenCalledWith(unknownError, key);
     });
 });

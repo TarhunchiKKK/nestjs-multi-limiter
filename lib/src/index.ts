@@ -5,4 +5,5 @@ export { type DynamicRateLimitOptions, type IOptionsFactory, OptionsFactory } fr
 export { RateLimit, type RateLimitOptions, RejectRateLimit, SkipRateLimit } from "./decorators";
 export { RateLimitGuard } from "./rate-limit.guard";
 export { RateLimiterModule } from "./rate-limiter.module";
+export { RedisAdapterError } from "./shared/errors";
 export type { IRedisAdapter, Key, Scope, StorageTypes, Strategies } from "./shared/model";
