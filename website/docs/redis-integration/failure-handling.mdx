@@ -26,7 +26,7 @@ RateLimiterModule.forRoot({
 
 ## Adapter implementation
 
-This library implements `Error Translation` (`Error Mapping`) pattern for Redis failure handling. It means, that if Redis is not available adapter should throw `RedisAdapterError` on every `eval` method call during Redis is not available. This error signals that Redis was failed and it will apply corresponding failing strategy.
+This library implements `Error Translation` (`Error Mapping`) pattern for Redis failure handling. It means, that if Redis is not available adapter should throw `RedisAdapterError` on every `eval` method call during Redis is not available. This error signals that Redis was failed and corresponding failing strategy will be applied.
 
 ```typescript title="redis.service.ts"
 import  { type IRedisAdapter, type Key, RedisAdapterError } from "nestjs-multi-limiter";

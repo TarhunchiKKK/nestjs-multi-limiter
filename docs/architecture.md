@@ -76,3 +76,18 @@ There are some extra-providers to to carry out secondary tasks:
 
 1. `InMemoryGarbageCollector`: Provider that collects _dead_ rate limiting data records from `Map` storage.
 2. `ProvidersResolved`: Providers that search for custom providers when module inits and cache them to provide high-speed access for this providers in runtime.
+
+
+## Redis Failure Handling
+
+This library implements `Error Translation` (`Error Mapping`) pattern for Redis failure handling. It means, that if Redis is not available adapter should throw `RedisAdapterError` on every `eval` method call during Redis is not available. This error signals that Redis was failed and corresponding failing strategy will be applied.
+
+```mermaid
+graph TD
+    A[<code>Adapter.eval</code>] -->|Error occurs| B[Adapter throws error]
+    B -->|Executor catches error| C[Executor]
+    C --> D{Is instance of <br /> <code>RedisAdapterError</code>?}
+    D --> |Yes| E[Apply failing strategy]
+    D --> |No| F[<code>Adapter.handleError</code>]
+    F --> G[Throw error]
+```
