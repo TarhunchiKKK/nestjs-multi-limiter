@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.3.0 (Sep 2, 2026)
+
+### Improved
+
+- Redis failure mechanism by implementing `Error Translation` (`Error Mapping`) pattern for errors handling
+
 ## 2.2.0 (Sep 1, 2026)
 
 ### Added

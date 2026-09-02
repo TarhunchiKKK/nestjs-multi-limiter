@@ -1,6 +1,6 @@
 {
     "name": "nestjs-multi-limiter",
-    "version": "2.2.0",
+    "version": "2.3.0",
     "description": "Rate Limiter module for NestJS framework",
     "keywords": ["nestjs", "rate-limit", "throttle", "security", "bruteforce", "express", "fastify", "ws", "gql", "rpc", "authorization"],
     "license": "MIT",
