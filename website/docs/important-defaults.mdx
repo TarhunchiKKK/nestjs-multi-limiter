@@ -2,7 +2,7 @@
 
 ## How keys work
 
-In this docs you often will see **key**. Keys used to store rate limiting data record in memory or in `Redis`.
+In this docs you often will see **key**. Keys used to store rate limiting data record in memory or in Redis.
 
 Key structure:
 
@@ -22,7 +22,7 @@ Let's look at all parts of the key.
 
 Prefix is the first part of key. Prefix is set to `rate-limiter` and cannot be overridden. 
 
-This is done in order to avoid `Redis` keys conflicts.
+This is done in order to avoid Redis keys conflicts.
 
 ### Strategy
 

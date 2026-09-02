@@ -1,14 +1,14 @@
 # Failure Handling
 
-Let's walk through how this library handles `Redis` failure.
+Let's walk through how this library handles Redis failure.
 
 ## Failing Strategies
 
-This library supports 3 strategies for `Redis` failure:
+This library supports 3 strategies for Redis failure:
 
-1. `fail-open` (default) - When `Redis` error occurs library allows all requests.  
-2. `fail-close` - When `Redis` error occurs library rejects all requests. 
-3. `fail-fast` - When `Redis` error occurs library throws error immediately.
+1. `fail-open` (default) - When Redis error occurs library allows all requests (recommended in high-load systems).  
+2. `fail-close` - When Redis error occurs library rejects all requests (recommended for critical API's). 
+3. `fail-fast` - When Redis error occurs library throws error immediately (recommended in staging environments).
 
 ## Configuration 
 
@@ -24,9 +24,41 @@ RateLimiterModule.forRoot({
 })
 ```
 
+## Adapter implementation
+
+This library implements `Error Translation` (`Error Mapping`) pattern for Redis failure handling. It means, that if Redis is not available adapter should throw `RedisAdapterError` on every `eval` method call during Redis is not available. This error signals that Redis was failed and it will apply corresponding failing strategy.
+
+```typescript title="redis.service.ts"
+import  { type IRedisAdapter, type Key, RedisAdapterError } from "nestjs-multi-limiter";
+
+@Injectable()
+export class RedisService implements IRedisAdapter {
+    private readonly client: Redis;
+    private redisAvailable = true;
+
+    public constructor(private readonly configService: ConfigService) {
+        this.client = new Redis(/* ... */);
+        this.client.on("error", () => {
+            this.redisAvailable = false;
+        })
+    }
+
+    public async eval(script: string | Buffer, numKeys: number, ...args: (number | string | Buffer)[]) {
+        if (!this.redisAvailable) {
+            // signals that redis is not available
+            throw new RedisAdapterError();
+        }
+    
+        return await this.client.eval(script, numKeys, ...args);
+    }
+}
+```
+
 ## Subscribe on errors
 
-To subscribe on `Redis` errors via rate limiting (for example, for logging) you can implement optional `handleError` property of `IRedisAdapter` type:
+`RedisAdapterError` instances will be handled by library. But if some another error occurs during Redis requests you also can subscribe on it. Such errors will always be thrown.
+
+To subscribe on Redis errors via rate limiting (for example, for logging) you can implement optional `handleError` property of `IRedisAdapter` type:
 
 ```typescript title="redis.service.ts"
 import type { IRedisAdapter, Key } from "nestjs-multi-limiter";
@@ -43,4 +75,4 @@ export class RedisService implements IRedisAdapter {
 }
 ```
 
-Now when error occurs via rate limiting this method will be called with original error.
+Now when error occurs via rate limiting this method will be called with original error and computed rate limiting key.
