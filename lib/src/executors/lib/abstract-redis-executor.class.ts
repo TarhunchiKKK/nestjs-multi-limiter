@@ -1,5 +1,5 @@
 import type { RateLimiterModuleFullOptions } from "../../config";
-import { UnknownRedisFailingStrategyError } from "../../shared/errors";
+import { RedisAdapterError, UnknownRedisFailingStrategyError } from "../../shared/errors";
 import { castLuaScriptResult, type Key } from "../../shared/model";
 import type { IExecutor } from "./executor.interface";
 
@@ -7,31 +7,39 @@ export abstract class AbstractRedisExecutor<Options> implements IExecutor<Option
     public constructor(protected readonly moduleOptions: RateLimiterModuleFullOptions) {}
 
     public async check(key: Key, options: Options) {
-        let result: unknown = null;
-
         try {
-            result = await this.performScript(key, options);
+            const result = await this.performScript(key, options);
+
+            return castLuaScriptResult(result);
         } catch (error: unknown) {
-            if (this.moduleOptions.storage.type !== "redis") {
-                throw error;
+            if (error instanceof RedisAdapterError) {
+                return this.applyFailingStrategy(error);
             }
 
-            await this.moduleOptions.storage.adapter.handleError?.(error, key);
-
-            switch (this.moduleOptions.storage.failingStrategy) {
-                case "fail-open":
-                    return true;
-                case "fail-close":
-                    return false;
-                case "fail-fast":
-                    throw error;
-                default:
-                    throw new UnknownRedisFailingStrategyError(this.moduleOptions.storage.failingStrategy);
+            if (this.moduleOptions.storage.type === "redis") {
+                await this.moduleOptions.storage.adapter.handleError?.(error, key);
             }
+
+            throw error;
         }
-
-        return castLuaScriptResult(result);
     }
 
     protected abstract performScript(key: Key, options: Options): unknown | Promise<unknown>;
+
+    private applyFailingStrategy(error: RedisAdapterError) {
+        if (this.moduleOptions.storage.type !== "redis") {
+            throw error;
+        }
+
+        switch (this.moduleOptions.storage.failingStrategy) {
+            case "fail-open":
+                return true;
+            case "fail-close":
+                return false;
+            case "fail-fast":
+                throw error;
+            default:
+                throw new UnknownRedisFailingStrategyError(this.moduleOptions.storage.failingStrategy);
+        }
+    }
 }
